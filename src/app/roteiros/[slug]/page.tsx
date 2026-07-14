@@ -1,16 +1,16 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FotoPlaceholder } from "@/components/FotoPlaceholder";
-import { getRoteiroPorId } from "@/data/roteiros";
+import { getRoteiroPorSlug } from "@/data/roteiros";
 import { formatarData, formatarPreco } from "@/lib/format";
 
 export default async function RoteiroDetalhe({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 }) {
-  const { id } = await params;
-  const roteiro = await getRoteiroPorId(id);
+  const { slug } = await params;
+  const roteiro = await getRoteiroPorSlug(slug);
 
   if (!roteiro) {
     notFound();

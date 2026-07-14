@@ -13,6 +13,7 @@ export type Vaga = {
 
 export type Roteiro = {
   id: string;
+  slug: string;
   nome: string;
   descricao: string | null;
   tipo: "fixo" | "personalizado";
@@ -51,15 +52,15 @@ export async function getRoteirosAtivos(): Promise<RoteiroComVagas[]> {
   return data as RoteiroComVagas[];
 }
 
-export async function getRoteiroPorId(
-  id: string,
+export async function getRoteiroPorSlug(
+  slug: string,
 ): Promise<RoteiroComVagas | null> {
   const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("roteiros")
     .select("*, vagas(*)")
-    .eq("id", id)
+    .eq("slug", slug)
     .eq("ativo", true)
     .maybeSingle();
 

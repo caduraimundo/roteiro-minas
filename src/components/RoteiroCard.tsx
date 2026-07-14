@@ -9,7 +9,7 @@ export function RoteiroCard({ roteiro }: { roteiro: RoteiroComVagas }) {
 
   return (
     <Link
-      href={`/roteiros/${roteiro.id}`}
+      href={`/roteiros/${roteiro.slug}`}
       className="flex flex-col overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800"
     >
       <FotoPlaceholder className="h-40 w-full" />
