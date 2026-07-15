@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { apenasDigitos, validarCPF, validarEmail } from "@/lib/validacao";
+import {
+  apenasDigitos,
+  validarCPF,
+  validarEmail,
+  validarTelefone,
+} from "@/lib/validacao";
 import { validarCupomServidor } from "@/lib/cupom";
 import { calcularValores, criarOrderPagarme } from "@/lib/pagarme";
 import { getVagaComRoteiro } from "@/data/roteiros";
@@ -14,6 +19,8 @@ export async function POST(request: Request) {
   const nome = typeof body?.nome === "string" ? body.nome.trim() : "";
   const cpf = typeof body?.cpf === "string" ? apenasDigitos(body.cpf) : "";
   const email = typeof body?.email === "string" ? body.email.trim() : "";
+  const telefone =
+    typeof body?.telefone === "string" ? apenasDigitos(body.telefone) : "";
   const vagaId = typeof body?.vagaId === "string" ? body.vagaId : "";
   const cupomCodigo =
     typeof body?.cupomCodigo === "string" ? body.cupomCodigo.trim() : "";
@@ -29,6 +36,7 @@ export async function POST(request: Request) {
     nome.length < 3 ||
     !validarCPF(cpf) ||
     !validarEmail(email) ||
+    !validarTelefone(telefone) ||
     !vagaId ||
     !formaPagamento
   ) {
@@ -110,7 +118,7 @@ export async function POST(request: Request) {
       descricaoItem: roteiro.nome,
       valorFinalReais: valorFinal,
       valorRoteiroReais: precoComDesconto,
-      comprador: { nome, email, cpfDigitos: cpf },
+      comprador: { nome, email, cpfDigitos: cpf, telefoneDigitos: telefone },
       pagamento:
         formaPagamento === "pix"
           ? { payment_method: "pix", pix: { expires_in: 3600 } }
@@ -128,13 +136,33 @@ export async function POST(request: Request) {
     const transacao = charge?.last_transaction;
 
     if (formaPagamento === "pix") {
+      const pixFalhou = charge?.status === "failed" || !transacao?.qr_code;
+
+      if (pixFalhou) {
+        console.error(
+          "Falha ao gerar Pix. status:",
+          charge?.status,
+          "erros:",
+          transacao?.gateway_response?.errors,
+        );
+
+        return NextResponse.json(
+          {
+            sucesso: false,
+            motivo:
+              transacao?.gateway_response?.errors?.[0]?.message ??
+              "Não foi possível gerar o Pix.",
+          },
+          { status: 502 },
+        );
+      }
+
       return NextResponse.json({
         sucesso: true,
         formaPagamento: "pix",
         orderId: order.id,
-        qrCode: transacao?.qr_code ?? null,
-        qrCodeUrl: transacao?.qr_code_url ?? null,
-        _debugCharge: charge,
+        qrCode: transacao.qr_code,
+        qrCodeUrl: transacao.qr_code_url ?? null,
       });
     }
 

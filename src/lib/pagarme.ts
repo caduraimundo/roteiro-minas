@@ -36,7 +36,12 @@ export type CriarOrderParams = {
   descricaoItem: string;
   valorFinalReais: number;
   valorRoteiroReais: number;
-  comprador: { nome: string; email: string; cpfDigitos: string };
+  comprador: {
+    nome: string;
+    email: string;
+    cpfDigitos: string;
+    telefoneDigitos: string;
+  };
   pagamento: PagamentoPix | PagamentoCartao;
 };
 
@@ -107,6 +112,13 @@ export async function criarOrderPagarme({
         type: "individual",
         document: comprador.cpfDigitos,
         document_type: "CPF",
+        phones: {
+          mobile_phone: {
+            country_code: "55",
+            area_code: comprador.telefoneDigitos.slice(0, 2),
+            number: comprador.telefoneDigitos.slice(2),
+          },
+        },
       },
       payments: [payment],
     }),

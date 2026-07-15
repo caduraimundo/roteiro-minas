@@ -4,8 +4,10 @@ import { useMemo, useState } from "react";
 import {
   apenasDigitos,
   formatarCPFInput,
+  formatarTelefoneInput,
   validarCPF,
   validarEmail,
+  validarTelefone,
 } from "@/lib/validacao";
 import { formatarPreco } from "@/lib/format";
 import { tokenizarCartao } from "@/lib/pagarmeClient";
@@ -17,7 +19,7 @@ const TAXA_PLATAFORMA_PERCENTUAL = 6;
 const TEXTO_CONSENTIMENTO =
   "Ao continuar, você concorda com os Termos de compra e a Política de reembolso. Seus dados (CPF e nome) serão utilizados para contratação do seguro de viagem do passeio.";
 
-type Campo = "nome" | "cpf" | "email";
+type Campo = "nome" | "cpf" | "email" | "telefone";
 type FormaPagamento = "pix" | "cartao_avista" | "cartao_parcelado";
 
 type CupomAplicado = {
@@ -43,11 +45,13 @@ export function CheckoutForm({
   const [nome, setNome] = useState("");
   const [cpf, setCpf] = useState("");
   const [email, setEmail] = useState("");
+  const [telefone, setTelefone] = useState("");
   const [consentimento, setConsentimento] = useState(false);
   const [tocado, setTocado] = useState<Record<Campo, boolean>>({
     nome: false,
     cpf: false,
     email: false,
+    telefone: false,
   });
 
   const [cupomCodigo, setCupomCodigo] = useState("");
@@ -70,6 +74,7 @@ export function CheckoutForm({
   const nomeValido = nome.trim().length >= 3;
   const cpfValido = validarCPF(cpf);
   const emailValido = validarEmail(email);
+  const telefoneValido = validarTelefone(telefone);
 
   const cpfDigitos = apenasDigitos(cpf);
   const cupomValidoParaCpfAtual =
@@ -92,7 +97,12 @@ export function CheckoutForm({
       /^\d{3,4}$/.test(cvv));
 
   const formularioValido =
-    nomeValido && cpfValido && emailValido && consentimento && cartaoValido;
+    nomeValido &&
+    cpfValido &&
+    emailValido &&
+    telefoneValido &&
+    consentimento &&
+    cartaoValido;
 
   async function handleAplicarCupom() {
     setCupomErro(null);
@@ -162,6 +172,11 @@ export function CheckoutForm({
     () => (tocado.email && !emailValido ? "E-mail inválido." : null),
     [tocado.email, emailValido],
   );
+  const erroTelefone = useMemo(
+    () =>
+      tocado.telefone && !telefoneValido ? "Telefone inválido." : null,
+    [tocado.telefone, telefoneValido],
+  );
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -192,6 +207,7 @@ export function CheckoutForm({
           nome: nome.trim(),
           cpf: cpfDigitos,
           email: email.trim(),
+          telefone: apenasDigitos(telefone),
           vagaId,
           cupomCodigo: cupomValidoParaCpfAtual ? cupomAplicado.codigo : "",
           formaPagamento,
@@ -323,6 +339,27 @@ export function CheckoutForm({
         />
         {erroEmail && (
           <span className="text-sm text-red-600">{erroEmail}</span>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label htmlFor="telefone" className="text-sm font-medium">
+          Telefone
+        </label>
+        <input
+          id="telefone"
+          type="tel"
+          inputMode="numeric"
+          placeholder="(00) 00000-0000"
+          value={telefone}
+          onChange={(event) =>
+            setTelefone(formatarTelefoneInput(event.target.value))
+          }
+          onBlur={() => marcarTocado("telefone")}
+          className="rounded-lg border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+        />
+        {erroTelefone && (
+          <span className="text-sm text-red-600">{erroTelefone}</span>
         )}
       </div>
 
