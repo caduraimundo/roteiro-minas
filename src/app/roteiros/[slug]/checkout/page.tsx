@@ -56,7 +56,11 @@ export default async function Checkout({
         </p>
       </div>
 
-      <CheckoutForm roteiroId={roteiro.id} preco={vaga.preco} />
+      <CheckoutForm
+        roteiroId={roteiro.id}
+        vagaId={vaga.id}
+        preco={vaga.preco}
+      />
     </div>
   );
 }

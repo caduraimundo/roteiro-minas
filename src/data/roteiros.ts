@@ -68,3 +68,22 @@ export async function getRoteiroPorSlug(
 
   return data as RoteiroComVagas | null;
 }
+
+export async function getVagaComRoteiro(
+  vagaId: string,
+): Promise<{ vaga: Vaga; roteiro: Roteiro } | null> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("vagas")
+    .select("*, roteiro:roteiros(*)")
+    .eq("id", vagaId)
+    .maybeSingle();
+
+  if (error) throw error;
+  if (!data) return null;
+
+  const { roteiro, ...vaga } = data as Vaga & { roteiro: Roteiro };
+
+  return { vaga, roteiro };
+}
