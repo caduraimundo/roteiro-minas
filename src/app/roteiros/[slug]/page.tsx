@@ -81,13 +81,22 @@ export default async function RoteiroDetalhe({
                     </span>
                   </div>
 
-                  <button
-                    type="button"
-                    disabled={esgotada}
-                    className="rounded-full px-4 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500"
-                  >
-                    {esgotada ? "Esgotado" : "Comprar"}
-                  </button>
+                  {esgotada ? (
+                    <button
+                      type="button"
+                      disabled
+                      className="rounded-full px-4 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500"
+                    >
+                      Esgotado
+                    </button>
+                  ) : (
+                    <Link
+                      href={`/roteiros/${roteiro.slug}/checkout?vaga=${vaga.id}`}
+                      className="rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background"
+                    >
+                      Comprar
+                    </Link>
+                  )}
                 </li>
               );
             })}
