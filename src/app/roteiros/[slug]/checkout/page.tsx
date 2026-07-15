@@ -56,7 +56,7 @@ export default async function Checkout({
         </p>
       </div>
 
-      <CheckoutForm />
+      <CheckoutForm roteiroId={roteiro.id} preco={vaga.preco} />
     </div>
   );
 }

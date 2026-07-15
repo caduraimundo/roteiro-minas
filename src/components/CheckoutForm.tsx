@@ -2,17 +2,31 @@
 
 import { useMemo, useState } from "react";
 import {
+  apenasDigitos,
   formatarCPFInput,
   validarCPF,
   validarEmail,
 } from "@/lib/validacao";
+import { formatarPreco } from "@/lib/format";
 
 const TEXTO_CONSENTIMENTO =
   "Ao continuar, você concorda com os Termos de compra e a Política de reembolso. Seus dados (CPF e nome) serão utilizados para contratação do seguro de viagem do passeio.";
 
 type Campo = "nome" | "cpf" | "email";
 
-export function CheckoutForm() {
+type CupomAplicado = {
+  codigo: string;
+  cpf: string;
+  percentualDesconto: number;
+};
+
+export function CheckoutForm({
+  roteiroId,
+  preco,
+}: {
+  roteiroId: string;
+  preco: number;
+}) {
   const [nome, setNome] = useState("");
   const [cpf, setCpf] = useState("");
   const [email, setEmail] = useState("");
@@ -24,10 +38,78 @@ export function CheckoutForm() {
   });
   const [enviado, setEnviado] = useState(false);
 
+  const [cupomCodigo, setCupomCodigo] = useState("");
+  const [cupomValidando, setCupomValidando] = useState(false);
+  const [cupomErro, setCupomErro] = useState<string | null>(null);
+  const [cupomAplicado, setCupomAplicado] = useState<CupomAplicado | null>(
+    null,
+  );
+
   const nomeValido = nome.trim().length >= 3;
   const cpfValido = validarCPF(cpf);
   const emailValido = validarEmail(email);
   const formularioValido = nomeValido && cpfValido && emailValido && consentimento;
+
+  const cpfDigitos = apenasDigitos(cpf);
+  const cupomValidoParaCpfAtual =
+    cupomAplicado !== null && cupomAplicado.cpf === cpfDigitos;
+
+  const precoComDesconto = cupomValidoParaCpfAtual
+    ? preco - (preco * cupomAplicado.percentualDesconto) / 100
+    : preco;
+
+  async function handleAplicarCupom() {
+    setCupomErro(null);
+
+    if (!cpfValido) {
+      setCupomErro("Informe um CPF válido antes de aplicar o cupom.");
+      return;
+    }
+
+    if (!cupomCodigo.trim()) {
+      setCupomErro("Informe um código de cupom.");
+      return;
+    }
+
+    setCupomValidando(true);
+
+    try {
+      const resposta = await fetch("/api/cupom/validar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          codigo: cupomCodigo.trim(),
+          roteiroId,
+          cpf: cpfDigitos,
+        }),
+      });
+
+      const resultado = await resposta.json();
+
+      if (!resultado.valido) {
+        setCupomAplicado(null);
+        setCupomErro(resultado.motivo ?? "Cupom inválido.");
+        return;
+      }
+
+      setCupomAplicado({
+        codigo: cupomCodigo.trim(),
+        cpf: cpfDigitos,
+        percentualDesconto: resultado.percentualDesconto,
+      });
+    } catch {
+      setCupomAplicado(null);
+      setCupomErro("Não foi possível validar o cupom. Tente novamente.");
+    } finally {
+      setCupomValidando(false);
+    }
+  }
+
+  function handleRemoverCupom() {
+    setCupomAplicado(null);
+    setCupomCodigo("");
+    setCupomErro(null);
+  }
 
   const marcarTocado = (campo: Campo) =>
     setTocado((atual) => ({ ...atual, [campo]: true }));
@@ -52,8 +134,16 @@ export function CheckoutForm() {
 
     console.log("Dados do checkout:", {
       nome: nome.trim(),
-      cpf: cpf.replace(/\D/g, ""),
+      cpf: cpfDigitos,
       email: email.trim(),
+      cupom: cupomValidoParaCpfAtual
+        ? {
+            codigo: cupomAplicado.codigo,
+            percentualDesconto: cupomAplicado.percentualDesconto,
+          }
+        : null,
+      precoOriginal: preco,
+      precoFinal: precoComDesconto,
     });
 
     setEnviado(true);
@@ -107,6 +197,66 @@ export function CheckoutForm() {
         />
         {erroEmail && (
           <span className="text-sm text-red-600">{erroEmail}</span>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label htmlFor="cupom" className="text-sm font-medium">
+          Cupom de desconto (opcional)
+        </label>
+        <div className="flex gap-2">
+          <input
+            id="cupom"
+            type="text"
+            value={cupomCodigo}
+            onChange={(event) => {
+              setCupomCodigo(event.target.value);
+              if (cupomAplicado) setCupomAplicado(null);
+            }}
+            disabled={cupomValidoParaCpfAtual}
+            className="flex-1 rounded-lg border border-zinc-300 px-3 py-2 disabled:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900 dark:disabled:bg-zinc-800"
+          />
+          {cupomValidoParaCpfAtual ? (
+            <button
+              type="button"
+              onClick={handleRemoverCupom}
+              className="shrink-0 rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700"
+            >
+              Remover
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleAplicarCupom}
+              disabled={cupomValidando}
+              className="shrink-0 rounded-lg border border-zinc-300 px-3 py-2 text-sm disabled:opacity-50 dark:border-zinc-700"
+            >
+              {cupomValidando ? "Validando..." : "Aplicar"}
+            </button>
+          )}
+        </div>
+        {cupomErro && <span className="text-sm text-red-600">{cupomErro}</span>}
+        {cupomValidoParaCpfAtual && (
+          <span className="text-sm text-green-700 dark:text-green-500">
+            Cupom aplicado: {cupomAplicado.percentualDesconto}% de desconto.
+          </span>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-1 rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
+        {cupomValidoParaCpfAtual ? (
+          <>
+            <span className="text-sm text-zinc-500 line-through">
+              {formatarPreco(preco)}
+            </span>
+            <span className="text-lg font-semibold">
+              {formatarPreco(precoComDesconto)}
+            </span>
+          </>
+        ) : (
+          <span className="text-lg font-semibold">
+            {formatarPreco(preco)}
+          </span>
         )}
       </div>
 
