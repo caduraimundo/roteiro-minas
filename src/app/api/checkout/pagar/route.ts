@@ -134,6 +134,7 @@ export async function POST(request: Request) {
         orderId: order.id,
         qrCode: transacao?.qr_code ?? null,
         qrCodeUrl: transacao?.qr_code_url ?? null,
+        _debugCharge: charge,
       });
     }
 
