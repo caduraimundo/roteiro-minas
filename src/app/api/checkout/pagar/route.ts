@@ -89,6 +89,7 @@ export async function POST(request: Request) {
   }
 
   let percentualDesconto: number | null = null;
+  let cupomId = "";
 
   if (cupomCodigo) {
     const supabase = await createClient();
@@ -106,6 +107,7 @@ export async function POST(request: Request) {
     }
 
     percentualDesconto = resultadoCupom.percentualDesconto;
+    cupomId = resultadoCupom.cupomId;
   }
 
   const { precoComDesconto, valorFinal } = calcularValores(
@@ -130,6 +132,13 @@ export async function POST(request: Request) {
                 card_token: cardToken,
               },
             },
+      metadata: {
+        vaga_id: vaga.id,
+        roteiro_id: roteiro.id,
+        cupom_id: cupomId,
+        forma_pagamento: formaPagamento,
+        parcelas: String(formaPagamento === "cartao_parcelado" ? parcelas : 1),
+      },
     });
 
     const charge = order?.charges?.[0];

@@ -1,6 +1,37 @@
 const PAGARME_API_URL = "https://api.pagar.me/core/v5";
 export const TAXA_PLATAFORMA_PERCENTUAL = 6;
 
+function authHeaderPagarme() {
+  const apiKey = process.env.PAGARME_API_KEY;
+  if (!apiKey) {
+    throw new Error("PAGARME_API_KEY não configurada.");
+  }
+
+  return `Basic ${Buffer.from(`${apiKey}:`).toString("base64")}`;
+}
+
+/**
+ * Busca uma order direto na API do Pagar.me (fonte de verdade). Usado pelo
+ * webhook pra nunca confiar no conteúdo do payload recebido - o status real
+ * do pagamento só é aceito se vier desta consulta autenticada com a chave
+ * secreta, nunca do corpo do webhook em si.
+ */
+export async function buscarOrderPagarme(orderId: string) {
+  const resposta = await fetch(`${PAGARME_API_URL}/orders/${orderId}`, {
+    headers: { Authorization: authHeaderPagarme() },
+  });
+
+  const dados = await resposta.json();
+
+  if (!resposta.ok) {
+    const mensagem =
+      dados?.message ?? dados?.errors?.[0]?.message ?? "Erro ao consultar order.";
+    throw new Error(mensagem);
+  }
+
+  return dados;
+}
+
 export function calcularValores(preco: number, percentualDesconto: number | null) {
   const precoComDesconto = percentualDesconto
     ? preco - (preco * percentualDesconto) / 100
@@ -43,6 +74,7 @@ export type CriarOrderParams = {
     telefoneDigitos: string;
   };
   pagamento: PagamentoPix | PagamentoCartao;
+  metadata: Record<string, string>;
 };
 
 /**
@@ -57,12 +89,8 @@ export async function criarOrderPagarme({
   valorRoteiroReais,
   comprador,
   pagamento,
+  metadata,
 }: CriarOrderParams) {
-  const apiKey = process.env.PAGARME_API_KEY;
-  if (!apiKey) {
-    throw new Error("PAGARME_API_KEY não configurada.");
-  }
-
   const items: ItemPagarme[] = [
     {
       amount: reaisParaCentavos(valorFinalReais),
@@ -102,10 +130,11 @@ export async function criarOrderPagarme({
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Basic ${Buffer.from(`${apiKey}:`).toString("base64")}`,
+      Authorization: authHeaderPagarme(),
     },
     body: JSON.stringify({
       items,
+      metadata,
       customer: {
         name: comprador.nome,
         email: comprador.email,

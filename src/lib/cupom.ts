@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export type ResultadoCupom =
-  | { valido: true; percentualDesconto: number }
+  | { valido: true; cupomId: string; percentualDesconto: number }
   | { valido: false; motivo: string };
 
 /** Valida um cupom no servidor: existência, vínculo com o roteiro e uso prévio pelo CPF. */
@@ -42,6 +42,7 @@ export async function validarCupomServidor(
 
   return {
     valido: true,
+    cupomId: cupom.id,
     percentualDesconto: Number(cupom.percentual_desconto),
   };
 }
