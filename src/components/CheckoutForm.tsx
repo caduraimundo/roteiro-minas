@@ -29,7 +29,12 @@ type CupomAplicado = {
 };
 
 type Resultado =
-  | { tipo: "pix"; qrCode: string | null; qrCodeUrl: string | null }
+  | {
+      tipo: "pix";
+      qrCode: string | null;
+      qrCodeUrl: string | null;
+      expiresAt: string | null;
+    }
   | { tipo: "cartao_sucesso" }
   | { tipo: "erro"; motivo: string };
 
@@ -178,10 +183,8 @@ export function CheckoutForm({
     [tocado.telefone, telefoneValido],
   );
 
-  async function handleSubmit(event: React.FormEvent) {
-    event.preventDefault();
-
-    if (!formularioValido || processando) return;
+  async function realizarPagamento() {
+    if (processando) return;
 
     setProcessando(true);
     setResultado(null);
@@ -231,6 +234,7 @@ export function CheckoutForm({
           tipo: "pix",
           qrCode: dados.qrCode,
           qrCodeUrl: dados.qrCodeUrl,
+          expiresAt: dados.expiresAt,
         });
       } else {
         setResultado({ tipo: "cartao_sucesso" });
@@ -246,6 +250,14 @@ export function CheckoutForm({
     } finally {
       setProcessando(false);
     }
+  }
+
+  async function handleSubmit(event: React.FormEvent) {
+    event.preventDefault();
+
+    if (!formularioValido) return;
+
+    await realizarPagamento();
   }
 
   if (resultado?.tipo === "pix") {
@@ -273,9 +285,27 @@ export function CheckoutForm({
             />
           </div>
         )}
+        {resultado.expiresAt && (
+          <p className="text-xs text-zinc-500 dark:text-zinc-500">
+            Esse QR Code expira às{" "}
+            {new Date(resultado.expiresAt).toLocaleTimeString("pt-BR", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+            .
+          </p>
+        )}
         <p className="text-sm text-zinc-600 dark:text-zinc-400">
           A confirmação do pagamento acontece automaticamente após o Pix cair.
         </p>
+        <button
+          type="button"
+          onClick={realizarPagamento}
+          disabled={processando}
+          className="text-sm font-medium underline disabled:opacity-50"
+        >
+          {processando ? "Gerando..." : "Gerar novo QR Code"}
+        </button>
       </div>
     );
   }

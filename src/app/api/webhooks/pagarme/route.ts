@@ -46,6 +46,26 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   }
 
+  if (order?.status === "failed") {
+    console.error(
+      "Webhook Pagar.me: pagamento recusado/falhou (order.payment_failed). orderId:",
+      orderId,
+      "vagaId:",
+      order?.metadata?.vaga_id,
+    );
+    return NextResponse.json({ ok: true });
+  }
+
+  if (order?.status === "canceled") {
+    console.error(
+      "Webhook Pagar.me: pedido cancelado (order.canceled). orderId:",
+      orderId,
+      "vagaId:",
+      order?.metadata?.vaga_id,
+    );
+    return NextResponse.json({ ok: true });
+  }
+
   if (order?.status !== "paid") {
     return NextResponse.json({ ok: true });
   }

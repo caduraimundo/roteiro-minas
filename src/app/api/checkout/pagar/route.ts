@@ -172,10 +172,24 @@ export async function POST(request: Request) {
         orderId: order.id,
         qrCode: transacao.qr_code,
         qrCodeUrl: transacao.qr_code_url ?? null,
+        expiresAt: transacao.expires_at ?? null,
       });
     }
 
     const statusAprovado = charge?.status === "paid";
+
+    if (!statusAprovado) {
+      // Nunca repassa o motivo/código cru do adquirente pro cliente (pode
+      // conter detalhes internos do banco/gateway) - fica só no log server-side.
+      console.error(
+        "Cartão recusado. status:",
+        charge?.status,
+        "acquirer_message:",
+        transacao?.acquirer_message,
+        "acquirer_return_code:",
+        transacao?.acquirer_return_code,
+      );
+    }
 
     return NextResponse.json({
       sucesso: statusAprovado,
@@ -184,7 +198,7 @@ export async function POST(request: Request) {
       status: charge?.status ?? "desconhecido",
       motivo: statusAprovado
         ? undefined
-        : (transacao?.acquirer_message ?? "Pagamento não aprovado."),
+        : "Pagamento recusado. Confira os dados do cartão ou tente outro método.",
     });
   } catch (erro) {
     console.error(
