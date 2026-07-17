@@ -1,36 +1,57 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
+const NOME_JANELA_POPUP = "google-login";
+const CHAVE_RESULTADO = "roteiro-minas-admin-login-result";
 const FONTE_MENSAGEM = "roteiro-minas-admin-login";
 
 /**
- * Renderizado em /admin e /admin/acesso-negado. Só age quando a página
- * está dentro do pop-up de login (window.opener não nulo) - avisa a
- * janela principal do resultado e se fecha sozinho. Acesso direto (sem
- * pop-up) não é afetado, não renderiza nada.
+ * Renderizado em /admin e /admin/acesso-negado. Detecta se é a pop-up de
+ * login via `window.name` (setado em window.open na página de login) -
+ * NÃO via `window.opener`, que o Cross-Origin-Opener-Policy do Google
+ * pode cortar durante a navegação (diferente de window.opener,
+ * window.name sobrevive a navegação cross-origin e não é afetado por
+ * COOP).
+ *
+ * Importante: /admin e /admin/acesso-negado também são alcançadas fora da
+ * pop-up (sucesso via polling na janela principal, fallback de pop-up
+ * bloqueada, acesso direto) - por isso a checagem de window.name continua
+ * necessária, não dá pra sempre fechar a janela incondicionalmente.
  */
 export function PopupCallbackNotifier({
   tipo,
 }: {
   tipo: "sucesso" | "negado";
 }) {
-  const [ehPopup, setEhPopup] = useState(false);
-
   useEffect(() => {
-    if (!window.opener) return;
+    if (window.name !== NOME_JANELA_POPUP) return;
 
-    setEhPopup(true);
+    // Mecanismo principal: localStorage + evento `storage`, não depende
+    // de window.opener.
+    try {
+      localStorage.setItem(
+        CHAVE_RESULTADO,
+        JSON.stringify({ tipo, ts: Date.now() }),
+      );
+    } catch {
+      // localStorage indisponível (raro) - segue só com postMessage/close.
+    }
 
-    window.opener.postMessage(
-      { fonte: FONTE_MENSAGEM, tipo },
-      window.location.origin,
-    );
+    // Tentativa extra sem custo, caso window.opener tenha sobrevivido.
+    if (window.opener) {
+      try {
+        window.opener.postMessage(
+          { fonte: FONTE_MENSAGEM, tipo },
+          window.location.origin,
+        );
+      } catch {
+        // ignora - localStorage já é o mecanismo principal
+      }
+    }
 
     window.close();
   }, [tipo]);
-
-  if (!ehPopup) return null;
 
   return (
     <p className="text-sm text-zinc-500 dark:text-zinc-500">

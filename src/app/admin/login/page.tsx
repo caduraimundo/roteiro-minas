@@ -6,6 +6,8 @@ import { createClient } from "@/lib/supabase/client";
 import { ADMIN_ALLOWLIST } from "@/lib/admin-allowlist";
 
 const FONTE_MENSAGEM = "roteiro-minas-admin-login";
+const CHAVE_RESULTADO = "roteiro-minas-admin-login-result";
+const TIMEOUT_LOGIN_MS = 60000;
 
 export default function AdminLogin() {
   const router = useRouter();
@@ -14,12 +16,17 @@ export default function AdminLogin() {
 
   const popupRef = useRef<Window | null>(null);
   const pollRef = useRef<number | null>(null);
+  const timeoutRef = useRef<number | null>(null);
   const resolvidoRef = useRef(false);
 
-  function pararDeEsperarPopup() {
+  function pararDeEsperar() {
     if (pollRef.current !== null) {
       window.clearInterval(pollRef.current);
       pollRef.current = null;
+    }
+    if (timeoutRef.current !== null) {
+      window.clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
     }
   }
 
@@ -27,7 +34,7 @@ export default function AdminLogin() {
     if (resolvidoRef.current) return;
     resolvidoRef.current = true;
 
-    pararDeEsperarPopup();
+    pararDeEsperar();
     // Fechar a partir da janela principal (que abriu a pop-up) funciona
     // mesmo quando window.opener/postMessage de dentro da pop-up falham
     // por causa de Cross-Origin-Opener-Policy nas páginas do Google.
@@ -43,8 +50,35 @@ export default function AdminLogin() {
     }
   }
 
-  // Caminho rápido: mensagem da pop-up (via PopupCallbackNotifier), quando
-  // window.opener sobrevive à navegação pela tela do Google.
+  // Mecanismo principal: evento `storage`, disparado pela pop-up gravando
+  // o resultado em localStorage (PopupCallbackNotifier). Não depende de
+  // window.opener - funciona mesmo quando o COOP do Google corta essa
+  // relação durante a navegação.
+  useEffect(() => {
+    function handleStorage(event: StorageEvent) {
+      if (event.key !== CHAVE_RESULTADO || !event.newValue) return;
+
+      try {
+        const resultado = JSON.parse(event.newValue) as { tipo?: string };
+        tratarResultado(resultado.tipo === "sucesso");
+      } catch {
+        // valor inesperado - ignora
+      } finally {
+        try {
+          localStorage.removeItem(CHAVE_RESULTADO);
+        } catch {
+          // ignora
+        }
+      }
+    }
+
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router]);
+
+  // Caminho extra sem custo: mensagem direta da pop-up, quando
+  // window.opener sobrevive à navegação. Não é o mecanismo principal.
   useEffect(() => {
     function handleMessage(event: MessageEvent) {
       if (event.origin !== window.location.origin) return;
@@ -62,6 +96,15 @@ export default function AdminLogin() {
     setErro(null);
     setCarregando(true);
     resolvidoRef.current = false;
+
+    // Limpa resultado de uma tentativa anterior - evita disparo de evento
+    // `storage` obsoleto nesta nova tentativa.
+    try {
+      localStorage.removeItem(CHAVE_RESULTADO);
+    } catch {
+      // localStorage indisponível - segue mesmo assim (sobra o polling de
+      // sessão como mecanismo de sucesso)
+    }
 
     const supabase = createClient();
     const { data, error } = await supabase.auth.signInWithOAuth({
@@ -81,7 +124,7 @@ export default function AdminLogin() {
     const popup = window.open(data.url, "google-login", "width=500,height=650");
 
     if (!popup) {
-      // Pop-up bloqueado pelo navegador - cai automaticamente pro fluxo de
+      // Pop-up bloqueada pelo navegador - cai automaticamente pro fluxo de
       // redirect de página inteira, mesma URL já obtida.
       window.location.href = data.url;
       return;
@@ -89,10 +132,8 @@ export default function AdminLogin() {
 
     popupRef.current = popup;
 
-    // Caminho robusto (não depende de window.opener/postMessage
-    // funcionarem dentro da pop-up, que o Cross-Origin-Opener-Policy do
-    // Google pode quebrar em alguns navegadores): confere a sessão
-    // diretamente, e detecta fechamento manual sem login.
+    // Segunda camada, além do storage: confere a sessão diretamente, e
+    // detecta fechamento manual da pop-up sem completar o login.
     pollRef.current = window.setInterval(async () => {
       const {
         data: { user },
@@ -104,15 +145,30 @@ export default function AdminLogin() {
       }
 
       if (popup.closed) {
-        pararDeEsperarPopup();
+        resolvidoRef.current = true;
+        pararDeEsperar();
         popupRef.current = null;
         setCarregando(false);
       }
     }, 800);
+
+    // Timeout de segurança: se nada resolver o login em 60s (nem storage,
+    // nem sessão detectada, nem pop-up fechada), não deixa a pessoa presa
+    // em "Aguardando login..." pra sempre.
+    timeoutRef.current = window.setTimeout(() => {
+      if (resolvidoRef.current) return;
+      resolvidoRef.current = true;
+
+      pararDeEsperar();
+      popupRef.current?.close();
+      popupRef.current = null;
+      setCarregando(false);
+      setErro("Não foi possível confirmar o login. Tente novamente.");
+    }, TIMEOUT_LOGIN_MS);
   }
 
   useEffect(() => {
-    return () => pararDeEsperarPopup();
+    return () => pararDeEsperar();
   }, []);
 
   return (
