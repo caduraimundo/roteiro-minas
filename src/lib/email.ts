@@ -6,6 +6,15 @@ import { formatarData } from "@/lib/format";
 // remetente ainda - endereço fixo, fácil de trocar aqui se necessário.
 const REMETENTE = "Roteiro Minas <ingressos@roteirominas.com.br>";
 
+function escaparHtml(valor: string) {
+  return valor
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 export type DadosEmailTicket = {
   paraEmail: string;
   paraNome: string;
@@ -28,11 +37,11 @@ export async function enviarTicketPorEmail(dados: DadosEmailTicket) {
     to: dados.paraEmail,
     subject: `Seu ingresso - ${dados.roteiroNome}`,
     html: `
-      <p>Olá, ${dados.paraNome}!</p>
-      <p>Sua compra para o passeio <strong>${dados.roteiroNome}</strong>, no dia
+      <p>Olá, ${escaparHtml(dados.paraNome)}!</p>
+      <p>Sua compra para o passeio <strong>${escaparHtml(dados.roteiroNome)}</strong>, no dia
       ${formatarData(dados.data)}, foi confirmada.</p>
       <p>Seu ticket em PDF está anexado a este e-mail, com o código de
-      verificação <strong>${dados.codigoVerificacao}</strong>. Apresente-o ao
+      verificação <strong>${escaparHtml(dados.codigoVerificacao)}</strong>. Apresente-o ao
       guia no dia do passeio.</p>
       <p>Bom passeio!</p>
     `,
