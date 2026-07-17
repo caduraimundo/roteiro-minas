@@ -10,14 +10,6 @@
 -- verificação de qualquer venda. Revoga o acesso público e concede EXECUTE
 -- só pra service_role - a partir de agora essas duas funções só podem ser
 -- chamadas por código server-side usando a service role key.
---
--- NOTA: esta migration tem timestamp anterior à 20260717180000
--- (funcoes_ticket, que cria as duas funções) - numa reaplicação do zero em
--- um banco novo, esta migration falharia por tentar revogar/conceder grant
--- em funções que ainda não existem. Isso reflete a ordem real em que as
--- coisas foram aplicadas em produção (fora do fluxo de git), não uma
--- decisão de design. Se o schema precisar ser replayado do zero algum dia,
--- mover o conteúdo desta migration pra depois de funcoes_ticket primeiro.
 
 revoke execute on function buscar_dados_ticket(uuid) from anon, authenticated, public;
 revoke execute on function marcar_ticket_enviado(uuid) from anon, authenticated, public;
