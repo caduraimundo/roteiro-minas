@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { ADMIN_ALLOWLIST } from "@/lib/admin-allowlist";
 
 const FONTE_MENSAGEM = "roteiro-minas-admin-login";
 
@@ -13,42 +14,54 @@ export default function AdminLogin() {
 
   const popupRef = useRef<Window | null>(null);
   const pollRef = useRef<number | null>(null);
+  const resolvidoRef = useRef(false);
 
   function pararDeEsperarPopup() {
     if (pollRef.current !== null) {
       window.clearInterval(pollRef.current);
       pollRef.current = null;
     }
-    popupRef.current = null;
   }
 
-  // Escuta a mensagem do pop-up (via PopupCallbackNotifier em /admin ou
-  // /admin/acesso-negado) - roda em toda a vida da página de login, não só
-  // durante um login em andamento, pra não perder a mensagem por causa de
-  // timing entre efeitos.
+  function tratarResultado(sucesso: boolean) {
+    if (resolvidoRef.current) return;
+    resolvidoRef.current = true;
+
+    pararDeEsperarPopup();
+    // Fechar a partir da janela principal (que abriu a pop-up) funciona
+    // mesmo quando window.opener/postMessage de dentro da pop-up falham
+    // por causa de Cross-Origin-Opener-Policy nas páginas do Google.
+    popupRef.current?.close();
+    popupRef.current = null;
+    setCarregando(false);
+
+    if (sucesso) {
+      router.push("/admin");
+      router.refresh();
+    } else {
+      router.push("/admin/acesso-negado");
+    }
+  }
+
+  // Caminho rápido: mensagem da pop-up (via PopupCallbackNotifier), quando
+  // window.opener sobrevive à navegação pela tela do Google.
   useEffect(() => {
     function handleMessage(event: MessageEvent) {
       if (event.origin !== window.location.origin) return;
       if (event.data?.fonte !== FONTE_MENSAGEM) return;
 
-      pararDeEsperarPopup();
-      setCarregando(false);
-
-      if (event.data.tipo === "sucesso") {
-        router.push("/admin");
-        router.refresh();
-      } else {
-        router.push("/admin/acesso-negado");
-      }
+      tratarResultado(event.data.tipo === "sucesso");
     }
 
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
   async function handleLogin() {
     setErro(null);
     setCarregando(true);
+    resolvidoRef.current = false;
 
     const supabase = createClient();
     const { data, error } = await supabase.auth.signInWithOAuth({
@@ -76,14 +89,26 @@ export default function AdminLogin() {
 
     popupRef.current = popup;
 
-    pollRef.current = window.setInterval(() => {
+    // Caminho robusto (não depende de window.opener/postMessage
+    // funcionarem dentro da pop-up, que o Cross-Origin-Opener-Policy do
+    // Google pode quebrar em alguns navegadores): confere a sessão
+    // diretamente, e detecta fechamento manual sem login.
+    pollRef.current = window.setInterval(async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user?.email && ADMIN_ALLOWLIST.includes(user.email)) {
+        tratarResultado(true);
+        return;
+      }
+
       if (popup.closed) {
-        // Fechado manualmente sem completar o login (nenhuma mensagem
-        // chegou) - volta a página ao estado normal.
         pararDeEsperarPopup();
+        popupRef.current = null;
         setCarregando(false);
       }
-    }, 500);
+    }, 800);
   }
 
   useEffect(() => {
