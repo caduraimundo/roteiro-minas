@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ADMIN_ALLOWLIST } from "@/lib/admin-allowlist";
 import { LogoutButton } from "@/components/LogoutButton";
+import { PopupCallbackNotifier } from "@/components/PopupCallbackNotifier";
 
 export default async function AdminHome() {
   const supabase = await createClient();
@@ -18,6 +19,7 @@ export default async function AdminHome() {
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 p-8">
+      <PopupCallbackNotifier tipo="sucesso" />
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Painel Admin</h1>
         <LogoutButton />
