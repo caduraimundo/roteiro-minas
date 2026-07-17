@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { buscarOrderPagarme } from "@/lib/pagarme";
+import { getVagaComRoteiro } from "@/data/roteiros";
+import { gerarTicketPdf } from "@/lib/ticket";
+import { enviarTicketPorEmail } from "@/lib/email";
 
 const FORMAS_PAGAMENTO_VALIDAS = new Set([
   "pix",
@@ -133,6 +136,85 @@ export async function POST(request: Request) {
       "comprador:",
       customer.email,
     );
+  }
+
+  if (data?.motivo === "erro_codigo_verificacao") {
+    console.error(
+      "PENDÊNCIA MANUAL: pagamento confirmado mas não foi possível gerar código de " +
+        "verificação único (colisões esgotadas). orderId:",
+      orderId,
+      "vagaId:",
+      vagaId,
+      "comprador:",
+      customer.email,
+    );
+  }
+
+  // Geração de PDF + envio de e-mail rodam depois que a venda já foi
+  // confirmada, em bloco separado: se falhar aqui, a venda continua válida
+  // e o webhook não deve ser reprocessado por causa disso (por isso o
+  // try/catch próprio e a resposta 200 sempre no final da função).
+  if (data?.sucesso && data.motivo === "confirmado" && data.venda_id) {
+    try {
+      const { data: dadosTicket, error: erroTicket } = (await supabase
+        .rpc("buscar_dados_ticket", { p_venda_id: data.venda_id })
+        .single()) as {
+        data: {
+          comprador_nome: string;
+          comprador_email: string;
+          valor_total: number;
+          codigo_verificacao: string;
+          vaga_id: string;
+          status: string;
+          ticket_enviado_em: string | null;
+        } | null;
+        error: { message: string } | null;
+      };
+
+      if (erroTicket || !dadosTicket) {
+        throw new Error(erroTicket?.message ?? "venda não encontrada");
+      }
+
+      if (dadosTicket.ticket_enviado_em) {
+        // Já enviado - não deveria acontecer aqui (motivo só é "confirmado"
+        // em vendas recém-criadas), mas a checagem é a trava de idempotência
+        // pedida, defesa extra contra qualquer reprocessamento futuro.
+        return NextResponse.json({ ok: true });
+      }
+
+      const registro = await getVagaComRoteiro(dadosTicket.vaga_id);
+      if (!registro) {
+        throw new Error("vaga/roteiro não encontrado pro ticket");
+      }
+
+      const pdf = await gerarTicketPdf({
+        roteiroNome: registro.roteiro.nome,
+        compradorNome: dadosTicket.comprador_nome,
+        data: registro.vaga.data,
+        valorPago: Number(dadosTicket.valor_total),
+        codigoVerificacao: dadosTicket.codigo_verificacao,
+      });
+
+      await enviarTicketPorEmail({
+        paraEmail: dadosTicket.comprador_email,
+        paraNome: dadosTicket.comprador_nome,
+        roteiroNome: registro.roteiro.nome,
+        data: registro.vaga.data,
+        codigoVerificacao: dadosTicket.codigo_verificacao,
+        pdf,
+      });
+
+      await supabase.rpc("marcar_ticket_enviado", { p_venda_id: data.venda_id });
+    } catch (erro) {
+      console.error(
+        "Webhook Pagar.me: falha ao gerar/enviar ticket (venda já confirmada, " +
+          "não reprocessada por causa disso). orderId:",
+        orderId,
+        "vendaId:",
+        data.venda_id,
+        erro instanceof Error ? erro.message : erro,
+      );
+    }
   }
 
   return NextResponse.json({ ok: true });
