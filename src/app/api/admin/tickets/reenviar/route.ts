@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { getVagaComRoteiro } from "@/data/roteiros";
 import { gerarTicketPdf } from "@/lib/ticket";
 import { enviarTicketPorEmail } from "@/lib/email";
@@ -22,9 +22,9 @@ export async function POST(request: Request) {
     );
   }
 
-  const supabase = await createClient();
+  const supabaseAdmin = createAdminClient();
 
-  const { data: dadosTicket, error: erroTicket } = (await supabase
+  const { data: dadosTicket, error: erroTicket } = (await supabaseAdmin
     .rpc("buscar_dados_ticket", { p_venda_id: vendaId })
     .single()) as {
     data: {
@@ -83,7 +83,7 @@ export async function POST(request: Request) {
       pdf,
     });
 
-    await supabase.rpc("marcar_ticket_enviado", { p_venda_id: vendaId });
+    await supabaseAdmin.rpc("marcar_ticket_enviado", { p_venda_id: vendaId });
 
     return NextResponse.json({ sucesso: true });
   } catch (erro) {

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { buscarOrderPagarme } from "@/lib/pagarme";
 import { getVagaComRoteiro } from "@/data/roteiros";
 import { gerarTicketPdf } from "@/lib/ticket";
@@ -156,7 +157,9 @@ export async function POST(request: Request) {
   // try/catch próprio e a resposta 200 sempre no final da função).
   if (data?.sucesso && data.motivo === "confirmado" && data.venda_id) {
     try {
-      const { data: dadosTicket, error: erroTicket } = (await supabase
+      const supabaseAdmin = createAdminClient();
+
+      const { data: dadosTicket, error: erroTicket } = (await supabaseAdmin
         .rpc("buscar_dados_ticket", { p_venda_id: data.venda_id })
         .single()) as {
         data: {
@@ -204,7 +207,9 @@ export async function POST(request: Request) {
         pdf,
       });
 
-      await supabase.rpc("marcar_ticket_enviado", { p_venda_id: data.venda_id });
+      await supabaseAdmin.rpc("marcar_ticket_enviado", {
+        p_venda_id: data.venda_id,
+      });
     } catch (erro) {
       console.error(
         "Webhook Pagar.me: falha ao gerar/enviar ticket (venda já confirmada, " +
