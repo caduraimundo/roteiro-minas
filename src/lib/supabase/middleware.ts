@@ -1,10 +1,19 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+/**
+ * Atualiza a sessão do Supabase e expõe o usuário autenticado + o client
+ * usado, pra quem chamar poder tomar decisões adicionais (ex: guarda de
+ * rota) sem duplicar a lógica de refresh de cookies.
+ *
+ * `box` é um wrapper mutável em vez de retornar `response` direto: o
+ * client do Supabase mantém um closure sobre `box.response` (igual ao
+ * padrão já usado aqui antes), então chamadas feitas DEPOIS que esta
+ * função retornar (ex: `supabase.auth.signOut()` no proxy) continuam
+ * atualizando o mesmo objeto - basta ler `box.response` de novo no final.
+ */
 export async function updateSession(request: NextRequest) {
-  let response = NextResponse.next({
-    request,
-  });
+  const box = { response: NextResponse.next({ request }) };
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -18,11 +27,11 @@ export async function updateSession(request: NextRequest) {
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value),
           );
-          response = NextResponse.next({
+          box.response = NextResponse.next({
             request,
           });
           cookiesToSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options),
+            box.response.cookies.set(name, value, options),
           );
         },
       },
@@ -31,7 +40,9 @@ export async function updateSession(request: NextRequest) {
 
   // Mantém a sessão do Supabase renovada; necessário para que Server
   // Components tenham acesso a um usuário autenticado válido.
-  await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  return response;
+  return { box, user, supabase };
 }
