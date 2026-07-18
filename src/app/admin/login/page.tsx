@@ -8,7 +8,7 @@ import { NOME_JANELA_POPUP } from "@/lib/admin-login-constants";
 
 const FONTE_MENSAGEM = "roteiro-minas-admin-login";
 const CHAVE_RESULTADO = "roteiro-minas-admin-login-result";
-const TIMEOUT_LOGIN_MS = 60000;
+const TIMEOUT_LOGIN_MS = 8000;
 
 export default function AdminLogin() {
   const router = useRouter();
@@ -176,8 +176,11 @@ export default function AdminLogin() {
 
     popupRef.current = popup;
 
-    // Segunda camada, além do storage: confere a sessão diretamente, e
-    // detecta fechamento manual da pop-up sem completar o login.
+    // Mecanismo principal: a janela principal já guarda a referência real
+    // da pop-up (window.open retorna ela) - fechar a partir daqui não
+    // depende de nada que a pop-up precise saber sobre si mesma (ao
+    // contrário de window.opener/window.name, que o COOP do Google parece
+    // resetar durante o fluxo OAuth, não é bug de implementação).
     pollRef.current = window.setInterval(async () => {
       const {
         data: { user },
@@ -188,6 +191,22 @@ export default function AdminLogin() {
         return;
       }
 
+      // Enquanto a pop-up está no domínio do Google, ler .location.href
+      // lança erro cross-origin - esperado, ignora e segue tentando. Só
+      // consegue ler quando ela já voltou pro nosso domínio.
+      try {
+        const url = popup.location.href;
+        if (
+          url.startsWith(window.location.origin) &&
+          (url.includes("/admin/acesso-negado") || url.includes("error="))
+        ) {
+          tratarResultado(false);
+          return;
+        }
+      } catch {
+        // ainda no domínio do Google - ignora
+      }
+
       if (popup.closed) {
         resolvidoRef.current = true;
         pararDeEsperar();
@@ -196,9 +215,9 @@ export default function AdminLogin() {
       }
     }, 800);
 
-    // Timeout de segurança: se nada resolver o login em 60s (nem storage,
-    // nem sessão detectada, nem pop-up fechada), não deixa a pessoa presa
-    // em "Aguardando login..." pra sempre.
+    // Timeout de segurança: se nada resolver o login rápido (nem storage,
+    // nem sessão detectada, nem URL da pop-up lida, nem pop-up fechada),
+    // não deixa a pessoa presa em "Aguardando login..." por muito tempo.
     timeoutRef.current = window.setTimeout(() => {
       if (resolvidoRef.current) return;
       resolvidoRef.current = true;
