@@ -38,13 +38,21 @@ export default function AdminLogin() {
   // se provaram frágeis nesta sessão por causa do Cross-Origin-Opener-
   // -Policy que o Google aplica durante o fluxo OAuth. Mesmo padrão do
   // Roleon: a pop-up nunca decide sucesso/negado, só sinaliza "terminei".
-  async function verificarSessaoEDecidir() {
+  async function verificarSessaoEDecidir(origem: "polling" | "storage") {
     if (resolvidoRef.current) return;
 
     const supabase = createClient();
     const {
       data: { user },
+      error,
     } = await supabase.auth.getUser();
+
+    console.log("[debug-login] verificarSessaoEDecidir", {
+      origem,
+      usuarioEncontrado: !!user,
+      email: user?.email ?? null,
+      erro: error?.message ?? null,
+    });
 
     if (!user) return; // login ainda não completou
 
@@ -105,7 +113,7 @@ export default function AdminLogin() {
         // ignora
       }
 
-      verificarSessaoEDecidir();
+      verificarSessaoEDecidir("storage");
     }
 
     window.addEventListener("storage", handleStorage);
@@ -162,7 +170,7 @@ export default function AdminLogin() {
     // provaram não confiáveis (há relatos documentados de popup.closed
     // retornar true falso por causa do COOP do Google no meio do fluxo).
     pollRef.current = window.setInterval(
-      verificarSessaoEDecidir,
+      () => verificarSessaoEDecidir("polling"),
       INTERVALO_POLL_MS,
     );
 
