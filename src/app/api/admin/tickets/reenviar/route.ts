@@ -1,17 +1,28 @@
 import { NextResponse } from "next/server";
+import {
+  requireAdminSession,
+  AdminSessionError,
+} from "@/lib/supabase/require-admin";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getVagaComRoteiro } from "@/data/roteiros";
 import { gerarTicketPdf } from "@/lib/ticket";
 import { enviarTicketPorEmail } from "@/lib/email";
 
 /**
- * Reenvio manual de ticket - uso interno, chamada via curl/Postman até o
- * painel admin existir. Sem autenticação nesta fase (não exposta em nenhum
- * link do frontend). Ignora a trava de idempotência de propósito: reenvio é
- * uma ação explícita, sempre gera o PDF de novo e atualiza
+ * Reenvio manual de ticket. Ignora a trava de idempotência de propósito:
+ * reenvio é uma ação explícita, sempre gera o PDF de novo e atualiza
  * `ticket_enviado_em`, mesmo se já tiver sido enviado antes.
  */
 export async function POST(request: Request) {
+  try {
+    await requireAdminSession();
+  } catch (erro) {
+    if (erro instanceof AdminSessionError) {
+      return NextResponse.json({ erro: "Não autorizado." }, { status: 401 });
+    }
+    throw erro;
+  }
+
   const body = await request.json().catch(() => null);
   const vendaId = typeof body?.venda_id === "string" ? body.venda_id : "";
 
