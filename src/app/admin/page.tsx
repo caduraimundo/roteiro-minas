@@ -45,6 +45,13 @@ export default async function AdminHome() {
         <LogoutButton />
       </div>
 
+      <Link
+        href="/admin/roteiros/novo"
+        className="self-start rounded-full bg-foreground px-5 py-2 text-sm font-medium text-background"
+      >
+        Novo roteiro
+      </Link>
+
       {!roteiros || roteiros.length === 0 ? (
         <p className="text-zinc-600 dark:text-zinc-400">
           Nenhum roteiro cadastrado ainda.

@@ -4,12 +4,9 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { ADMIN_ALLOWLIST } from "@/lib/admin-allowlist";
 import { formatarData, formatarPreco } from "@/lib/format";
+import { RoteiroCabecalho } from "@/components/admin/RoteiroCabecalho";
+import { NovaVagaForm } from "@/components/admin/NovaVagaForm";
 import type { Roteiro, Vaga } from "@/data/roteiros";
-
-const RUBRICAS_TIPO: Record<Roteiro["tipo"], string> = {
-  fixo: "Fixo",
-  personalizado: "Personalizado",
-};
 
 const RUBRICAS_STATUS_VAGA: Record<"lotada" | "cancelada", string> = {
   lotada: "Lotada",
@@ -72,20 +69,7 @@ export default async function AdminRoteiroDetalhe({
         ← Roteiros
       </Link>
 
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex flex-col">
-          <h1 className="text-xl font-semibold">{roteiroTipado.nome}</h1>
-          <span className="text-sm text-zinc-600 dark:text-zinc-400">
-            {RUBRICAS_TIPO[roteiroTipado.tipo]}
-          </span>
-        </div>
-
-        {!roteiroTipado.ativo && (
-          <span className="rounded-full bg-zinc-200 px-3 py-1 text-xs font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
-            Pausado
-          </span>
-        )}
-      </div>
+      <RoteiroCabecalho roteiro={roteiroTipado} />
 
       {!vagas || vagas.length === 0 ? (
         <p className="text-zinc-600 dark:text-zinc-400">
@@ -119,6 +103,8 @@ export default async function AdminRoteiroDetalhe({
           ))}
         </ul>
       )}
+
+      <NovaVagaForm roteiroId={id} />
     </div>
   );
 }
