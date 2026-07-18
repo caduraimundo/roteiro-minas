@@ -7,7 +7,12 @@ import { ADMIN_ALLOWLIST } from "@/lib/admin-allowlist";
 import { NOME_JANELA_POPUP } from "@/lib/admin-login-constants";
 
 const CHAVE_RESULTADO = "roteiro-minas-admin-login-result";
-const TIMEOUT_LOGIN_MS = 8000;
+// Teto de segurança, não o tempo normal de espera - resolve mais cedo via
+// storage/polling assim que a sessão aparecer. Precisa de margem pro
+// tempo real de interação humana escolhendo a conta no Google (medido em
+// produção: ~7-8s numa tentativa normal), não só pro caso de rejeição
+// rápida.
+const TIMEOUT_LOGIN_MS = 45000;
 const INTERVALO_POLL_MS = 1000;
 
 export default function AdminLogin() {
@@ -38,21 +43,13 @@ export default function AdminLogin() {
   // se provaram frágeis nesta sessão por causa do Cross-Origin-Opener-
   // -Policy que o Google aplica durante o fluxo OAuth. Mesmo padrão do
   // Roleon: a pop-up nunca decide sucesso/negado, só sinaliza "terminei".
-  async function verificarSessaoEDecidir(origem: "polling" | "storage") {
+  async function verificarSessaoEDecidir() {
     if (resolvidoRef.current) return;
 
     const supabase = createClient();
     const {
       data: { user },
-      error,
     } = await supabase.auth.getUser();
-
-    console.log("[debug-login] verificarSessaoEDecidir", {
-      origem,
-      usuarioEncontrado: !!user,
-      email: user?.email ?? null,
-      erro: error?.message ?? null,
-    });
 
     if (!user) return; // login ainda não completou
 
@@ -113,7 +110,7 @@ export default function AdminLogin() {
         // ignora
       }
 
-      verificarSessaoEDecidir("storage");
+      verificarSessaoEDecidir();
     }
 
     window.addEventListener("storage", handleStorage);
@@ -170,7 +167,7 @@ export default function AdminLogin() {
     // provaram não confiáveis (há relatos documentados de popup.closed
     // retornar true falso por causa do COOP do Google no meio do fluxo).
     pollRef.current = window.setInterval(
-      () => verificarSessaoEDecidir("polling"),
+      verificarSessaoEDecidir,
       INTERVALO_POLL_MS,
     );
 
