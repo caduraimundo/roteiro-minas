@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { ADMIN_ALLOWLIST } from "@/lib/admin-allowlist";
+import { NOME_JANELA_POPUP } from "@/lib/admin-login-constants";
 
 const FONTE_MENSAGEM = "roteiro-minas-admin-login";
 const CHAVE_RESULTADO = "roteiro-minas-admin-login-result";
@@ -79,7 +80,7 @@ export default function AdminLogin() {
       // branch abaixo ainda trata o caso sem pop-up)
     }
 
-    if (window.opener) {
+    if (window.name === NOME_JANELA_POPUP) {
       window.close();
     } else {
       setErro(
@@ -160,7 +161,11 @@ export default function AdminLogin() {
       return;
     }
 
-    const popup = window.open(data.url, "google-login", "width=500,height=650");
+    const popup = window.open(
+      data.url,
+      NOME_JANELA_POPUP,
+      "width=500,height=650",
+    );
 
     if (!popup) {
       // Pop-up bloqueada pelo navegador - cai automaticamente pro fluxo de

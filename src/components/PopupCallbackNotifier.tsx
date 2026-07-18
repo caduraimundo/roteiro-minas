@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
+import { NOME_JANELA_POPUP } from "@/lib/admin-login-constants";
 
-const NOME_JANELA_POPUP = "google-login";
 const CHAVE_RESULTADO = "roteiro-minas-admin-login-result";
 const FONTE_MENSAGEM = "roteiro-minas-admin-login";
 
@@ -24,8 +24,10 @@ export function PopupCallbackNotifier({
 }: {
   tipo: "sucesso" | "negado";
 }) {
+  const ehPopup = typeof window !== "undefined" && window.name === NOME_JANELA_POPUP;
+
   useEffect(() => {
-    if (window.name !== NOME_JANELA_POPUP) return;
+    if (!ehPopup) return;
 
     // Mecanismo principal: localStorage + evento `storage`, não depende
     // de window.opener.
@@ -51,11 +53,21 @@ export function PopupCallbackNotifier({
     }
 
     window.close();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tipo]);
+
+  if (!ehPopup) return null;
 
   return (
     <p className="text-sm text-zinc-500 dark:text-zinc-500">
-      Você pode fechar esta janela.
+      Você pode fechar esta janela.{" "}
+      <button
+        type="button"
+        onClick={() => window.close()}
+        className="font-medium underline"
+      >
+        Fechar janela
+      </button>
     </p>
   );
 }
