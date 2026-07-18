@@ -6,9 +6,9 @@ import { createClient } from "@/lib/supabase/client";
 import { ADMIN_ALLOWLIST } from "@/lib/admin-allowlist";
 import { NOME_JANELA_POPUP } from "@/lib/admin-login-constants";
 
-const FONTE_MENSAGEM = "roteiro-minas-admin-login";
 const CHAVE_RESULTADO = "roteiro-minas-admin-login-result";
 const TIMEOUT_LOGIN_MS = 8000;
+const INTERVALO_POLL_MS = 1000;
 
 export default function AdminLogin() {
   const router = useRouter();
@@ -31,35 +31,48 @@ export default function AdminLogin() {
     }
   }
 
-  function tratarResultado(sucesso: boolean) {
+  // Único ponto de decisão de autorização: roda na janela principal, com
+  // a sessão já criada (cookies compartilhados entre pop-up e janela
+  // principal, mesma origem) - não depende de nada que a pop-up precise
+  // saber sobre si mesma. window.opener, window.name e popup.closed já
+  // se provaram frágeis nesta sessão por causa do Cross-Origin-Opener-
+  // -Policy que o Google aplica durante o fluxo OAuth. Mesmo padrão do
+  // Roleon: a pop-up nunca decide sucesso/negado, só sinaliza "terminei".
+  async function verificarSessaoEDecidir() {
     if (resolvidoRef.current) return;
-    resolvidoRef.current = true;
 
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) return; // login ainda não completou
+
+    resolvidoRef.current = true;
     pararDeEsperar();
-    // Fechar a partir da janela principal (que abriu a pop-up) funciona
-    // mesmo quando window.opener/postMessage de dentro da pop-up falham
-    // por causa de Cross-Origin-Opener-Policy nas páginas do Google.
     popupRef.current?.close();
     popupRef.current = null;
     setCarregando(false);
 
-    if (sucesso) {
+    if (user.email && ADMIN_ALLOWLIST.includes(user.email)) {
       router.push("/admin");
       router.refresh();
-    } else {
-      router.push("/admin/acesso-negado");
+      return;
     }
+
+    // Segunda camada de defesa: e-mail fora da allowlist não fica com
+    // sessão viva (proxy.ts e require-admin.ts também checam isso de
+    // forma independente - essa checagem aqui é só pra decidir a
+    // navegação da janela principal).
+    await supabase.auth.signOut();
+    router.push("/admin/acesso-negado");
   }
 
   // Detecta erro do Google devolvido como fragmento (#error=access_denied...)
   // - acontece quando a conta não tem permissão no consent screen em modo
-  // Testing: o Google deixa completar e nega na troca do código, o GoTrue
-  // redireciona pro nosso /auth/callback com o erro só no fragmento (nunca
-  // chega no servidor), nosso route.ts cai no fallback e redireciona pra cá
-  // sem fragmento próprio - mas o navegador preserva o fragmento original,
-  // então esta página carrega com #error=... Ninguém chega aqui com esse
-  // fragmento por acaso, então a simples presença dele já identifica o
-  // cenário, sem precisar inspecionar o valor exato do erro.
+  // Testing: o Google deixa completar e nega na troca do código, e o
+  // GoTrue nunca chega a criar sessão. Caso raro, mitigado pelo botão
+  // manual "Fechar janela" na pop-up se o auto-close falhar.
   useEffect(() => {
     if (!window.location.hash.includes("error=")) return;
 
@@ -68,17 +81,6 @@ export default function AdminLogin() {
       "",
       window.location.pathname + window.location.search,
     );
-
-    try {
-      localStorage.setItem(
-        CHAVE_RESULTADO,
-        JSON.stringify({ tipo: "negado", ts: Date.now() }),
-      );
-    } catch {
-      // localStorage indisponível - segue mesmo assim (o listener de
-      // storage nesta mesma aba, se for o caso, não vai disparar, mas o
-      // branch abaixo ainda trata o caso sem pop-up)
-    }
 
     if (window.name === NOME_JANELA_POPUP) {
       window.close();
@@ -90,45 +92,24 @@ export default function AdminLogin() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Mecanismo principal: evento `storage`, disparado pela pop-up gravando
-  // o resultado em localStorage (PopupCallbackNotifier). Não depende de
-  // window.opener - funciona mesmo quando o COOP do Google corta essa
-  // relação durante a navegação.
+  // Mecanismo de wake-up: evento `storage`, disparado pela pop-up
+  // (PopupCallbackNotifier) ao terminar - não carrega mais sucesso/negado,
+  // só "terminei"; a decisão acontece em verificarSessaoEDecidir.
   useEffect(() => {
     function handleStorage(event: StorageEvent) {
       if (event.key !== CHAVE_RESULTADO || !event.newValue) return;
 
       try {
-        const resultado = JSON.parse(event.newValue) as { tipo?: string };
-        tratarResultado(resultado.tipo === "sucesso");
+        localStorage.removeItem(CHAVE_RESULTADO);
       } catch {
-        // valor inesperado - ignora
-      } finally {
-        try {
-          localStorage.removeItem(CHAVE_RESULTADO);
-        } catch {
-          // ignora
-        }
+        // ignora
       }
+
+      verificarSessaoEDecidir();
     }
 
     window.addEventListener("storage", handleStorage);
     return () => window.removeEventListener("storage", handleStorage);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router]);
-
-  // Caminho extra sem custo: mensagem direta da pop-up, quando
-  // window.opener sobrevive à navegação. Não é o mecanismo principal.
-  useEffect(() => {
-    function handleMessage(event: MessageEvent) {
-      if (event.origin !== window.location.origin) return;
-      if (event.data?.fonte !== FONTE_MENSAGEM) return;
-
-      tratarResultado(event.data.tipo === "sucesso");
-    }
-
-    window.addEventListener("message", handleMessage);
-    return () => window.removeEventListener("message", handleMessage);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
@@ -143,7 +124,7 @@ export default function AdminLogin() {
       localStorage.removeItem(CHAVE_RESULTADO);
     } catch {
       // localStorage indisponível - segue mesmo assim (sobra o polling de
-      // sessão como mecanismo de sucesso)
+      // sessão como mecanismo)
     }
 
     const supabase = createClient();
@@ -176,48 +157,17 @@ export default function AdminLogin() {
 
     popupRef.current = popup;
 
-    // Mecanismo principal: a janela principal já guarda a referência real
-    // da pop-up (window.open retorna ela) - fechar a partir daqui não
-    // depende de nada que a pop-up precise saber sobre si mesma (ao
-    // contrário de window.opener/window.name, que o COOP do Google parece
-    // resetar durante o fluxo OAuth, não é bug de implementação).
-    pollRef.current = window.setInterval(async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+    // Segunda camada, além do storage: confere a sessão periodicamente.
+    // Não usa popup.closed nem popup.location.href - ambos já se
+    // provaram não confiáveis (há relatos documentados de popup.closed
+    // retornar true falso por causa do COOP do Google no meio do fluxo).
+    pollRef.current = window.setInterval(
+      verificarSessaoEDecidir,
+      INTERVALO_POLL_MS,
+    );
 
-      if (user?.email && ADMIN_ALLOWLIST.includes(user.email)) {
-        tratarResultado(true);
-        return;
-      }
-
-      // Enquanto a pop-up está no domínio do Google, ler .location.href
-      // lança erro cross-origin - esperado, ignora e segue tentando. Só
-      // consegue ler quando ela já voltou pro nosso domínio.
-      try {
-        const url = popup.location.href;
-        if (
-          url.startsWith(window.location.origin) &&
-          (url.includes("/admin/acesso-negado") || url.includes("error="))
-        ) {
-          tratarResultado(false);
-          return;
-        }
-      } catch {
-        // ainda no domínio do Google - ignora
-      }
-
-      if (popup.closed) {
-        resolvidoRef.current = true;
-        pararDeEsperar();
-        popupRef.current = null;
-        setCarregando(false);
-      }
-    }, 800);
-
-    // Timeout de segurança: se nada resolver o login rápido (nem storage,
-    // nem sessão detectada, nem URL da pop-up lida, nem pop-up fechada),
-    // não deixa a pessoa presa em "Aguardando login..." por muito tempo.
+    // Timeout de segurança: se nada resolver o login rápido, não deixa a
+    // pessoa presa em "Aguardando login..." por muito tempo.
     timeoutRef.current = window.setTimeout(() => {
       if (resolvidoRef.current) return;
       resolvidoRef.current = true;

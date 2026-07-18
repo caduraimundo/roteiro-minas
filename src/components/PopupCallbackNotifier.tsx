@@ -4,57 +4,38 @@ import { useEffect } from "react";
 import { NOME_JANELA_POPUP } from "@/lib/admin-login-constants";
 
 const CHAVE_RESULTADO = "roteiro-minas-admin-login-result";
-const FONTE_MENSAGEM = "roteiro-minas-admin-login";
 
 /**
- * Renderizado em /admin e /admin/acesso-negado. Detecta se é a pop-up de
- * login via `window.name` (setado em window.open na página de login) -
- * NÃO via `window.opener`, que o Cross-Origin-Opener-Policy do Google
- * pode cortar durante a navegação (diferente de window.opener,
- * window.name sobrevive a navegação cross-origin e não é afetado por
- * COOP).
+ * Renderizado em /admin e /admin/acesso-negado. Só avisa "terminei" pra
+ * janela principal (via localStorage) e se fecha - não decide mais
+ * sucesso/negado (padrão do Roleon: a pop-up nunca decide nada, a
+ * autorização é checada na janela principal, com a sessão já criada).
+ *
+ * Detecta se é a pop-up via `window.name` (setado em window.open na
+ * página de login) - não via `window.opener`, que o
+ * Cross-Origin-Opener-Policy do Google pode cortar durante a navegação.
  *
  * Importante: /admin e /admin/acesso-negado também são alcançadas fora da
- * pop-up (sucesso via polling na janela principal, fallback de pop-up
- * bloqueada, acesso direto) - por isso a checagem de window.name continua
+ * pop-up (decisão da janela principal, fallback de pop-up bloqueada,
+ * acesso direto) - por isso a checagem de window.name continua
  * necessária, não dá pra sempre fechar a janela incondicionalmente.
  */
-export function PopupCallbackNotifier({
-  tipo,
-}: {
-  tipo: "sucesso" | "negado";
-}) {
-  const ehPopup = typeof window !== "undefined" && window.name === NOME_JANELA_POPUP;
+export function PopupCallbackNotifier() {
+  const ehPopup =
+    typeof window !== "undefined" && window.name === NOME_JANELA_POPUP;
 
   useEffect(() => {
     if (!ehPopup) return;
 
-    // Mecanismo principal: localStorage + evento `storage`, não depende
-    // de window.opener.
     try {
-      localStorage.setItem(
-        CHAVE_RESULTADO,
-        JSON.stringify({ tipo, ts: Date.now() }),
-      );
+      localStorage.setItem(CHAVE_RESULTADO, String(Date.now()));
     } catch {
-      // localStorage indisponível (raro) - segue só com postMessage/close.
-    }
-
-    // Tentativa extra sem custo, caso window.opener tenha sobrevivido.
-    if (window.opener) {
-      try {
-        window.opener.postMessage(
-          { fonte: FONTE_MENSAGEM, tipo },
-          window.location.origin,
-        );
-      } catch {
-        // ignora - localStorage já é o mecanismo principal
-      }
+      // localStorage indisponível (raro) - segue só com close.
     }
 
     window.close();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tipo]);
+  }, []);
 
   if (!ehPopup) return null;
 

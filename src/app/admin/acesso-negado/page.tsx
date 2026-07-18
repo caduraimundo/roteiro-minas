@@ -4,7 +4,7 @@ import { PopupCallbackNotifier } from "@/components/PopupCallbackNotifier";
 export default function AcessoNegado() {
   return (
     <div className="mx-auto flex w-full max-w-sm flex-1 flex-col items-center justify-center gap-4 p-8 text-center">
-      <PopupCallbackNotifier tipo="negado" />
+      <PopupCallbackNotifier />
       <h1 className="text-xl font-semibold">Acesso negado</h1>
       <p className="text-sm text-zinc-600 dark:text-zinc-400">
         Essa conta não tem permissão para acessar o painel admin.
