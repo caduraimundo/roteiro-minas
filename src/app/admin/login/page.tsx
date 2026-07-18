@@ -50,6 +50,45 @@ export default function AdminLogin() {
     }
   }
 
+  // Detecta erro do Google devolvido como fragmento (#error=access_denied...)
+  // - acontece quando a conta não tem permissão no consent screen em modo
+  // Testing: o Google deixa completar e nega na troca do código, o GoTrue
+  // redireciona pro nosso /auth/callback com o erro só no fragmento (nunca
+  // chega no servidor), nosso route.ts cai no fallback e redireciona pra cá
+  // sem fragmento próprio - mas o navegador preserva o fragmento original,
+  // então esta página carrega com #error=... Ninguém chega aqui com esse
+  // fragmento por acaso, então a simples presença dele já identifica o
+  // cenário, sem precisar inspecionar o valor exato do erro.
+  useEffect(() => {
+    if (!window.location.hash.includes("error=")) return;
+
+    history.replaceState(
+      null,
+      "",
+      window.location.pathname + window.location.search,
+    );
+
+    try {
+      localStorage.setItem(
+        CHAVE_RESULTADO,
+        JSON.stringify({ tipo: "negado", ts: Date.now() }),
+      );
+    } catch {
+      // localStorage indisponível - segue mesmo assim (o listener de
+      // storage nesta mesma aba, se for o caso, não vai disparar, mas o
+      // branch abaixo ainda trata o caso sem pop-up)
+    }
+
+    if (window.opener) {
+      window.close();
+    } else {
+      setErro(
+        "Login negado pelo Google. Verifique se a conta usada tem permissão.",
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Mecanismo principal: evento `storage`, disparado pela pop-up gravando
   // o resultado em localStorage (PopupCallbackNotifier). Não depende de
   // window.opener - funciona mesmo quando o COOP do Google corta essa
