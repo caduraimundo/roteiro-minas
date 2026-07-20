@@ -119,7 +119,8 @@ export async function GET(request: Request) {
 
   let receitaBruta = 0;
   let valorRoteirosTotal = 0;
-  let taxaTotal = 0;
+  let taxaOnline = 0;
+  let taxaManualPendente = 0;
 
   const porRoteiro = new Map<
     string,
@@ -140,7 +141,12 @@ export async function GET(request: Request) {
 
     receitaBruta += valorTotal;
     valorRoteirosTotal += valorRoteiro;
-    taxaTotal += taxa;
+
+    if (venda.venda_manual) {
+      taxaManualPendente += taxa;
+    } else {
+      taxaOnline += taxa;
+    }
 
     const roteiroId = roteiroIdPorVagaId.get(venda.vaga_id) ?? "desconhecido";
     const nomeRoteiro =
@@ -174,7 +180,8 @@ export async function GET(request: Request) {
       total_vendas: vendas?.length ?? 0,
       receita_bruta: arredondar(receitaBruta),
       valor_roteiros: arredondar(valorRoteirosTotal),
-      taxa_total: arredondar(taxaTotal),
+      taxa_online: arredondar(taxaOnline),
+      taxa_manual_pendente: arredondar(taxaManualPendente),
     },
     por_roteiro: Array.from(porRoteiro.values())
       .map((item) => ({ ...item, valor_roteiros: arredondar(item.valor_roteiros) }))
