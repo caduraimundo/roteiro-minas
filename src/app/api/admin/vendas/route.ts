@@ -24,7 +24,7 @@ export async function GET(request: Request) {
   let query = supabaseAdmin
     .from("vendas")
     .select(
-      "id, vaga_id, comprador_nome, comprador_email, comprador_cpf, valor_total, status, created_at, venda_manual, codigo_verificacao, vagas!inner(roteiro_id)",
+      "id, vaga_id, comprador_nome, comprador_email, comprador_cpf, valor_total, status, created_at, venda_manual, codigo_verificacao, taxa_devida_valor, taxa_devida_acertada_em, vagas!inner(roteiro_id)",
     )
     .order("created_at", { ascending: false });
 
