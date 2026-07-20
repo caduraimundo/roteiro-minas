@@ -47,9 +47,13 @@ export function NovoRoteiroForm() {
     // Custo não é aceito na criação (rota de POST não tem esses campos) -
     // faz um PATCH logo em seguida quando o Markys já preenche o custo na
     // hora de criar o roteiro. Falha aqui não impede a navegação: o
-    // roteiro já foi criado, dá pra completar o custo depois na edição.
+    // roteiro já foi criado, dá pra completar o custo depois na edição -
+    // mas não silencia, sinaliza via query param pra página de detalhe
+    // avisar que o custo não foi salvo.
+    let custoPendente = false;
+
     if (custoFixoExecucao.trim() || custoVariavelPessoa.trim()) {
-      await fetch(`/api/admin/roteiros/${roteiroId}`, {
+      const respostaCusto = await fetch(`/api/admin/roteiros/${roteiroId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -61,9 +65,13 @@ export function NovoRoteiroForm() {
             : null,
         }),
       }).catch(() => null);
+
+      custoPendente = !respostaCusto || !respostaCusto.ok;
     }
 
-    router.push(`/admin/roteiros/${roteiroId}`);
+    router.push(
+      `/admin/roteiros/${roteiroId}${custoPendente ? "?custo_pendente=1" : ""}`,
+    );
   }
 
   return (

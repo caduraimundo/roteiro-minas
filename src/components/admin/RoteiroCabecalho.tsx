@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { formatarPreco } from "@/lib/format";
 import type { Roteiro } from "@/data/roteiros";
 
@@ -15,6 +15,8 @@ const campoClasse =
 
 export function RoteiroCabecalho({ roteiro }: { roteiro: Roteiro }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const custoPendente = searchParams.get("custo_pendente") === "1";
   const [editando, setEditando] = useState(false);
   const [nome, setNome] = useState(roteiro.nome);
   const [descricao, setDescricao] = useState(roteiro.descricao ?? "");
@@ -218,6 +220,14 @@ export function RoteiroCabecalho({ roteiro }: { roteiro: Roteiro }) {
           </span>
         )}
       </div>
+
+      {custoPendente && (
+        <p className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm font-medium text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-300">
+          O custo digitado na criação não foi salvo (falha ao gravar). O
+          roteiro foi criado normalmente - clique em &quot;Editar&quot; abaixo
+          e preencha o custo de novo.
+        </p>
+      )}
 
       {roteiro.descricao && (
         <p className="text-sm text-zinc-600 dark:text-zinc-400">
