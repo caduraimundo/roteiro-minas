@@ -78,6 +78,34 @@ export async function PATCH(
     atualizacoes.ativo = body.ativo;
   }
 
+  if (body?.custo_fixo_execucao !== undefined) {
+    if (
+      body.custo_fixo_execucao !== null &&
+      (typeof body.custo_fixo_execucao !== "number" ||
+        !Number.isFinite(body.custo_fixo_execucao))
+    ) {
+      return NextResponse.json(
+        { erro: "custo_fixo_execucao deve ser numérico ou null." },
+        { status: 400 },
+      );
+    }
+    atualizacoes.custo_fixo_execucao = body.custo_fixo_execucao;
+  }
+
+  if (body?.custo_variavel_pessoa !== undefined) {
+    if (
+      body.custo_variavel_pessoa !== null &&
+      (typeof body.custo_variavel_pessoa !== "number" ||
+        !Number.isFinite(body.custo_variavel_pessoa))
+    ) {
+      return NextResponse.json(
+        { erro: "custo_variavel_pessoa deve ser numérico ou null." },
+        { status: 400 },
+      );
+    }
+    atualizacoes.custo_variavel_pessoa = body.custo_variavel_pessoa;
+  }
+
   if (body?.slug !== undefined) {
     const slug =
       typeof body.slug === "string" ? gerarSlug(body.slug) : "";
