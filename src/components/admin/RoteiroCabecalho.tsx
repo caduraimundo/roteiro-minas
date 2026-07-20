@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { formatarPreco } from "@/lib/format";
 import type { Roteiro } from "@/data/roteiros";
 
 const RUBRICAS_TIPO: Record<Roteiro["tipo"], string> = {
@@ -19,6 +20,16 @@ export function RoteiroCabecalho({ roteiro }: { roteiro: Roteiro }) {
   const [descricao, setDescricao] = useState(roteiro.descricao ?? "");
   const [tipo, setTipo] = useState<Roteiro["tipo"]>(roteiro.tipo);
   const [pdfUrl, setPdfUrl] = useState(roteiro.pdf_url ?? "");
+  const [custoFixoExecucao, setCustoFixoExecucao] = useState(
+    roteiro.custo_fixo_execucao !== null
+      ? String(roteiro.custo_fixo_execucao)
+      : "",
+  );
+  const [custoVariavelPessoa, setCustoVariavelPessoa] = useState(
+    roteiro.custo_variavel_pessoa !== null
+      ? String(roteiro.custo_variavel_pessoa)
+      : "",
+  );
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
@@ -27,6 +38,16 @@ export function RoteiroCabecalho({ roteiro }: { roteiro: Roteiro }) {
     setDescricao(roteiro.descricao ?? "");
     setTipo(roteiro.tipo);
     setPdfUrl(roteiro.pdf_url ?? "");
+    setCustoFixoExecucao(
+      roteiro.custo_fixo_execucao !== null
+        ? String(roteiro.custo_fixo_execucao)
+        : "",
+    );
+    setCustoVariavelPessoa(
+      roteiro.custo_variavel_pessoa !== null
+        ? String(roteiro.custo_variavel_pessoa)
+        : "",
+    );
     setErro(null);
     setEditando(false);
   }
@@ -44,6 +65,12 @@ export function RoteiroCabecalho({ roteiro }: { roteiro: Roteiro }) {
         descricao: descricao || null,
         tipo,
         pdf_url: pdfUrl || null,
+        custo_fixo_execucao: custoFixoExecucao.trim()
+          ? Number(custoFixoExecucao)
+          : null,
+        custo_variavel_pessoa: custoVariavelPessoa.trim()
+          ? Number(custoVariavelPessoa)
+          : null,
       }),
     });
 
@@ -130,6 +157,28 @@ export function RoteiroCabecalho({ roteiro }: { roteiro: Roteiro }) {
           />
         </label>
 
+        <label className="flex flex-col gap-1 text-sm">
+          Custo fixo por execução (van, guia, hospedagem)
+          <input
+            type="number"
+            step="0.01"
+            value={custoFixoExecucao}
+            onChange={(evento) => setCustoFixoExecucao(evento.target.value)}
+            className={campoClasse}
+          />
+        </label>
+
+        <label className="flex flex-col gap-1 text-sm">
+          Custo por pessoa (ingresso de atrativo)
+          <input
+            type="number"
+            step="0.01"
+            value={custoVariavelPessoa}
+            onChange={(evento) => setCustoVariavelPessoa(evento.target.value)}
+            className={campoClasse}
+          />
+        </label>
+
         {erro && <p className="text-sm text-red-600">{erro}</p>}
 
         <div className="flex gap-2">
@@ -175,6 +224,17 @@ export function RoteiroCabecalho({ roteiro }: { roteiro: Roteiro }) {
           {roteiro.descricao}
         </p>
       )}
+
+      <p className="text-sm text-zinc-600 dark:text-zinc-400">
+        Custo fixo por execução:{" "}
+        {roteiro.custo_fixo_execucao !== null
+          ? formatarPreco(roteiro.custo_fixo_execucao)
+          : "não cadastrado"}{" "}
+        · Custo por pessoa:{" "}
+        {roteiro.custo_variavel_pessoa !== null
+          ? formatarPreco(roteiro.custo_variavel_pessoa)
+          : "não cadastrado"}
+      </p>
 
       {erro && <p className="text-sm text-red-600">{erro}</p>}
 

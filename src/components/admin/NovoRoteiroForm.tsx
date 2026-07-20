@@ -13,6 +13,8 @@ export function NovoRoteiroForm() {
   const [tipo, setTipo] = useState<Roteiro["tipo"]>("fixo");
   const [descricao, setDescricao] = useState("");
   const [pdfUrl, setPdfUrl] = useState("");
+  const [custoFixoExecucao, setCustoFixoExecucao] = useState("");
+  const [custoVariavelPessoa, setCustoVariavelPessoa] = useState("");
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
@@ -40,7 +42,28 @@ export function NovoRoteiroForm() {
       return;
     }
 
-    router.push(`/admin/roteiros/${corpo.roteiro.id}`);
+    const roteiroId = corpo.roteiro.id;
+
+    // Custo não é aceito na criação (rota de POST não tem esses campos) -
+    // faz um PATCH logo em seguida quando o Markys já preenche o custo na
+    // hora de criar o roteiro. Falha aqui não impede a navegação: o
+    // roteiro já foi criado, dá pra completar o custo depois na edição.
+    if (custoFixoExecucao.trim() || custoVariavelPessoa.trim()) {
+      await fetch(`/api/admin/roteiros/${roteiroId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          custo_fixo_execucao: custoFixoExecucao.trim()
+            ? Number(custoFixoExecucao)
+            : null,
+          custo_variavel_pessoa: custoVariavelPessoa.trim()
+            ? Number(custoVariavelPessoa)
+            : null,
+        }),
+      }).catch(() => null);
+    }
+
+    router.push(`/admin/roteiros/${roteiroId}`);
   }
 
   return (
@@ -86,6 +109,28 @@ export function NovoRoteiroForm() {
           type="text"
           value={pdfUrl}
           onChange={(evento) => setPdfUrl(evento.target.value)}
+          className={campoClasse}
+        />
+      </label>
+
+      <label className="flex flex-col gap-1 text-sm">
+        Custo fixo por execução (van, guia, hospedagem) - opcional
+        <input
+          type="number"
+          step="0.01"
+          value={custoFixoExecucao}
+          onChange={(evento) => setCustoFixoExecucao(evento.target.value)}
+          className={campoClasse}
+        />
+      </label>
+
+      <label className="flex flex-col gap-1 text-sm">
+        Custo por pessoa (ingresso de atrativo) - opcional
+        <input
+          type="number"
+          step="0.01"
+          value={custoVariavelPessoa}
+          onChange={(evento) => setCustoVariavelPessoa(evento.target.value)}
           className={campoClasse}
         />
       </label>

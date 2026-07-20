@@ -20,6 +20,8 @@ export type Roteiro = {
   pdf_url: string | null;
   ativo: boolean;
   created_at: string;
+  custo_fixo_execucao: number | null;
+  custo_variavel_pessoa: number | null;
 };
 
 export type RoteiroComVagas = Roteiro & { vagas: Vaga[] };

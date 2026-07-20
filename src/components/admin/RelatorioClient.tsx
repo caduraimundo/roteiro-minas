@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { formatarPreco } from "@/lib/format";
+import { SeletorMes } from "@/components/admin/SeletorMes";
 
 type ResumoRelatorio = {
   total_vendas: number | null;
@@ -86,15 +87,7 @@ export function RelatorioClient({ mesInicial }: { mesInicial: string }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <label className="flex flex-col gap-1 text-sm">
-        Mês
-        <input
-          type="month"
-          value={mes}
-          onChange={handleMesChange}
-          className="rounded-lg border border-zinc-300 bg-transparent px-3 py-2 text-sm dark:border-zinc-700"
-        />
-      </label>
+      <SeletorMes mes={mes} onChange={handleMesChange} />
 
       {erro && <p className="text-sm text-red-600">{erro}</p>}
 

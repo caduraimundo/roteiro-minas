@@ -64,6 +64,12 @@ export default async function AdminHome() {
         >
           Relatório
         </Link>
+        <Link
+          href="/admin/custos"
+          className="self-start rounded-full border border-zinc-300 px-5 py-2 text-sm dark:border-zinc-700"
+        >
+          Custos
+        </Link>
       </div>
 
       {!roteiros || roteiros.length === 0 ? (
