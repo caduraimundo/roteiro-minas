@@ -1,0 +1,15 @@
+-- Mesmo bug estrutural de sempre neste projeto (tabela criada via SQL puro
+-- não recebe grant automático), dessa vez em vendas. Passou despercebido
+-- até agora porque toda escrita em vendas sempre passou por função
+-- SECURITY DEFINER (confirmar_venda_pagarme, registrar_venda_manual,
+-- marcar_venda_reembolsada), que não depende do grant direto do
+-- service_role na tabela. marcar-taxa-acertada é a primeira rota a fazer
+-- UPDATE direto via createAdminClient(), sem função no meio - por isso só
+-- deu 500 agora.
+--
+-- INSERT concedido junto por consistência com o padrão dos outros grants
+-- deste projeto (sempre em conjunto quando a tabela é revisitada), mesmo
+-- sem rota hoje que precise - toda inserção em vendas ainda passa por
+-- função. Evita repetir esse mesmo ciclo de descoberta se um dia alguém
+-- adicionar uma rota de insert direto.
+grant insert, update on vendas to service_role;
