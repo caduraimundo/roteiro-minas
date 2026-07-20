@@ -70,6 +70,12 @@ export default async function AdminHome() {
         >
           Custos
         </Link>
+        <Link
+          href="/admin/cupons"
+          className="self-start rounded-full border border-zinc-300 px-5 py-2 text-sm dark:border-zinc-700"
+        >
+          Cupons
+        </Link>
       </div>
 
       {!roteiros || roteiros.length === 0 ? (
