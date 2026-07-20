@@ -45,12 +45,20 @@ export default async function AdminHome() {
         <LogoutButton />
       </div>
 
-      <Link
-        href="/admin/roteiros/novo"
-        className="self-start rounded-full bg-foreground px-5 py-2 text-sm font-medium text-background"
-      >
-        Novo roteiro
-      </Link>
+      <div className="flex gap-2">
+        <Link
+          href="/admin/roteiros/novo"
+          className="self-start rounded-full bg-foreground px-5 py-2 text-sm font-medium text-background"
+        >
+          Novo roteiro
+        </Link>
+        <Link
+          href="/admin/vendas"
+          className="self-start rounded-full border border-zinc-300 px-5 py-2 text-sm dark:border-zinc-700"
+        >
+          Vendas
+        </Link>
+      </div>
 
       {!roteiros || roteiros.length === 0 ? (
         <p className="text-zinc-600 dark:text-zinc-400">
