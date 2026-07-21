@@ -50,6 +50,7 @@ export function CheckoutForm({
   const [nome, setNome] = useState("");
   const [cpf, setCpf] = useState("");
   const [email, setEmail] = useState("");
+  const [emailConfirmacao, setEmailConfirmacao] = useState("");
   const [telefone, setTelefone] = useState("");
   const [consentimento, setConsentimento] = useState(false);
   const [tocado, setTocado] = useState<Record<Campo, boolean>>({
@@ -81,6 +82,13 @@ export function CheckoutForm({
   const emailValido = validarEmail(email);
   const telefoneValido = validarTelefone(telefone);
 
+  // Comparação só pra pegar erro de digitação - mesmo trim/lowercase que
+  // já seria aplicado no e-mail original no submit, sem sanitização extra.
+  const emailsIguais =
+    email.trim().toLowerCase() === emailConfirmacao.trim().toLowerCase();
+  const emailConfirmadoValido =
+    emailConfirmacao.trim().length > 0 && emailsIguais;
+
   const cpfDigitos = apenasDigitos(cpf);
   const cupomValidoParaCpfAtual =
     cupomAplicado !== null && cupomAplicado.cpf === cpfDigitos;
@@ -105,6 +113,7 @@ export function CheckoutForm({
     nomeValido &&
     cpfValido &&
     emailValido &&
+    emailConfirmadoValido &&
     telefoneValido &&
     consentimento &&
     cartaoValido;
@@ -176,6 +185,13 @@ export function CheckoutForm({
   const erroEmail = useMemo(
     () => (tocado.email && !emailValido ? "E-mail inválido." : null),
     [tocado.email, emailValido],
+  );
+  const erroEmailConfirmacao = useMemo(
+    () =>
+      emailConfirmacao.length > 0 && !emailsIguais
+        ? "Os e-mails não são iguais."
+        : null,
+    [emailConfirmacao, emailsIguais],
   );
   const erroTelefone = useMemo(
     () =>
@@ -369,6 +385,22 @@ export function CheckoutForm({
         />
         {erroEmail && (
           <span className="text-sm text-red-600">{erroEmail}</span>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label htmlFor="emailConfirmacao" className="text-sm font-medium">
+          Confirme seu e-mail
+        </label>
+        <input
+          id="emailConfirmacao"
+          type="email"
+          value={emailConfirmacao}
+          onChange={(event) => setEmailConfirmacao(event.target.value)}
+          className="rounded-lg border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+        />
+        {erroEmailConfirmacao && (
+          <span className="text-sm text-red-600">{erroEmailConfirmacao}</span>
         )}
       </div>
 
