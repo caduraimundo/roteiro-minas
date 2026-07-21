@@ -78,7 +78,11 @@ export default async function AdminHome() {
         </Link>
       </div>
 
-      {!roteiros || roteiros.length === 0 ? (
+      {error ? (
+        <p className="text-red-600 dark:text-red-500">
+          Não foi possível carregar os roteiros. Tente recarregar a página.
+        </p>
+      ) : !roteiros || roteiros.length === 0 ? (
         <p className="text-zinc-600 dark:text-zinc-400">
           Nenhum roteiro cadastrado ainda.
         </p>
