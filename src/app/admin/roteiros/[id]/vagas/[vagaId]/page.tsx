@@ -80,15 +80,24 @@ export default async function AdminVagaDetalhe({
         ← {roteiroTipado.nome}
       </Link>
 
-      <div className="flex flex-col gap-1">
-        <h1 className="text-xl font-semibold">
-          {formatarData(vagaTipada.data)}
-        </h1>
-        <span className="text-sm text-zinc-600 dark:text-zinc-400">
-          {formatarPreco(vagaTipada.preco)} ·{" "}
-          {vagaTipada.vagas_disponiveis}/{vagaTipada.vagas_totais} vagas ·{" "}
-          {RUBRICAS_STATUS_VAGA[vagaTipada.status]}
-        </span>
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-xl font-semibold">
+            {formatarData(vagaTipada.data)}
+          </h1>
+          <span className="text-sm text-zinc-600 dark:text-zinc-400">
+            {formatarPreco(vagaTipada.preco)} ·{" "}
+            {vagaTipada.vagas_disponiveis}/{vagaTipada.vagas_totais} vagas ·{" "}
+            {RUBRICAS_STATUS_VAGA[vagaTipada.status]}
+          </span>
+        </div>
+
+        <Link
+          href={`/admin/roteiros/${id}/vagas/${vagaId}/lista`}
+          className="self-start rounded-full border border-zinc-300 px-5 py-2 text-sm dark:border-zinc-700"
+        >
+          Lista do dia
+        </Link>
       </div>
 
       <VendaManualForm
