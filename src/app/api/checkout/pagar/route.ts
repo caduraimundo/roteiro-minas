@@ -102,11 +102,7 @@ export async function POST(request: Request) {
 
   const { vaga, roteiro } = registro;
 
-  if (
-    !roteiro.ativo ||
-    vaga.status !== "aberta" ||
-    vaga.vagas_disponiveis <= 0
-  ) {
+  if (!roteiro.ativo || vaga.status !== "aberta") {
     return NextResponse.json(
       { sucesso: false, motivo: "Essa data não está mais disponível." },
       { status: 409 },
