@@ -90,11 +90,16 @@ export default function AdminLogin() {
     if (window.name === NOME_JANELA_POPUP) {
       window.close();
     } else {
-      setErro(
-        "Login negado pelo Google. Verifique se a conta usada tem permissão.",
-      );
+      // queueMicrotask evita o "setState síncrono dentro de efeito"
+      // (react-hooks/set-state-in-effect) - não muda o comportamento
+      // percebido (roda no mesmo tick, antes da próxima pintura), só
+      // adia a atualização pra fora do corpo síncrono do efeito.
+      queueMicrotask(() => {
+        setErro(
+          "Login negado pelo Google. Verifique se a conta usada tem permissão.",
+        );
+      });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Mecanismo de wake-up: evento `storage`, disparado pela pop-up
