@@ -111,9 +111,34 @@ export async function POST(request: Request) {
     );
   }
 
+  let percentualDesconto: number | null = null;
+  let cupomId = "";
+
+  if (cupomCodigo) {
+    const supabase = await createClient();
+    const resultadoCupom = await validarCupomServidor(supabase, {
+      codigo: cupomCodigo,
+      roteiroId: roteiro.id,
+      cpf,
+    });
+
+    if (!resultadoCupom.valido) {
+      return NextResponse.json(
+        { sucesso: false, motivo: resultadoCupom.motivo },
+        { status: 400 },
+      );
+    }
+
+    percentualDesconto = resultadoCupom.percentualDesconto;
+    cupomId = resultadoCupom.cupomId;
+  }
+
   // Reserva a vaga pra qualquer forma de pagamento (não só Pix) - cartão
   // também depende do webhook pra confirmação final, então também precisa
-  // segurar a vaga até lá. Mesma janela de 15min do QR Code Pix.
+  // segurar a vaga até lá. Mesma janela de 15min do QR Code Pix. Só
+  // depois da validação do cupom de propósito - reservar antes deixaria
+  // um cupom inválido prender a vaga por 15min sem jeito de liberar antes
+  // da expiração (nenhum order chega a existir nesse ponto).
   const EXPIRACAO_RESERVA_MS = 15 * 60 * 1000;
   const expiresAt = new Date(Date.now() + EXPIRACAO_RESERVA_MS).toISOString();
 
@@ -150,28 +175,6 @@ export async function POST(request: Request) {
   }
 
   const reservaId = reserva.reserva_id as string;
-
-  let percentualDesconto: number | null = null;
-  let cupomId = "";
-
-  if (cupomCodigo) {
-    const supabase = await createClient();
-    const resultadoCupom = await validarCupomServidor(supabase, {
-      codigo: cupomCodigo,
-      roteiroId: roteiro.id,
-      cpf,
-    });
-
-    if (!resultadoCupom.valido) {
-      return NextResponse.json(
-        { sucesso: false, motivo: resultadoCupom.motivo },
-        { status: 400 },
-      );
-    }
-
-    percentualDesconto = resultadoCupom.percentualDesconto;
-    cupomId = resultadoCupom.cupomId;
-  }
 
   const { precoComDesconto, valorFinal } = calcularValores(
     vaga.preco,
