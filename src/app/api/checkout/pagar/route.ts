@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   apenasDigitos,
   validarCPF,
@@ -12,6 +13,28 @@ import { getVagaComRoteiro } from "@/data/roteiros";
 
 const FORMAS_PAGAMENTO = ["pix", "cartao_avista", "cartao_parcelado"] as const;
 type FormaPagamento = (typeof FORMAS_PAGAMENTO)[number];
+
+/**
+ * Libera a reserva de vaga vinculada a um order que falhou/foi recusado
+ * de forma síncrona (Pix que não gerou QR Code, cartão recusado) - não
+ * pode impedir a resposta ao cliente se falhar, só loga.
+ */
+async function liberarReservaComLog(
+  supabase: SupabaseClient,
+  pagarmeOrderId: string,
+) {
+  const { error } = await supabase.rpc("liberar_reserva_por_order", {
+    p_pagarme_order_id: pagarmeOrderId,
+  });
+
+  if (error) {
+    console.error(
+      "Erro ao liberar reserva de vaga. orderId:",
+      pagarmeOrderId,
+      error.message,
+    );
+  }
+}
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
@@ -88,6 +111,46 @@ export async function POST(request: Request) {
     );
   }
 
+  // Reserva a vaga pra qualquer forma de pagamento (não só Pix) - cartão
+  // também depende do webhook pra confirmação final, então também precisa
+  // segurar a vaga até lá. Mesma janela de 15min do QR Code Pix.
+  const EXPIRACAO_RESERVA_MS = 15 * 60 * 1000;
+  const expiresAt = new Date(Date.now() + EXPIRACAO_RESERVA_MS).toISOString();
+
+  const supabaseReserva = await createClient();
+  const { data: reserva, error: erroReserva } = (await supabaseReserva
+    .rpc("reservar_vaga_checkout", {
+      p_vaga_id: vaga.id,
+      p_expires_at: expiresAt,
+    })
+    .single()) as {
+    data: { sucesso: boolean; motivo: string; reserva_id: string | null } | null;
+    error: { message: string } | null;
+  };
+
+  if (erroReserva || !reserva) {
+    console.error(
+      "Erro ao reservar vaga no checkout:",
+      erroReserva?.message,
+    );
+    return NextResponse.json(
+      {
+        sucesso: false,
+        motivo: "Não foi possível processar o pagamento. Tente novamente.",
+      },
+      { status: 502 },
+    );
+  }
+
+  if (reserva.motivo === "vaga_esgotada") {
+    return NextResponse.json(
+      { sucesso: false, motivo: "Essa data não está mais disponível." },
+      { status: 409 },
+    );
+  }
+
+  const reservaId = reserva.reserva_id as string;
+
   let percentualDesconto: number | null = null;
   let cupomId = "";
 
@@ -123,7 +186,7 @@ export async function POST(request: Request) {
       comprador: { nome, email, cpfDigitos: cpf, telefoneDigitos: telefone },
       pagamento:
         formaPagamento === "pix"
-          ? { payment_method: "pix", pix: { expires_in: 3600 } }
+          ? { payment_method: "pix", pix: { expires_in: 900 } }
           : {
               payment_method: "credit_card",
               credit_card: {
@@ -141,6 +204,25 @@ export async function POST(request: Request) {
       },
     });
 
+    // Não pode impedir a resposta se falhar (mesmo padrão já usado em
+    // outros lugares do projeto pra passos "de rastreio", não o pagamento
+    // em si) - a reserva expira sozinha em 15min se isso não conseguir
+    // ligar ela ao order.
+    const { error: erroVincular } = await supabaseReserva.rpc(
+      "vincular_reserva_order",
+      { p_reserva_id: reservaId, p_pagarme_order_id: order.id },
+    );
+
+    if (erroVincular) {
+      console.error(
+        "Erro ao vincular reserva ao order do Pagar.me. reservaId:",
+        reservaId,
+        "orderId:",
+        order.id,
+        erroVincular.message,
+      );
+    }
+
     const charge = order?.charges?.[0];
     const transacao = charge?.last_transaction;
 
@@ -154,6 +236,8 @@ export async function POST(request: Request) {
           "erros:",
           transacao?.gateway_response?.errors,
         );
+
+        await liberarReservaComLog(supabaseReserva, order.id);
 
         return NextResponse.json(
           {
@@ -189,6 +273,8 @@ export async function POST(request: Request) {
         "acquirer_return_code:",
         transacao?.acquirer_return_code,
       );
+
+      await liberarReservaComLog(supabaseReserva, order.id);
     }
 
     return NextResponse.json({
@@ -201,6 +287,13 @@ export async function POST(request: Request) {
         : "Pagamento recusado. Confira os dados do cartão ou tente outro método.",
     });
   } catch (erro) {
+    // Não existe order.id aqui pra liberar a reserva por (criarOrderPagarme
+    // é o único ponto que lança dentro deste try, e ele lança antes de
+    // retornar um order) - decisão consciente de não adicionar acesso
+    // direto à tabela de reservas só pra esse caso raro (falha de rede/API
+    // ao criar o order): a reserva expira sozinha em 15min via a limpeza
+    // automática já embutida em reservar_vaga_checkout, sem precisar de
+    // função de banco nova nem de grants extras.
     console.error(
       "Erro ao criar cobrança no Pagar.me:",
       erro instanceof Error ? erro.message : erro,

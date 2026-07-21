@@ -13,6 +13,26 @@ const FORMAS_PAGAMENTO_VALIDAS = new Set([
 ]);
 
 /**
+ * Libera a reserva de vaga vinculada a um order que falhou/foi cancelado -
+ * idempotente no banco (liberar_reserva_por_order só age se a reserva
+ * ainda estiver 'reservada'), sem trava adicional necessária aqui.
+ */
+async function liberarReservaComLog(pagarmeOrderId: string) {
+  const supabaseAdmin = createAdminClient();
+  const { error } = await supabaseAdmin.rpc("liberar_reserva_por_order", {
+    p_pagarme_order_id: pagarmeOrderId,
+  });
+
+  if (error) {
+    console.error(
+      "Webhook Pagar.me: erro ao liberar reserva de vaga. orderId:",
+      pagarmeOrderId,
+      error.message,
+    );
+  }
+}
+
+/**
  * Webhook do Pagar.me para order.paid. O Pagar.me v5 não assina o payload
  * (sem HMAC), então o conteúdo recebido nunca é usado para decisões - só o
  * order_id é extraído daqui. O status real é sempre confirmado com um GET
@@ -57,6 +77,7 @@ export async function POST(request: Request) {
       "vagaId:",
       order?.metadata?.vaga_id,
     );
+    await liberarReservaComLog(orderId);
     return NextResponse.json({ ok: true });
   }
 
@@ -67,6 +88,7 @@ export async function POST(request: Request) {
       "vagaId:",
       order?.metadata?.vaga_id,
     );
+    await liberarReservaComLog(orderId);
     return NextResponse.json({ ok: true });
   }
 
