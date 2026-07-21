@@ -17,10 +17,14 @@ const FORMAS_PAGAMENTO_VALIDAS = new Set([
  * idempotente no banco (liberar_reserva_por_order só age se a reserva
  * ainda estiver 'reservada'), sem trava adicional necessária aqui.
  */
-async function liberarReservaComLog(pagarmeOrderId: string) {
+async function liberarReservaComLog(
+  pagarmeOrderId: string,
+  reservaId: string | null,
+) {
   const supabaseAdmin = createAdminClient();
   const { error } = await supabaseAdmin.rpc("liberar_reserva_por_order", {
     p_pagarme_order_id: pagarmeOrderId,
+    p_reserva_id: reservaId,
   });
 
   if (error) {
@@ -70,6 +74,17 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   }
 
+  const metadata = order?.metadata ?? {};
+
+  // reserva_id pode legitimamente vir ausente/vazio em pedidos criados
+  // antes dessa mudança - confirmar_venda_pagarme e liberar_reserva_por_order
+  // já têm fallback pro comportamento antigo (casar por pagarme_order_id)
+  // quando isso vier null.
+  const reservaId =
+    typeof metadata.reserva_id === "string" && metadata.reserva_id.length > 0
+      ? metadata.reserva_id
+      : null;
+
   if (order?.status === "failed") {
     console.error(
       "Webhook Pagar.me: pagamento recusado/falhou (order.payment_failed). orderId:",
@@ -77,7 +92,7 @@ export async function POST(request: Request) {
       "vagaId:",
       order?.metadata?.vaga_id,
     );
-    await liberarReservaComLog(orderId);
+    await liberarReservaComLog(orderId, reservaId);
     return NextResponse.json({ ok: true });
   }
 
@@ -88,7 +103,7 @@ export async function POST(request: Request) {
       "vagaId:",
       order?.metadata?.vaga_id,
     );
-    await liberarReservaComLog(orderId);
+    await liberarReservaComLog(orderId, reservaId);
     return NextResponse.json({ ok: true });
   }
 
@@ -96,7 +111,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   }
 
-  const metadata = order?.metadata ?? {};
   const vagaId = typeof metadata.vaga_id === "string" ? metadata.vaga_id : "";
   const cupomId =
     typeof metadata.cupom_id === "string" && metadata.cupom_id.length > 0
@@ -134,6 +148,7 @@ export async function POST(request: Request) {
       p_parcelas: parcelas,
       p_valor_total: valorTotalReais,
       p_cupom_id: cupomId,
+      p_reserva_id: reservaId,
     })
     .single()) as {
     data: { sucesso: boolean; motivo: string; venda_id: string | null } | null;

@@ -22,9 +22,11 @@ type FormaPagamento = (typeof FORMAS_PAGAMENTO)[number];
 async function liberarReservaComLog(
   supabase: SupabaseClient,
   pagarmeOrderId: string,
+  reservaId: string,
 ) {
   const { error } = await supabase.rpc("liberar_reserva_por_order", {
     p_pagarme_order_id: pagarmeOrderId,
+    p_reserva_id: reservaId,
   });
 
   if (error) {
@@ -204,6 +206,7 @@ export async function POST(request: Request) {
         cupom_id: cupomId,
         forma_pagamento: formaPagamento,
         parcelas: String(formaPagamento === "cartao_parcelado" ? parcelas : 1),
+        reserva_id: reservaId,
       },
     });
 
@@ -240,7 +243,7 @@ export async function POST(request: Request) {
           transacao?.gateway_response?.errors,
         );
 
-        await liberarReservaComLog(supabaseReserva, order.id);
+        await liberarReservaComLog(supabaseReserva, order.id, reservaId);
 
         return NextResponse.json(
           {
@@ -277,7 +280,7 @@ export async function POST(request: Request) {
         transacao?.acquirer_return_code,
       );
 
-      await liberarReservaComLog(supabaseReserva, order.id);
+      await liberarReservaComLog(supabaseReserva, order.id, reservaId);
     }
 
     return NextResponse.json({
