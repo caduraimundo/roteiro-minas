@@ -143,7 +143,7 @@ export async function POST(request: Request) {
           codigoVerificacao: dadosTicket.codigo_verificacao,
         });
 
-        await enviarTicketPorEmail({
+        const resendEmailId = await enviarTicketPorEmail({
           paraEmail: dadosTicket.comprador_email,
           paraNome: dadosTicket.comprador_nome,
           roteiroNome: registro.roteiro.nome,
@@ -157,6 +157,22 @@ export async function POST(request: Request) {
         });
 
         ticketEnviado = true;
+
+        // Mesmo padrão de ticket_enviado: falha aqui não pode virar 500 -
+        // a venda e o envio já aconteceram, só o rastreio pro webhook de
+        // bounce que ficaria incompleto.
+        const { error: erroResendId } = await supabaseAdmin
+          .from("vendas")
+          .update({ resend_email_id: resendEmailId })
+          .eq("id", vendaId);
+
+        if (erroResendId) {
+          console.error(
+            "Falha ao gravar resend_email_id após venda manual. vendaId:",
+            vendaId,
+            erroResendId.message,
+          );
+        }
       } catch (erro) {
         console.error(
           "Envio de ticket falhou após registrar venda manual. vendaId:",

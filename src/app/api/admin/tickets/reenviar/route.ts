@@ -85,7 +85,7 @@ export async function POST(request: Request) {
       codigoVerificacao: dadosTicket.codigo_verificacao,
     });
 
-    await enviarTicketPorEmail({
+    const resendEmailId = await enviarTicketPorEmail({
       paraEmail: dadosTicket.comprador_email,
       paraNome: dadosTicket.comprador_nome,
       roteiroNome: registro.roteiro.nome,
@@ -95,6 +95,22 @@ export async function POST(request: Request) {
     });
 
     await supabaseAdmin.rpc("marcar_ticket_enviado", { p_venda_id: vendaId });
+
+    // Não pode impedir a resposta de sucesso - o e-mail já foi enviado e o
+    // ticket já foi marcado, gravar o id só habilita o webhook de bounce
+    // a achar essa venda depois.
+    const { error: erroResendId } = await supabaseAdmin
+      .from("vendas")
+      .update({ resend_email_id: resendEmailId })
+      .eq("id", vendaId);
+
+    if (erroResendId) {
+      console.error(
+        "Falha ao gravar resend_email_id após reenvio de ticket. vendaId:",
+        vendaId,
+        erroResendId.message,
+      );
+    }
 
     return NextResponse.json({ sucesso: true });
   } catch (erro) {

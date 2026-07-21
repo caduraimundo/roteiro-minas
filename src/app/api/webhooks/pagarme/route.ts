@@ -198,7 +198,7 @@ export async function POST(request: Request) {
         codigoVerificacao: dadosTicket.codigo_verificacao,
       });
 
-      await enviarTicketPorEmail({
+      const resendEmailId = await enviarTicketPorEmail({
         paraEmail: dadosTicket.comprador_email,
         paraNome: dadosTicket.comprador_nome,
         roteiroNome: registro.roteiro.nome,
@@ -210,6 +210,24 @@ export async function POST(request: Request) {
       await supabaseAdmin.rpc("marcar_ticket_enviado", {
         p_venda_id: data.venda_id,
       });
+
+      // Mesmo padrão do bloco acima: venda já confirmada e ticket já
+      // enviado, uma falha aqui não pode virar novo ponto de falha no
+      // caminho de confirmação de pagamento - só loga e segue.
+      const { error: erroResendId } = await supabaseAdmin
+        .from("vendas")
+        .update({ resend_email_id: resendEmailId })
+        .eq("id", data.venda_id);
+
+      if (erroResendId) {
+        console.error(
+          "Webhook Pagar.me: falha ao gravar resend_email_id. orderId:",
+          orderId,
+          "vendaId:",
+          data.venda_id,
+          erroResendId.message,
+        );
+      }
     } catch (erro) {
       console.error(
         "Webhook Pagar.me: falha ao gerar/enviar ticket (venda já confirmada, " +

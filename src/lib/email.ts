@@ -24,7 +24,9 @@ export type DadosEmailTicket = {
   pdf: Uint8Array;
 };
 
-export async function enviarTicketPorEmail(dados: DadosEmailTicket) {
+export async function enviarTicketPorEmail(
+  dados: DadosEmailTicket,
+): Promise<string> {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
     throw new Error("RESEND_API_KEY não configurada.");
@@ -32,7 +34,7 @@ export async function enviarTicketPorEmail(dados: DadosEmailTicket) {
 
   const resend = new Resend(apiKey);
 
-  const { error } = await resend.emails.send({
+  const { data, error } = await resend.emails.send({
     from: REMETENTE,
     to: dados.paraEmail,
     subject: `Seu ingresso - ${dados.roteiroNome}`,
@@ -56,4 +58,6 @@ export async function enviarTicketPorEmail(dados: DadosEmailTicket) {
   if (error) {
     throw new Error(error.message);
   }
+
+  return data.id;
 }
