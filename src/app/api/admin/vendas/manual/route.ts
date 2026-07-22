@@ -7,6 +7,12 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getVagaComRoteiro } from "@/data/roteiros";
 import { gerarTicketPdf } from "@/lib/ticket";
 import { enviarTicketPorEmail } from "@/lib/email";
+import {
+  apenasDigitos,
+  validarCEP,
+  validarDataNascimento,
+  validarUF,
+} from "@/lib/validacao";
 
 export async function POST(request: Request) {
   try {
@@ -30,11 +36,50 @@ export async function POST(request: Request) {
       ? body.comprador_email.trim()
       : "";
 
+  // Pedido do Markys (card 6 do Kanban): venda manual coleta os mesmos
+  // dados do checkout online, mesma lógica do CPF (dado usado pro seguro
+  // do passeio, vale pra qualquer canal de venda). complemento é o único
+  // campo de endereço sempre opcional.
+  const dataNascimento =
+    typeof body?.data_nascimento === "string"
+      ? body.data_nascimento.trim()
+      : "";
+  const cep = typeof body?.cep === "string" ? apenasDigitos(body.cep) : "";
+  const rua = typeof body?.rua === "string" ? body.rua.trim() : "";
+  const numero = typeof body?.numero === "string" ? body.numero.trim() : "";
+  const complemento =
+    typeof body?.complemento === "string" &&
+    body.complemento.trim().length > 0
+      ? body.complemento.trim()
+      : null;
+  const bairro = typeof body?.bairro === "string" ? body.bairro.trim() : "";
+  const cidade = typeof body?.cidade === "string" ? body.cidade.trim() : "";
+  const uf =
+    typeof body?.uf === "string" ? body.uf.trim().toUpperCase() : "";
+
   if (!vagaId || !compradorNome || !compradorCpf || !compradorEmail) {
     return NextResponse.json(
       {
         erro:
           "vaga_id, comprador_nome, comprador_cpf e comprador_email são obrigatórios.",
+      },
+      { status: 400 },
+    );
+  }
+
+  if (
+    !validarDataNascimento(dataNascimento) ||
+    !validarCEP(cep) ||
+    !rua ||
+    !numero ||
+    !bairro ||
+    !cidade ||
+    !validarUF(uf)
+  ) {
+    return NextResponse.json(
+      {
+        erro:
+          "Preencha data de nascimento e endereço completo (CEP, rua, número, bairro, cidade e UF).",
       },
       { status: 400 },
     );
@@ -48,6 +93,14 @@ export async function POST(request: Request) {
       p_comprador_nome: compradorNome,
       p_comprador_cpf: compradorCpf,
       p_comprador_email: compradorEmail,
+      p_data_nascimento: dataNascimento,
+      p_cep: cep,
+      p_rua: rua,
+      p_numero: numero,
+      p_complemento: complemento,
+      p_bairro: bairro,
+      p_cidade: cidade,
+      p_uf: uf,
     })
     .single()) as {
     data: {

@@ -24,6 +24,14 @@ export function VendaManualForm({
   const [compradorNome, setCompradorNome] = useState("");
   const [compradorCpf, setCompradorCpf] = useState("");
   const [compradorEmail, setCompradorEmail] = useState("");
+  const [dataNascimento, setDataNascimento] = useState("");
+  const [cep, setCep] = useState("");
+  const [rua, setRua] = useState("");
+  const [numero, setNumero] = useState("");
+  const [complemento, setComplemento] = useState("");
+  const [bairro, setBairro] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [uf, setUf] = useState("");
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [resultado, setResultado] = useState<Resultado | null>(null);
@@ -44,6 +52,14 @@ export function VendaManualForm({
         comprador_nome: compradorNome,
         comprador_cpf: compradorCpf,
         comprador_email: compradorEmail,
+        data_nascimento: dataNascimento,
+        cep,
+        rua,
+        numero,
+        complemento,
+        bairro,
+        cidade,
+        uf,
       }),
     });
 
@@ -63,6 +79,14 @@ export function VendaManualForm({
     setCompradorNome("");
     setCompradorCpf("");
     setCompradorEmail("");
+    setDataNascimento("");
+    setCep("");
+    setRua("");
+    setNumero("");
+    setComplemento("");
+    setBairro("");
+    setCidade("");
+    setUf("");
     setEnviando(false);
     router.refresh();
   }
@@ -114,6 +138,98 @@ export function VendaManualForm({
           className={campoClasse}
         />
       </label>
+
+      <label className="flex flex-col gap-1 text-sm">
+        Data de nascimento
+        <input
+          type="date"
+          required
+          value={dataNascimento}
+          onChange={(evento) => setDataNascimento(evento.target.value)}
+          className={campoClasse}
+        />
+      </label>
+
+      <label className="flex flex-col gap-1 text-sm">
+        CEP
+        <input
+          type="text"
+          required
+          value={cep}
+          onChange={(evento) => setCep(evento.target.value)}
+          className={campoClasse}
+        />
+      </label>
+
+      <label className="flex flex-col gap-1 text-sm">
+        Rua
+        <input
+          type="text"
+          required
+          value={rua}
+          onChange={(evento) => setRua(evento.target.value)}
+          className={campoClasse}
+        />
+      </label>
+
+      <div className="flex gap-3">
+        <label className="flex flex-1 flex-col gap-1 text-sm">
+          Número
+          <input
+            type="text"
+            required
+            value={numero}
+            onChange={(evento) => setNumero(evento.target.value)}
+            className={campoClasse}
+          />
+        </label>
+
+        <label className="flex flex-1 flex-col gap-1 text-sm">
+          Complemento (opcional)
+          <input
+            type="text"
+            value={complemento}
+            onChange={(evento) => setComplemento(evento.target.value)}
+            className={campoClasse}
+          />
+        </label>
+      </div>
+
+      <label className="flex flex-col gap-1 text-sm">
+        Bairro
+        <input
+          type="text"
+          required
+          value={bairro}
+          onChange={(evento) => setBairro(evento.target.value)}
+          className={campoClasse}
+        />
+      </label>
+
+      <div className="flex gap-3">
+        <label className="flex flex-1 flex-col gap-1 text-sm">
+          Cidade
+          <input
+            type="text"
+            required
+            value={cidade}
+            onChange={(evento) => setCidade(evento.target.value)}
+            className={campoClasse}
+          />
+        </label>
+
+        <label className="flex w-24 flex-col gap-1 text-sm">
+          UF
+          <input
+            type="text"
+            required
+            maxLength={2}
+            value={uf}
+            onChange={(evento) => setUf(evento.target.value.toUpperCase())}
+            className={campoClasse}
+          />
+        </label>
+      </div>
 
       {erro && <p className="text-sm text-red-600">{erro}</p>}
 
