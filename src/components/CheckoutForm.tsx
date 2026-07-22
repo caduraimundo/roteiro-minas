@@ -20,6 +20,20 @@ import { tokenizarCartao } from "@/lib/pagarmeClient";
 // (Node-only) e não deve ser importado em código client-side.
 const TAXA_PLATAFORMA_PERCENTUAL = 6;
 
+// Tokens de visual reaproveitados das telas públicas já com o design
+// system aplicado (Home, Agenda, Detalhe do roteiro) - mesma paleta
+// verde-mata/terracota/ocre/pedra-sabão e tipografia Oswald/Mulish,
+// nada criado do zero.
+const CAMPO_CLASSE =
+  "font-body rounded-xl border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-terracota focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-pedra-sabao";
+const LABEL_CLASSE =
+  "font-body text-sm font-medium text-zinc-700 dark:text-zinc-300";
+const ERRO_CLASSE = "font-body text-sm text-red-600";
+const SECAO_CLASSE =
+  "flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-pedra-sabao/30 p-6 dark:border-zinc-800 dark:bg-zinc-900/40";
+const SECAO_TITULO_CLASSE =
+  "font-display text-verde-mata dark:text-pedra-sabao text-lg font-semibold uppercase tracking-wide";
+
 type Campo =
   | "nome"
   | "cpf"
@@ -362,31 +376,44 @@ export function CheckoutForm({
 
   if (resultado?.tipo === "pix") {
     return (
-      <div className="flex flex-col items-center gap-4 rounded-lg border border-zinc-200 p-6 text-center dark:border-zinc-800">
-        <h2 className="font-semibold">Pague com Pix pra confirmar</h2>
+      <div className="border-verde-mata/15 bg-pedra-sabao flex flex-col items-center gap-4 rounded-2xl border p-6 text-center shadow-[0_10px_26px_rgba(46,58,34,0.1)] dark:border-zinc-800 dark:bg-zinc-900">
+        <span className="bg-terracota/10 flex h-12 w-12 items-center justify-center rounded-full">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M5 13l4 4L19 7"
+              stroke="#C25A2C"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </span>
+        <h2 className="font-display text-verde-mata dark:text-pedra-sabao text-xl font-semibold uppercase">
+          Pague com Pix pra confirmar
+        </h2>
         {resultado.qrCodeUrl && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={resultado.qrCodeUrl}
             alt="QR Code Pix"
-            className="h-56 w-56"
+            className="h-56 w-56 rounded-xl border border-zinc-200 dark:border-zinc-800"
           />
         )}
         {resultado.qrCode && (
           <div className="flex w-full flex-col gap-1">
-            <span className="text-sm text-zinc-600 dark:text-zinc-400">
+            <span className="font-body text-sm text-zinc-600 dark:text-zinc-400">
               Ou copie o código:
             </span>
             <textarea
               readOnly
               value={resultado.qrCode}
-              className="w-full resize-none rounded-lg border border-zinc-300 p-2 text-xs dark:border-zinc-700 dark:bg-zinc-900"
+              className="font-body w-full resize-none rounded-xl border border-zinc-300 p-2 text-xs dark:border-zinc-700 dark:bg-zinc-900"
               rows={4}
             />
           </div>
         )}
         {resultado.expiresAt && (
-          <p className="text-xs text-zinc-500 dark:text-zinc-500">
+          <p className="font-body text-xs text-zinc-500 dark:text-zinc-500">
             Esse QR Code expira às{" "}
             {new Date(resultado.expiresAt).toLocaleTimeString("pt-BR", {
               hour: "2-digit",
@@ -395,14 +422,14 @@ export function CheckoutForm({
             .
           </p>
         )}
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="font-body text-sm text-zinc-600 dark:text-zinc-400">
           A confirmação do pagamento acontece automaticamente após o Pix cair.
         </p>
         <button
           type="button"
           onClick={realizarPagamento}
           disabled={processando}
-          className="text-sm font-medium underline disabled:opacity-50"
+          className="font-display text-terracota text-sm font-semibold uppercase tracking-wide underline disabled:opacity-50"
         >
           {processando ? "Gerando..." : "Gerar novo QR Code"}
         </button>
@@ -412,443 +439,498 @@ export function CheckoutForm({
 
   if (resultado?.tipo === "cartao_sucesso") {
     return (
-      <div className="flex flex-col items-center gap-2 rounded-lg border border-zinc-200 p-6 text-center dark:border-zinc-800">
-        <h2 className="font-semibold">Pagamento aprovado!</h2>
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+      <div className="border-verde-mata/15 bg-pedra-sabao flex flex-col items-center gap-2 rounded-2xl border p-6 text-center shadow-[0_10px_26px_rgba(46,58,34,0.1)] dark:border-zinc-800 dark:bg-zinc-900">
+        <span className="bg-terracota/10 flex h-12 w-12 items-center justify-center rounded-full">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M5 13l4 4L19 7"
+              stroke="#C25A2C"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </span>
+        <h2 className="font-display text-verde-mata dark:text-pedra-sabao text-xl font-semibold uppercase">
+          Pagamento aprovado!
+        </h2>
+        <p className="font-body text-sm text-zinc-600 dark:text-zinc-400">
           Você vai receber o ticket por e-mail em breve.
         </p>
       </div>
     );
   }
 
-  return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <div className="flex flex-col gap-1">
-        <label htmlFor="nome" className="text-sm font-medium">
-          Nome completo
-        </label>
-        <input
-          id="nome"
-          type="text"
-          value={nome}
-          onChange={(event) => setNome(event.target.value)}
-          onBlur={() => marcarTocado("nome")}
-          className="rounded-lg border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
-        />
-        {erroNome && <span className="text-sm text-red-600">{erroNome}</span>}
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <label htmlFor="cpf" className="text-sm font-medium">
-          CPF
-        </label>
-        <input
-          id="cpf"
-          type="text"
-          inputMode="numeric"
-          placeholder="000.000.000-00"
-          value={cpf}
-          onChange={(event) => setCpf(formatarCPFInput(event.target.value))}
-          onBlur={() => marcarTocado("cpf")}
-          className="rounded-lg border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
-        />
-        {erroCpf && <span className="text-sm text-red-600">{erroCpf}</span>}
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <label htmlFor="email" className="text-sm font-medium">
-          E-mail
-        </label>
-        <input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          onBlur={() => marcarTocado("email")}
-          className="rounded-lg border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
-        />
-        {erroEmail && (
-          <span className="text-sm text-red-600">{erroEmail}</span>
-        )}
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <label htmlFor="emailConfirmacao" className="text-sm font-medium">
-          Confirme seu e-mail
-        </label>
-        <input
-          id="emailConfirmacao"
-          type="email"
-          value={emailConfirmacao}
-          onChange={(event) => setEmailConfirmacao(event.target.value)}
-          className="rounded-lg border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
-        />
-        {erroEmailConfirmacao && (
-          <span className="text-sm text-red-600">{erroEmailConfirmacao}</span>
-        )}
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <label htmlFor="telefone" className="text-sm font-medium">
-          Telefone
-        </label>
-        <input
-          id="telefone"
-          type="tel"
-          inputMode="numeric"
-          placeholder="(00) 00000-0000"
-          value={telefone}
-          onChange={(event) =>
-            setTelefone(formatarTelefoneInput(event.target.value))
-          }
-          onBlur={() => marcarTocado("telefone")}
-          className="rounded-lg border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
-        />
-        {erroTelefone && (
-          <span className="text-sm text-red-600">{erroTelefone}</span>
-        )}
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <label htmlFor="dataNascimento" className="text-sm font-medium">
-          Data de nascimento
-        </label>
-        <input
-          id="dataNascimento"
-          type="date"
-          value={dataNascimento}
-          onChange={(event) => setDataNascimento(event.target.value)}
-          onBlur={() => marcarTocado("dataNascimento")}
-          className="rounded-lg border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
-        />
-        {erroDataNascimento && (
-          <span className="text-sm text-red-600">{erroDataNascimento}</span>
-        )}
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <label htmlFor="cep" className="text-sm font-medium">
-          CEP
-        </label>
-        <input
-          id="cep"
-          type="text"
-          inputMode="numeric"
-          placeholder="00000-000"
-          value={cep}
-          onChange={(event) => setCep(event.target.value)}
-          onBlur={() => marcarTocado("cep")}
-          className="rounded-lg border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
-        />
-        {erroCep && <span className="text-sm text-red-600">{erroCep}</span>}
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <label htmlFor="rua" className="text-sm font-medium">
-          Rua
-        </label>
-        <input
-          id="rua"
-          type="text"
-          value={rua}
-          onChange={(event) => setRua(event.target.value)}
-          onBlur={() => marcarTocado("rua")}
-          className="rounded-lg border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
-        />
-        {erroRua && <span className="text-sm text-red-600">{erroRua}</span>}
-      </div>
-
-      <div className="flex gap-3">
-        <div className="flex flex-1 flex-col gap-1">
-          <label htmlFor="numero" className="text-sm font-medium">
-            Número
-          </label>
-          <input
-            id="numero"
-            type="text"
-            value={numero}
-            onChange={(event) => setNumero(event.target.value)}
-            onBlur={() => marcarTocado("numero")}
-            className="rounded-lg border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
-          />
-          {erroNumero && (
-            <span className="text-sm text-red-600">{erroNumero}</span>
-          )}
+  const resumoPreco = (
+    <div className="flex flex-col gap-4">
+      <div>
+        <div className="font-body text-[11px] tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
+          Total
         </div>
-
-        <div className="flex flex-1 flex-col gap-1">
-          <label htmlFor="complemento" className="text-sm font-medium">
-            Complemento (opcional)
-          </label>
-          <input
-            id="complemento"
-            type="text"
-            value={complemento}
-            onChange={(event) => setComplemento(event.target.value)}
-            className="rounded-lg border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
-          />
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <label htmlFor="bairro" className="text-sm font-medium">
-          Bairro
-        </label>
-        <input
-          id="bairro"
-          type="text"
-          value={bairro}
-          onChange={(event) => setBairro(event.target.value)}
-          onBlur={() => marcarTocado("bairro")}
-          className="rounded-lg border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
-        />
-        {erroBairro && (
-          <span className="text-sm text-red-600">{erroBairro}</span>
-        )}
-      </div>
-
-      <div className="flex gap-3">
-        <div className="flex flex-1 flex-col gap-1">
-          <label htmlFor="cidade" className="text-sm font-medium">
-            Cidade
-          </label>
-          <input
-            id="cidade"
-            type="text"
-            value={cidade}
-            onChange={(event) => setCidade(event.target.value)}
-            onBlur={() => marcarTocado("cidade")}
-            className="rounded-lg border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
-          />
-          {erroCidade && (
-            <span className="text-sm text-red-600">{erroCidade}</span>
-          )}
-        </div>
-
-        <div className="flex w-24 flex-col gap-1">
-          <label htmlFor="uf" className="text-sm font-medium">
-            UF
-          </label>
-          <input
-            id="uf"
-            type="text"
-            maxLength={2}
-            value={uf}
-            onChange={(event) => setUf(event.target.value.toUpperCase())}
-            onBlur={() => marcarTocado("uf")}
-            className="rounded-lg border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
-          />
-          {erroUf && <span className="text-sm text-red-600">{erroUf}</span>}
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <label htmlFor="cupom" className="text-sm font-medium">
-          Cupom de desconto (opcional)
-        </label>
-        <div className="flex gap-2">
-          <input
-            id="cupom"
-            type="text"
-            value={cupomCodigo}
-            onChange={(event) => {
-              setCupomCodigo(event.target.value);
-              if (cupomAplicado) setCupomAplicado(null);
-            }}
-            disabled={cupomValidoParaCpfAtual}
-            className="flex-1 rounded-lg border border-zinc-300 px-3 py-2 disabled:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900 dark:disabled:bg-zinc-800"
-          />
-          {cupomValidoParaCpfAtual ? (
-            <button
-              type="button"
-              onClick={handleRemoverCupom}
-              className="shrink-0 rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700"
-            >
-              Remover
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={handleAplicarCupom}
-              disabled={cupomValidando}
-              className="shrink-0 rounded-lg border border-zinc-300 px-3 py-2 text-sm disabled:opacity-50 dark:border-zinc-700"
-            >
-              {cupomValidando ? "Validando..." : "Aplicar"}
-            </button>
-          )}
-        </div>
-        {cupomErro && <span className="text-sm text-red-600">{cupomErro}</span>}
         {cupomValidoParaCpfAtual && (
-          <span className="text-sm text-green-700 dark:text-green-500">
-            Cupom aplicado: {cupomAplicado.percentualDesconto}% de desconto.
-          </span>
-        )}
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <span className="text-sm font-medium">Forma de pagamento</span>
-        <div className="flex flex-col gap-2">
-          {(
-            [
-              { valor: "pix", rotulo: "Pix" },
-              { valor: "cartao_avista", rotulo: "Cartão à vista" },
-              { valor: "cartao_parcelado", rotulo: "Cartão parcelado" },
-            ] as const
-          ).map((opcao) => (
-            <label
-              key={opcao.valor}
-              className="flex items-center gap-2 text-sm"
-            >
-              <input
-                type="radio"
-                name="formaPagamento"
-                value={opcao.valor}
-                checked={formaPagamento === opcao.valor}
-                onChange={() => setFormaPagamento(opcao.valor)}
-              />
-              {opcao.rotulo}
-            </label>
-          ))}
-        </div>
-
-        {formaPagamento === "cartao_parcelado" && (
-          <select
-            value={parcelas}
-            onChange={(event) => setParcelas(Number(event.target.value))}
-            className="mt-1 w-fit rounded-lg border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
-          >
-            {[2, 3, 4, 5, 6].map((n) => (
-              <option key={n} value={n}>
-                {n}x
-              </option>
-            ))}
-          </select>
-        )}
-      </div>
-
-      {ehCartao && (
-        <div className="flex flex-col gap-3 rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
-          <div className="flex flex-col gap-1">
-            <label htmlFor="numeroCartao" className="text-sm font-medium">
-              Número do cartão
-            </label>
-            <input
-              id="numeroCartao"
-              type="text"
-              inputMode="numeric"
-              value={numeroCartao}
-              onChange={(event) => setNumeroCartao(event.target.value)}
-              className="rounded-lg border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
-            />
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <label htmlFor="nomeCartao" className="text-sm font-medium">
-              Nome impresso no cartão
-            </label>
-            <input
-              id="nomeCartao"
-              type="text"
-              value={nomeCartao}
-              onChange={(event) => setNomeCartao(event.target.value)}
-              className="rounded-lg border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
-            />
-          </div>
-
-          <div className="flex gap-3">
-            <div className="flex flex-1 flex-col gap-1">
-              <label htmlFor="validade" className="text-sm font-medium">
-                Validade (MM/AA)
-              </label>
-              <input
-                id="validade"
-                type="text"
-                placeholder="MM/AA"
-                value={validadeCartao}
-                onChange={(event) => setValidadeCartao(event.target.value)}
-                className="rounded-lg border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
-              />
-            </div>
-            <div className="flex w-24 flex-col gap-1">
-              <label htmlFor="cvv" className="text-sm font-medium">
-                CVV
-              </label>
-              <input
-                id="cvv"
-                type="text"
-                inputMode="numeric"
-                value={cvv}
-                onChange={(event) => setCvv(event.target.value)}
-                className="rounded-lg border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div className="flex flex-col gap-1 rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
-        {cupomValidoParaCpfAtual && (
-          <span className="text-sm text-zinc-500 line-through">
+          <div className="font-body text-sm text-zinc-500 line-through">
             {formatarPreco(preco + (preco * TAXA_PLATAFORMA_PERCENTUAL) / 100)}
-          </span>
+          </div>
         )}
-        <span className="text-lg font-semibold">
+        <div className="font-display text-verde-mata dark:text-pedra-sabao text-2xl font-semibold">
           {formatarPreco(valorFinal)}
-        </span>
-        <span className="text-xs text-zinc-500 dark:text-zinc-500">
+        </div>
+        <div className="font-body text-xs text-zinc-500 dark:text-zinc-500">
           Roteiro {formatarPreco(precoComDesconto)} + taxa (
           {TAXA_PLATAFORMA_PERCENTUAL}%) {formatarPreco(taxa)}
-        </span>
+        </div>
       </div>
 
-      <label className="flex items-start gap-2 text-sm text-zinc-600 dark:text-zinc-400">
-        <input
-          type="checkbox"
-          checked={consentimento}
-          onChange={(event) => setConsentimento(event.target.checked)}
-          className="mt-1"
-        />
-        <span>
-          Ao continuar, você concorda com os{" "}
-          {/* stopPropagation: um <a> dentro de <label> também aciona o
-              checkbox ao clicar (comportamento nativo do HTML) - sem
-              isso, abrir o link marcaria/desmarcaria o consentimento
-              sem querer, no meio de uma compra em andamento. */}
-          <Link
-            href="/termos"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(event) => event.stopPropagation()}
-            className="underline"
-          >
-            Termos de compra
-          </Link>{" "}
-          e a{" "}
-          <Link
-            href="/politica-de-reembolso"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(event) => event.stopPropagation()}
-            className="underline"
-          >
-            Política de reembolso
-          </Link>
-          . Seus dados (CPF e nome) serão utilizados para contratação do
-          seguro de viagem do passeio.
-        </span>
-      </label>
-
       {resultado?.tipo === "erro" && (
-        <p className="text-sm text-red-600">{resultado.motivo}</p>
+        <p className={ERRO_CLASSE}>{resultado.motivo}</p>
       )}
 
       <button
         type="submit"
         disabled={!formularioValido || processando}
-        className="rounded-full bg-foreground px-5 py-3 text-sm font-medium text-background disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500"
+        className="font-display bg-terracota hover:bg-terracota/90 text-pedra-sabao w-full rounded-xl py-3.5 text-sm font-semibold tracking-wide uppercase transition-colors disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500"
       >
         {processando ? "Processando..." : "Continuar"}
       </button>
+    </div>
+  );
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="pb-32 md:grid md:grid-cols-[1fr_320px] md:items-start md:gap-10 md:pb-0"
+    >
+      <div className="flex flex-col gap-6">
+        <div className={SECAO_CLASSE}>
+          <h2 className={SECAO_TITULO_CLASSE}>Seus dados</h2>
+
+          <div className="flex flex-col gap-1">
+            <label htmlFor="nome" className={LABEL_CLASSE}>
+              Nome completo
+            </label>
+            <input
+              id="nome"
+              type="text"
+              value={nome}
+              onChange={(event) => setNome(event.target.value)}
+              onBlur={() => marcarTocado("nome")}
+              className={CAMPO_CLASSE}
+            />
+            {erroNome && <span className={ERRO_CLASSE}>{erroNome}</span>}
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label htmlFor="cpf" className={LABEL_CLASSE}>
+              CPF
+            </label>
+            <input
+              id="cpf"
+              type="text"
+              inputMode="numeric"
+              placeholder="000.000.000-00"
+              value={cpf}
+              onChange={(event) => setCpf(formatarCPFInput(event.target.value))}
+              onBlur={() => marcarTocado("cpf")}
+              className={CAMPO_CLASSE}
+            />
+            {erroCpf && <span className={ERRO_CLASSE}>{erroCpf}</span>}
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label htmlFor="email" className={LABEL_CLASSE}>
+              E-mail
+            </label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              onBlur={() => marcarTocado("email")}
+              className={CAMPO_CLASSE}
+            />
+            {erroEmail && <span className={ERRO_CLASSE}>{erroEmail}</span>}
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label htmlFor="emailConfirmacao" className={LABEL_CLASSE}>
+              Confirme seu e-mail
+            </label>
+            <input
+              id="emailConfirmacao"
+              type="email"
+              value={emailConfirmacao}
+              onChange={(event) => setEmailConfirmacao(event.target.value)}
+              className={CAMPO_CLASSE}
+            />
+            {erroEmailConfirmacao && (
+              <span className={ERRO_CLASSE}>{erroEmailConfirmacao}</span>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label htmlFor="telefone" className={LABEL_CLASSE}>
+              Telefone
+            </label>
+            <input
+              id="telefone"
+              type="tel"
+              inputMode="numeric"
+              placeholder="(00) 00000-0000"
+              value={telefone}
+              onChange={(event) =>
+                setTelefone(formatarTelefoneInput(event.target.value))
+              }
+              onBlur={() => marcarTocado("telefone")}
+              className={CAMPO_CLASSE}
+            />
+            {erroTelefone && (
+              <span className={ERRO_CLASSE}>{erroTelefone}</span>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label htmlFor="dataNascimento" className={LABEL_CLASSE}>
+              Data de nascimento
+            </label>
+            <input
+              id="dataNascimento"
+              type="date"
+              value={dataNascimento}
+              onChange={(event) => setDataNascimento(event.target.value)}
+              onBlur={() => marcarTocado("dataNascimento")}
+              className={CAMPO_CLASSE}
+            />
+            {erroDataNascimento && (
+              <span className={ERRO_CLASSE}>{erroDataNascimento}</span>
+            )}
+          </div>
+        </div>
+
+        <div className={SECAO_CLASSE}>
+          <h2 className={SECAO_TITULO_CLASSE}>Endereço</h2>
+
+          <div className="flex flex-col gap-1">
+            <label htmlFor="cep" className={LABEL_CLASSE}>
+              CEP
+            </label>
+            <input
+              id="cep"
+              type="text"
+              inputMode="numeric"
+              placeholder="00000-000"
+              value={cep}
+              onChange={(event) => setCep(event.target.value)}
+              onBlur={() => marcarTocado("cep")}
+              className={CAMPO_CLASSE}
+            />
+            {erroCep && <span className={ERRO_CLASSE}>{erroCep}</span>}
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label htmlFor="rua" className={LABEL_CLASSE}>
+              Rua
+            </label>
+            <input
+              id="rua"
+              type="text"
+              value={rua}
+              onChange={(event) => setRua(event.target.value)}
+              onBlur={() => marcarTocado("rua")}
+              className={CAMPO_CLASSE}
+            />
+            {erroRua && <span className={ERRO_CLASSE}>{erroRua}</span>}
+          </div>
+
+          <div className="flex gap-3">
+            <div className="flex flex-1 flex-col gap-1">
+              <label htmlFor="numero" className={LABEL_CLASSE}>
+                Número
+              </label>
+              <input
+                id="numero"
+                type="text"
+                value={numero}
+                onChange={(event) => setNumero(event.target.value)}
+                onBlur={() => marcarTocado("numero")}
+                className={CAMPO_CLASSE}
+              />
+              {erroNumero && (
+                <span className={ERRO_CLASSE}>{erroNumero}</span>
+              )}
+            </div>
+
+            <div className="flex flex-1 flex-col gap-1">
+              <label htmlFor="complemento" className={LABEL_CLASSE}>
+                Complemento (opcional)
+              </label>
+              <input
+                id="complemento"
+                type="text"
+                value={complemento}
+                onChange={(event) => setComplemento(event.target.value)}
+                className={CAMPO_CLASSE}
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label htmlFor="bairro" className={LABEL_CLASSE}>
+              Bairro
+            </label>
+            <input
+              id="bairro"
+              type="text"
+              value={bairro}
+              onChange={(event) => setBairro(event.target.value)}
+              onBlur={() => marcarTocado("bairro")}
+              className={CAMPO_CLASSE}
+            />
+            {erroBairro && <span className={ERRO_CLASSE}>{erroBairro}</span>}
+          </div>
+
+          <div className="flex gap-3">
+            <div className="flex flex-1 flex-col gap-1">
+              <label htmlFor="cidade" className={LABEL_CLASSE}>
+                Cidade
+              </label>
+              <input
+                id="cidade"
+                type="text"
+                value={cidade}
+                onChange={(event) => setCidade(event.target.value)}
+                onBlur={() => marcarTocado("cidade")}
+                className={CAMPO_CLASSE}
+              />
+              {erroCidade && (
+                <span className={ERRO_CLASSE}>{erroCidade}</span>
+              )}
+            </div>
+
+            <div className="flex w-24 flex-col gap-1">
+              <label htmlFor="uf" className={LABEL_CLASSE}>
+                UF
+              </label>
+              <input
+                id="uf"
+                type="text"
+                maxLength={2}
+                value={uf}
+                onChange={(event) => setUf(event.target.value.toUpperCase())}
+                onBlur={() => marcarTocado("uf")}
+                className={CAMPO_CLASSE}
+              />
+              {erroUf && <span className={ERRO_CLASSE}>{erroUf}</span>}
+            </div>
+          </div>
+        </div>
+
+        <div className={SECAO_CLASSE}>
+          <h2 className={SECAO_TITULO_CLASSE}>Cupom de desconto</h2>
+
+          <div className="flex flex-col gap-1">
+            <label htmlFor="cupom" className={LABEL_CLASSE}>
+              Código (opcional)
+            </label>
+            <div className="flex gap-2">
+              <input
+                id="cupom"
+                type="text"
+                value={cupomCodigo}
+                onChange={(event) => {
+                  setCupomCodigo(event.target.value);
+                  if (cupomAplicado) setCupomAplicado(null);
+                }}
+                disabled={cupomValidoParaCpfAtual}
+                className={`flex-1 ${CAMPO_CLASSE} disabled:bg-zinc-100 dark:disabled:bg-zinc-800`}
+              />
+              {cupomValidoParaCpfAtual ? (
+                <button
+                  type="button"
+                  onClick={handleRemoverCupom}
+                  className="font-body shrink-0 rounded-xl border border-zinc-300 px-4 py-2 text-sm dark:border-zinc-700"
+                >
+                  Remover
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleAplicarCupom}
+                  disabled={cupomValidando}
+                  className="font-body text-verde-mata dark:text-pedra-sabao shrink-0 rounded-xl border border-zinc-300 px-4 py-2 text-sm disabled:opacity-50 dark:border-zinc-700"
+                >
+                  {cupomValidando ? "Validando..." : "Aplicar"}
+                </button>
+              )}
+            </div>
+            {cupomErro && <span className={ERRO_CLASSE}>{cupomErro}</span>}
+            {cupomValidoParaCpfAtual && (
+              <span className="font-body text-sm font-medium text-green-700 dark:text-green-500">
+                Cupom aplicado: {cupomAplicado.percentualDesconto}% de
+                desconto.
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className={SECAO_CLASSE}>
+          <h2 className={SECAO_TITULO_CLASSE}>Forma de pagamento</h2>
+
+          <div className="flex flex-col gap-2 sm:flex-row">
+            {(
+              [
+                { valor: "pix", rotulo: "Pix" },
+                { valor: "cartao_avista", rotulo: "Cartão à vista" },
+                { valor: "cartao_parcelado", rotulo: "Cartão parcelado" },
+              ] as const
+            ).map((opcao) => (
+              <label
+                key={opcao.valor}
+                className={`font-body flex-1 cursor-pointer rounded-xl border px-4 py-3 text-center text-sm font-medium transition-colors ${
+                  formaPagamento === opcao.valor
+                    ? "border-terracota bg-terracota/10 text-terracota"
+                    : "border-zinc-300 text-zinc-600 dark:border-zinc-700 dark:text-zinc-400"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="formaPagamento"
+                  value={opcao.valor}
+                  checked={formaPagamento === opcao.valor}
+                  onChange={() => setFormaPagamento(opcao.valor)}
+                  className="sr-only"
+                />
+                {opcao.rotulo}
+              </label>
+            ))}
+          </div>
+
+          {formaPagamento === "cartao_parcelado" && (
+            <select
+              value={parcelas}
+              onChange={(event) => setParcelas(Number(event.target.value))}
+              className={`w-fit ${CAMPO_CLASSE}`}
+            >
+              {[2, 3, 4, 5, 6].map((n) => (
+                <option key={n} value={n}>
+                  {n}x
+                </option>
+              ))}
+            </select>
+          )}
+
+          {ehCartao && (
+            <div className="flex flex-col gap-3 border-t border-zinc-200 pt-4 dark:border-zinc-800">
+              <div className="flex flex-col gap-1">
+                <label htmlFor="numeroCartao" className={LABEL_CLASSE}>
+                  Número do cartão
+                </label>
+                <input
+                  id="numeroCartao"
+                  type="text"
+                  inputMode="numeric"
+                  value={numeroCartao}
+                  onChange={(event) => setNumeroCartao(event.target.value)}
+                  className={CAMPO_CLASSE}
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label htmlFor="nomeCartao" className={LABEL_CLASSE}>
+                  Nome impresso no cartão
+                </label>
+                <input
+                  id="nomeCartao"
+                  type="text"
+                  value={nomeCartao}
+                  onChange={(event) => setNomeCartao(event.target.value)}
+                  className={CAMPO_CLASSE}
+                />
+              </div>
+
+              <div className="flex gap-3">
+                <div className="flex flex-1 flex-col gap-1">
+                  <label htmlFor="validade" className={LABEL_CLASSE}>
+                    Validade (MM/AA)
+                  </label>
+                  <input
+                    id="validade"
+                    type="text"
+                    placeholder="MM/AA"
+                    value={validadeCartao}
+                    onChange={(event) => setValidadeCartao(event.target.value)}
+                    className={CAMPO_CLASSE}
+                  />
+                </div>
+                <div className="flex w-24 flex-col gap-1">
+                  <label htmlFor="cvv" className={LABEL_CLASSE}>
+                    CVV
+                  </label>
+                  <input
+                    id="cvv"
+                    type="text"
+                    inputMode="numeric"
+                    value={cvv}
+                    onChange={(event) => setCvv(event.target.value)}
+                    className={CAMPO_CLASSE}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <label className="font-body flex items-start gap-2 text-sm text-zinc-600 dark:text-zinc-400">
+          <input
+            type="checkbox"
+            checked={consentimento}
+            onChange={(event) => setConsentimento(event.target.checked)}
+            className="accent-terracota mt-1"
+          />
+          <span>
+            Ao continuar, você concorda com os{" "}
+            {/* stopPropagation: um <a> dentro de <label> também aciona o
+                checkbox ao clicar (comportamento nativo do HTML) - sem
+                isso, abrir o link marcaria/desmarcaria o consentimento
+                sem querer, no meio de uma compra em andamento. */}
+            <Link
+              href="/termos"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(event) => event.stopPropagation()}
+              className="text-terracota underline"
+            >
+              Termos de compra
+            </Link>{" "}
+            e a{" "}
+            <Link
+              href="/politica-de-reembolso"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(event) => event.stopPropagation()}
+              className="text-terracota underline"
+            >
+              Política de reembolso
+            </Link>
+            . Seus dados (CPF e nome) serão utilizados para contratação do
+            seguro de viagem do passeio.
+          </span>
+        </label>
+      </div>
+
+      {/* Resumo de preço + botão - sticky no desktop (mesmo padrão do
+          card lateral no Detalhe do roteiro), barra fixa no mobile.
+          Duplicado visualmente (não em lógica: mesmas variáveis/estado),
+          igual à referência - ambos os blocos vivem dentro do mesmo
+          <form>, então qualquer um dos dois botões dispara o submit. */}
+      <aside className="hidden md:sticky md:top-8 md:block">
+        <div className="border-verde-mata/15 bg-pedra-sabao rounded-2xl border p-6 shadow-[0_10px_26px_rgba(46,58,34,0.1)] dark:border-zinc-800 dark:bg-zinc-900">
+          {resumoPreco}
+        </div>
+      </aside>
+
+      <div className="border-zinc-200 bg-pedra-sabao fixed inset-x-0 bottom-0 z-20 border-t p-4 shadow-[0_-8px_22px_rgba(0,0,0,0.08)] md:hidden dark:border-zinc-800 dark:bg-zinc-900">
+        {resumoPreco}
+      </div>
     </form>
   );
 }
