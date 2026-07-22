@@ -121,6 +121,25 @@ export async function POST(request: Request) {
     : null;
   const parcelas = Number(metadata.parcelas) || 1;
 
+  // Data de nascimento/endereço: campos crus do metadata (POST
+  // /api/checkout/pagar já os envia lá desde a extensão do card 6) -
+  // pedidos criados antes dessa mudança simplesmente não têm essas
+  // chaves no metadata, então tratamos ausência/string vazia como null
+  // explícito, nunca como erro (confirmar_venda_pagarme também não
+  // valida esses campos, de propósito - webhook confirma pagamento já
+  // cobrado, não pode falhar por metadata incompleto de pedido antigo).
+  const metadataParaTexto = (valor: unknown) =>
+    typeof valor === "string" && valor.length > 0 ? valor : null;
+
+  const dataNascimento = metadataParaTexto(metadata.data_nascimento);
+  const cep = metadataParaTexto(metadata.cep);
+  const rua = metadataParaTexto(metadata.rua);
+  const numero = metadataParaTexto(metadata.numero);
+  const complemento = metadataParaTexto(metadata.complemento);
+  const bairro = metadataParaTexto(metadata.bairro);
+  const cidade = metadataParaTexto(metadata.cidade);
+  const uf = metadataParaTexto(metadata.uf);
+
   const charge = order?.charges?.[0];
   const customer = charge?.customer;
 
@@ -148,6 +167,14 @@ export async function POST(request: Request) {
       p_parcelas: parcelas,
       p_valor_total: valorTotalReais,
       p_cupom_id: cupomId,
+      p_data_nascimento: dataNascimento,
+      p_cep: cep,
+      p_rua: rua,
+      p_numero: numero,
+      p_complemento: complemento,
+      p_bairro: bairro,
+      p_cidade: cidade,
+      p_uf: uf,
       p_reserva_id: reservaId,
     })
     .single()) as {
