@@ -76,6 +76,12 @@ export default async function AdminHome() {
         >
           Cupons
         </Link>
+        <Link
+          href="/admin/configuracoes"
+          className="self-start rounded-full border border-zinc-300 px-5 py-2 text-sm dark:border-zinc-700"
+        >
+          Configurações
+        </Link>
       </div>
 
       {error ? (
