@@ -5,9 +5,12 @@ import {
   apenasDigitos,
   formatarCPFInput,
   formatarTelefoneInput,
+  validarCEP,
   validarCPF,
+  validarDataNascimento,
   validarEmail,
   validarTelefone,
+  validarUF,
 } from "@/lib/validacao";
 import { formatarPreco } from "@/lib/format";
 import { tokenizarCartao } from "@/lib/pagarmeClient";
@@ -19,7 +22,18 @@ const TAXA_PLATAFORMA_PERCENTUAL = 6;
 const TEXTO_CONSENTIMENTO =
   "Ao continuar, você concorda com os Termos de compra e a Política de reembolso. Seus dados (CPF e nome) serão utilizados para contratação do seguro de viagem do passeio.";
 
-type Campo = "nome" | "cpf" | "email" | "telefone";
+type Campo =
+  | "nome"
+  | "cpf"
+  | "email"
+  | "telefone"
+  | "dataNascimento"
+  | "cep"
+  | "rua"
+  | "numero"
+  | "bairro"
+  | "cidade"
+  | "uf";
 type FormaPagamento = "pix" | "cartao_avista" | "cartao_parcelado";
 
 type CupomAplicado = {
@@ -52,12 +66,27 @@ export function CheckoutForm({
   const [email, setEmail] = useState("");
   const [emailConfirmacao, setEmailConfirmacao] = useState("");
   const [telefone, setTelefone] = useState("");
+  const [dataNascimento, setDataNascimento] = useState("");
+  const [cep, setCep] = useState("");
+  const [rua, setRua] = useState("");
+  const [numero, setNumero] = useState("");
+  const [complemento, setComplemento] = useState("");
+  const [bairro, setBairro] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [uf, setUf] = useState("");
   const [consentimento, setConsentimento] = useState(false);
   const [tocado, setTocado] = useState<Record<Campo, boolean>>({
     nome: false,
     cpf: false,
     email: false,
     telefone: false,
+    dataNascimento: false,
+    cep: false,
+    rua: false,
+    numero: false,
+    bairro: false,
+    cidade: false,
+    uf: false,
   });
 
   const [cupomCodigo, setCupomCodigo] = useState("");
@@ -81,6 +110,17 @@ export function CheckoutForm({
   const cpfValido = validarCPF(cpf);
   const emailValido = validarEmail(email);
   const telefoneValido = validarTelefone(telefone);
+
+  // Mesma exigência do backend (POST /api/checkout/pagar) - complemento
+  // continua sempre opcional, os outros 7 são obrigatórios aqui também,
+  // reusando os validadores de validacao.ts em vez de duplicar a lógica.
+  const dataNascimentoValida = validarDataNascimento(dataNascimento);
+  const cepValido = validarCEP(cep);
+  const ruaValida = rua.trim().length > 0;
+  const numeroValido = numero.trim().length > 0;
+  const bairroValido = bairro.trim().length > 0;
+  const cidadeValida = cidade.trim().length > 0;
+  const ufValido = validarUF(uf);
 
   // Comparação só pra pegar erro de digitação - mesmo trim/lowercase que
   // já seria aplicado no e-mail original no submit, sem sanitização extra.
@@ -115,6 +155,13 @@ export function CheckoutForm({
     emailValido &&
     emailConfirmadoValido &&
     telefoneValido &&
+    dataNascimentoValida &&
+    cepValido &&
+    ruaValida &&
+    numeroValido &&
+    bairroValido &&
+    cidadeValida &&
+    ufValido &&
     consentimento &&
     cartaoValido;
 
@@ -198,6 +245,37 @@ export function CheckoutForm({
       tocado.telefone && !telefoneValido ? "Telefone inválido." : null,
     [tocado.telefone, telefoneValido],
   );
+  const erroDataNascimento = useMemo(
+    () =>
+      tocado.dataNascimento && !dataNascimentoValida
+        ? "Data de nascimento inválida."
+        : null,
+    [tocado.dataNascimento, dataNascimentoValida],
+  );
+  const erroCep = useMemo(
+    () => (tocado.cep && !cepValido ? "CEP inválido." : null),
+    [tocado.cep, cepValido],
+  );
+  const erroRua = useMemo(
+    () => (tocado.rua && !ruaValida ? "Informe a rua." : null),
+    [tocado.rua, ruaValida],
+  );
+  const erroNumero = useMemo(
+    () => (tocado.numero && !numeroValido ? "Informe o número." : null),
+    [tocado.numero, numeroValido],
+  );
+  const erroBairro = useMemo(
+    () => (tocado.bairro && !bairroValido ? "Informe o bairro." : null),
+    [tocado.bairro, bairroValido],
+  );
+  const erroCidade = useMemo(
+    () => (tocado.cidade && !cidadeValida ? "Informe a cidade." : null),
+    [tocado.cidade, cidadeValida],
+  );
+  const erroUf = useMemo(
+    () => (tocado.uf && !ufValido ? "UF inválida." : null),
+    [tocado.uf, ufValido],
+  );
 
   async function realizarPagamento() {
     if (processando) return;
@@ -232,6 +310,14 @@ export function CheckoutForm({
           formaPagamento,
           parcelas: formaPagamento === "cartao_parcelado" ? parcelas : 1,
           cardToken,
+          dataNascimento,
+          cep: apenasDigitos(cep),
+          rua: rua.trim(),
+          numero: numero.trim(),
+          complemento: complemento.trim(),
+          bairro: bairro.trim(),
+          cidade: cidade.trim(),
+          uf: uf.trim().toUpperCase(),
         }),
       });
 
@@ -423,6 +509,139 @@ export function CheckoutForm({
         {erroTelefone && (
           <span className="text-sm text-red-600">{erroTelefone}</span>
         )}
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label htmlFor="dataNascimento" className="text-sm font-medium">
+          Data de nascimento
+        </label>
+        <input
+          id="dataNascimento"
+          type="date"
+          value={dataNascimento}
+          onChange={(event) => setDataNascimento(event.target.value)}
+          onBlur={() => marcarTocado("dataNascimento")}
+          className="rounded-lg border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+        />
+        {erroDataNascimento && (
+          <span className="text-sm text-red-600">{erroDataNascimento}</span>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label htmlFor="cep" className="text-sm font-medium">
+          CEP
+        </label>
+        <input
+          id="cep"
+          type="text"
+          inputMode="numeric"
+          placeholder="00000-000"
+          value={cep}
+          onChange={(event) => setCep(event.target.value)}
+          onBlur={() => marcarTocado("cep")}
+          className="rounded-lg border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+        />
+        {erroCep && <span className="text-sm text-red-600">{erroCep}</span>}
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label htmlFor="rua" className="text-sm font-medium">
+          Rua
+        </label>
+        <input
+          id="rua"
+          type="text"
+          value={rua}
+          onChange={(event) => setRua(event.target.value)}
+          onBlur={() => marcarTocado("rua")}
+          className="rounded-lg border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+        />
+        {erroRua && <span className="text-sm text-red-600">{erroRua}</span>}
+      </div>
+
+      <div className="flex gap-3">
+        <div className="flex flex-1 flex-col gap-1">
+          <label htmlFor="numero" className="text-sm font-medium">
+            Número
+          </label>
+          <input
+            id="numero"
+            type="text"
+            value={numero}
+            onChange={(event) => setNumero(event.target.value)}
+            onBlur={() => marcarTocado("numero")}
+            className="rounded-lg border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+          />
+          {erroNumero && (
+            <span className="text-sm text-red-600">{erroNumero}</span>
+          )}
+        </div>
+
+        <div className="flex flex-1 flex-col gap-1">
+          <label htmlFor="complemento" className="text-sm font-medium">
+            Complemento (opcional)
+          </label>
+          <input
+            id="complemento"
+            type="text"
+            value={complemento}
+            onChange={(event) => setComplemento(event.target.value)}
+            className="rounded-lg border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label htmlFor="bairro" className="text-sm font-medium">
+          Bairro
+        </label>
+        <input
+          id="bairro"
+          type="text"
+          value={bairro}
+          onChange={(event) => setBairro(event.target.value)}
+          onBlur={() => marcarTocado("bairro")}
+          className="rounded-lg border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+        />
+        {erroBairro && (
+          <span className="text-sm text-red-600">{erroBairro}</span>
+        )}
+      </div>
+
+      <div className="flex gap-3">
+        <div className="flex flex-1 flex-col gap-1">
+          <label htmlFor="cidade" className="text-sm font-medium">
+            Cidade
+          </label>
+          <input
+            id="cidade"
+            type="text"
+            value={cidade}
+            onChange={(event) => setCidade(event.target.value)}
+            onBlur={() => marcarTocado("cidade")}
+            className="rounded-lg border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+          />
+          {erroCidade && (
+            <span className="text-sm text-red-600">{erroCidade}</span>
+          )}
+        </div>
+
+        <div className="flex w-24 flex-col gap-1">
+          <label htmlFor="uf" className="text-sm font-medium">
+            UF
+          </label>
+          <input
+            id="uf"
+            type="text"
+            maxLength={2}
+            value={uf}
+            onChange={(event) => setUf(event.target.value.toUpperCase())}
+            onBlur={() => marcarTocado("uf")}
+            className="rounded-lg border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+          />
+          {erroUf && <span className="text-sm text-red-600">{erroUf}</span>}
+        </div>
       </div>
 
       <div className="flex flex-col gap-1">
