@@ -3,9 +3,12 @@ import { createClient } from "@/lib/supabase/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   apenasDigitos,
+  validarCEP,
   validarCPF,
+  validarDataNascimento,
   validarEmail,
   validarTelefone,
+  validarUF,
 } from "@/lib/validacao";
 import { validarCupomServidor } from "@/lib/cupom";
 import { calcularValores, criarOrderPagarme } from "@/lib/pagarme";
@@ -57,6 +60,24 @@ export async function POST(request: Request) {
   const cardToken =
     typeof body?.cardToken === "string" ? body.cardToken : "";
 
+  // Pedido do Markys (card 6 do Kanban): igualar o checkout online ao que
+  // ele já coleta manualmente por WhatsApp. Complemento é o único campo
+  // de endereço sempre opcional - todos os outros são exigidos aqui, na
+  // camada de API (o schema em si aceita todos nullable, de propósito,
+  // pra não travar vendas antigas).
+  const dataNascimento =
+    typeof body?.dataNascimento === "string" ? body.dataNascimento.trim() : "";
+  const cep = typeof body?.cep === "string" ? apenasDigitos(body.cep) : "";
+  const rua = typeof body?.rua === "string" ? body.rua.trim() : "";
+  const numero = typeof body?.numero === "string" ? body.numero.trim() : "";
+  const complemento =
+    typeof body?.complemento === "string" && body.complemento.trim().length > 0
+      ? body.complemento.trim()
+      : null;
+  const bairro = typeof body?.bairro === "string" ? body.bairro.trim() : "";
+  const cidade = typeof body?.cidade === "string" ? body.cidade.trim() : "";
+  const uf = typeof body?.uf === "string" ? body.uf.trim().toUpperCase() : "";
+
   if (
     nome.length < 3 ||
     !validarCPF(cpf) ||
@@ -67,6 +88,25 @@ export async function POST(request: Request) {
   ) {
     return NextResponse.json(
       { sucesso: false, motivo: "Dados inválidos para iniciar a cobrança." },
+      { status: 400 },
+    );
+  }
+
+  if (
+    !validarDataNascimento(dataNascimento) ||
+    !validarCEP(cep) ||
+    !rua ||
+    !numero ||
+    !bairro ||
+    !cidade ||
+    !validarUF(uf)
+  ) {
+    return NextResponse.json(
+      {
+        sucesso: false,
+        motivo:
+          "Preencha data de nascimento e endereço completo (CEP, rua, número, bairro, cidade e UF) antes de continuar.",
+      },
       { status: 400 },
     );
   }
@@ -185,6 +225,7 @@ export async function POST(request: Request) {
       valorFinalReais: valorFinal,
       valorRoteiroReais: precoComDesconto,
       comprador: { nome, email, cpfDigitos: cpf, telefoneDigitos: telefone },
+      endereco: { cep, rua, numero, complemento, bairro, cidade, uf },
       pagamento:
         formaPagamento === "pix"
           ? { payment_method: "pix", pix: { expires_in: 900 } }
@@ -203,6 +244,20 @@ export async function POST(request: Request) {
         forma_pagamento: formaPagamento,
         parcelas: String(formaPagamento === "cartao_parcelado" ? parcelas : 1),
         reserva_id: reservaId,
+        // Campos crus (não só o line_1/line_2 concatenado do Pagar.me) pra
+        // uma futura extensão de confirmar_venda_pagarme conseguir gravar
+        // em vendas sem precisar desmontar a string concatenada do
+        // endereço. Isso NÃO persiste os dados em `vendas` ainda - só
+        // preserva no order do Pagar.me até essa extensão existir (ver
+        // card 6 do Kanban).
+        data_nascimento: dataNascimento,
+        cep,
+        rua,
+        numero,
+        complemento: complemento ?? "",
+        bairro,
+        cidade,
+        uf,
       },
     });
 

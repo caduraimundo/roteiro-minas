@@ -1,5 +1,52 @@
+import { apenasDigitos } from "@/lib/validacao";
+
 const PAGARME_API_URL = "https://api.pagar.me/core/v5";
 export const TAXA_PLATAFORMA_PERCENTUAL = 6;
+
+export type EnderecoComprador = {
+  cep: string;
+  rua: string;
+  numero: string;
+  complemento: string | null;
+  bairro: string;
+  cidade: string;
+  uf: string;
+};
+
+/**
+ * Monta o objeto `address` no formato exigido pelo Pagar.me v5: line_1
+ * concatena "Número, Rua, Bairro" (nessa ordem) - se não houver número,
+ * essa parte é omitida da concatenação, não vira ", Rua, Bairro" com
+ * vírgula sobrando. line_2 (complemento) só entra no objeto quando
+ * preenchido - omitido de propósito quando vazio, não enviado como
+ * string vazia.
+ *
+ * IMPORTANTE: a ausência total de line_2 quando não há complemento
+ * NÃO foi confirmada por uma chamada de sandbox autenticada de verdade
+ * (só temos a chave pública pk_test_ disponível, que não autentica
+ * POST /orders - só o endpoint de tokenização de cartão). Ver
+ * documentação do card no Kanban - se a API rejeitar isso um dia,
+ * ajustar aqui.
+ */
+export function montarEnderecoPagarme(endereco: EnderecoComprador) {
+  const partesLine1 = [endereco.numero, endereco.rua, endereco.bairro].filter(
+    (parte) => parte.trim().length > 0,
+  );
+
+  const address: Record<string, string> = {
+    line_1: partesLine1.join(", "),
+    zip_code: apenasDigitos(endereco.cep),
+    city: endereco.cidade,
+    state: endereco.uf.toUpperCase(),
+    country: "BR",
+  };
+
+  if (endereco.complemento && endereco.complemento.trim().length > 0) {
+    address.line_2 = endereco.complemento.trim();
+  }
+
+  return address;
+}
 
 function authHeaderPagarme() {
   const apiKey = process.env.PAGARME_API_KEY;
@@ -73,6 +120,7 @@ export type CriarOrderParams = {
     cpfDigitos: string;
     telefoneDigitos: string;
   };
+  endereco: EnderecoComprador;
   pagamento: PagamentoPix | PagamentoCartao;
   metadata: Record<string, string>;
 };
@@ -88,6 +136,7 @@ export async function criarOrderPagarme({
   valorFinalReais,
   valorRoteiroReais,
   comprador,
+  endereco,
   pagamento,
   metadata,
 }: CriarOrderParams) {
@@ -148,6 +197,7 @@ export async function criarOrderPagarme({
             number: comprador.telefoneDigitos.slice(2),
           },
         },
+        address: montarEnderecoPagarme(endereco),
       },
       payments: [payment],
     }),

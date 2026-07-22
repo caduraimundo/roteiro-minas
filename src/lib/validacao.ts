@@ -59,3 +59,31 @@ export function validarTelefone(valor: string) {
   const digitos = apenasDigitos(valor);
   return digitos.length === 10 || digitos.length === 11;
 }
+
+export function validarCEP(valor: string) {
+  return apenasDigitos(valor).length === 8;
+}
+
+const UFS_VALIDAS = new Set([
+  "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO",
+  "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI",
+  "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO",
+]);
+
+export function validarUF(valor: string) {
+  return UFS_VALIDAS.has(valor.trim().toUpperCase());
+}
+
+/**
+ * Só formato (YYYY-MM-DD, data real) e não estar no futuro - checagem de
+ * maioridade ou faixa etária mínima não foi pedida, fica pra quando isso
+ * virar exigência de fato.
+ */
+export function validarDataNascimento(valor: string) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(valor)) return false;
+
+  const data = new Date(`${valor}T00:00:00`);
+  if (Number.isNaN(data.getTime())) return false;
+
+  return data.getTime() <= Date.now();
+}
