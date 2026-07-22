@@ -5,11 +5,33 @@
   --foreground: #171717;
 }
 
+/* Paleta de marca (validada no Claude Design) - tokens só, ainda não
+   aplicados em nenhuma tela (Home/Agenda/Detalhe/Checkout ficam pros
+   próximos cards). Cores fixas, sem variante de dark mode - são cor de
+   marca, não semântica de fundo/texto. */
+:root {
+  --color-verde-mata: #1f3a2e;
+  --color-terracota: #c25a2c;
+  --color-ocre: #e7a15c;
+  --color-pedra-sabao: #ede8dd;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --color-verde-mata: var(--color-verde-mata);
+  --color-terracota: var(--color-terracota);
+  --color-ocre: var(--color-ocre);
+  --color-pedra-sabao: var(--color-pedra-sabao);
+
+  /* Oswald pro display (títulos, nomes de roteiro, headers de seção,
+     wordmark) e Mulish pro corpo/formulários - gera as utilities
+     font-display/font-body. */
+  --font-display: var(--font-oswald);
+  --font-body: var(--font-mulish);
 }
 
 @media (prefers-color-scheme: dark) {
