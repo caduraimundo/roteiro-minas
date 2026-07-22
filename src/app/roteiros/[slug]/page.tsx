@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { FotoPlaceholder } from "@/components/FotoPlaceholder";
-import { getRoteiroPorSlug } from "@/data/roteiros";
+import { GaleriaPlaceholder } from "@/components/GaleriaPlaceholder";
+import { getConfiguracoesSite } from "@/data/configuracoes";
+import { getRoteiroPorSlug, proximaVagaDisponivel } from "@/data/roteiros";
 import { formatarData, formatarPreco } from "@/lib/format";
 
 export default async function RoteiroDetalhe({
@@ -10,7 +11,10 @@ export default async function RoteiroDetalhe({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const roteiro = await getRoteiroPorSlug(slug);
+  const [roteiro, configuracoes] = await Promise.all([
+    getRoteiroPorSlug(slug),
+    getConfiguracoesSite(),
+  ]);
 
   if (!roteiro) {
     notFound();
@@ -19,17 +23,48 @@ export default async function RoteiroDetalhe({
   const vagasOrdenadas = [...roteiro.vagas].sort((a, b) =>
     a.data.localeCompare(b.data),
   );
+  const vagasDisponiveis = vagasOrdenadas.filter(
+    (vaga) => vaga.status === "aberta" && vaga.vagas_disponiveis > 0,
+  );
+  const vagaMaisBarata = proximaVagaDisponivel(roteiro.vagas);
+
+  // A barra fixa do rodapé precisa de um destino pro botão. Na referência
+  // (Claude Design) cada roteiro tem uma única data, então o botão sempre
+  // leva pro mesmo lugar - aqui um roteiro pode ter várias vagas (datas)
+  // com preços diferentes, então: se só existe uma data disponível, o
+  // botão já leva direto pro checkout dela (sem ambiguidade); se existem
+  // várias, ele rola até a lista de datas pra a pessoa escolher, em vez
+  // de eu decidir qual comprar.
+  const cta =
+    vagasDisponiveis.length === 1
+      ? {
+          href: `/roteiros/${roteiro.slug}/checkout?vaga=${vagasDisponiveis[0].id}`,
+          label: "Reservar vaga",
+        }
+      : { href: "#datas", label: "Ver datas disponíveis" };
 
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 p-8">
+    <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 p-8 pb-32">
       <Link href="/" className="text-sm text-zinc-600 dark:text-zinc-400">
         ← Voltar
       </Link>
 
-      <FotoPlaceholder className="h-56 w-full rounded-lg" />
+      <GaleriaPlaceholder />
 
       <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-semibold">{roteiro.nome}</h1>
+
+        {/* Nota/contagem de avaliação ainda placeholder - igual aos
+            depoimentos da Home, não existe campo de nota por roteiro no
+            banco. */}
+        <div className="font-body flex items-center gap-1.5 text-sm font-medium text-zinc-700 dark:text-zinc-300">
+          <span className="text-ocre text-base leading-none">★</span>
+          4,9
+          <span className="font-normal text-zinc-500 dark:text-zinc-500">
+            (128 avaliações)
+          </span>
+        </div>
+
         {roteiro.descricao && (
           <p className="text-zinc-600 dark:text-zinc-400">
             {roteiro.descricao}
@@ -52,7 +87,22 @@ export default async function RoteiroDetalhe({
         </p>
       )}
 
-      <div className="flex flex-col gap-3">
+      <div className="border-verde-mata/20 bg-verde-mata/5 flex items-start gap-3 rounded-lg border p-4">
+        <span className="text-verde-mata dark:text-pedra-sabao mt-0.5 text-lg leading-none">
+          ✓
+        </span>
+        <div>
+          <div className="font-display text-verde-mata dark:text-pedra-sabao text-sm font-semibold uppercase tracking-wide">
+            Cancelamento flexível
+          </div>
+          <p className="font-body mt-0.5 text-sm text-zinc-600 dark:text-zinc-400">
+            {configuracoes?.cancelamento_texto ??
+              "Consulte nossa política de cancelamento."}
+          </p>
+        </div>
+      </div>
+
+      <div id="datas" className="flex scroll-mt-8 flex-col gap-3">
         <h2 className="font-semibold">Datas disponíveis</h2>
 
         {vagasOrdenadas.length === 0 ? (
@@ -101,6 +151,30 @@ export default async function RoteiroDetalhe({
               );
             })}
           </ul>
+        )}
+      </div>
+
+      <div className="border-zinc-200 bg-pedra-sabao fixed inset-x-0 bottom-0 z-20 flex items-center gap-4 border-t px-6 py-4 shadow-[0_-8px_22px_rgba(0,0,0,0.08)] dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="flex-none">
+          <div className="font-body text-[11px] tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
+            A partir de
+          </div>
+          <div className="font-display text-verde-mata dark:text-pedra-sabao text-xl font-semibold">
+            {vagaMaisBarata ? formatarPreco(vagaMaisBarata.preco) : "—"}
+          </div>
+        </div>
+
+        {!vagaMaisBarata ? (
+          <div className="font-display flex-1 cursor-not-allowed rounded-xl bg-zinc-200 py-4 text-center text-sm font-semibold tracking-wide text-zinc-500 uppercase dark:bg-zinc-800 dark:text-zinc-500">
+            Esgotado
+          </div>
+        ) : (
+          <Link
+            href={cta.href}
+            className="font-display bg-terracota hover:bg-terracota/90 text-pedra-sabao flex-1 rounded-xl py-4 text-center text-sm font-semibold tracking-wide uppercase transition-colors"
+          >
+            {cta.label}
+          </Link>
         )}
       </div>
     </div>
