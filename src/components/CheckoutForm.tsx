@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import {
   apenasDigitos,
@@ -18,9 +19,6 @@ import { tokenizarCartao } from "@/lib/pagarmeClient";
 // Duplicado de src/lib/pagarme.ts de propósito: aquele módulo usa Buffer
 // (Node-only) e não deve ser importado em código client-side.
 const TAXA_PLATAFORMA_PERCENTUAL = 6;
-
-const TEXTO_CONSENTIMENTO =
-  "Ao continuar, você concorda com os Termos de compra e a Política de reembolso. Seus dados (CPF e nome) serão utilizados para contratação do seguro de viagem do passeio.";
 
 type Campo =
   | "nome"
@@ -810,7 +808,34 @@ export function CheckoutForm({
           onChange={(event) => setConsentimento(event.target.checked)}
           className="mt-1"
         />
-        <span>{TEXTO_CONSENTIMENTO}</span>
+        <span>
+          Ao continuar, você concorda com os{" "}
+          {/* stopPropagation: um <a> dentro de <label> também aciona o
+              checkbox ao clicar (comportamento nativo do HTML) - sem
+              isso, abrir o link marcaria/desmarcaria o consentimento
+              sem querer, no meio de uma compra em andamento. */}
+          <Link
+            href="/termos"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(event) => event.stopPropagation()}
+            className="underline"
+          >
+            Termos de compra
+          </Link>{" "}
+          e a{" "}
+          <Link
+            href="/politica-de-reembolso"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(event) => event.stopPropagation()}
+            className="underline"
+          >
+            Política de reembolso
+          </Link>
+          . Seus dados (CPF e nome) serão utilizados para contratação do
+          seguro de viagem do passeio.
+        </span>
       </label>
 
       {resultado?.tipo === "erro" && (
