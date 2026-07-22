@@ -1,5 +1,7 @@
 import { RoteiroCard } from "@/components/RoteiroCard";
 import { HeroCarousel } from "@/components/HeroCarousel";
+import { Header } from "@/components/Header";
+import { WhatsAppFloatButton } from "@/components/WhatsAppFloatButton";
 import { Depoimentos } from "@/components/Depoimentos";
 import { TexturaTopografica } from "@/components/TexturaTopografica";
 import { getRoteirosAtivos } from "@/data/roteiros";
@@ -13,7 +15,11 @@ export default async function Home() {
 
   return (
     <>
-      <HeroCarousel />
+      <div className="relative">
+        <Header />
+        <HeroCarousel />
+      </div>
+      <WhatsAppFloatButton />
 
       <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-10 p-8">
         <section className="flex flex-col gap-4">

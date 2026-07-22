@@ -9,35 +9,36 @@ export default async function AgendaRoteiros() {
 
   return (
     <div className="flex flex-1 flex-col">
+      {/* Título e chips ficam dentro do header sticky (junto, como na
+          referência) - só o header continua claro: os chips já
+          confirmados em produção usam contraste pensado pra fundo
+          claro (borda/texto escuros no estado inativo), então não dá
+          pra escurecer o header sem mexer na cor deles. */}
       <header className="sticky top-0 z-20 border-b border-zinc-200 bg-pedra-sabao/95 backdrop-blur dark:border-zinc-800 dark:bg-verde-mata/95">
-        <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-8 py-4">
+        <div className="mx-auto flex w-full max-w-5xl items-center gap-3 px-8 py-4">
           <Link
             href="/"
-            className="font-display text-lg font-semibold text-verde-mata dark:text-pedra-sabao"
+            aria-label="Voltar para o início"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-zinc-300 text-lg text-verde-mata dark:border-zinc-700 dark:text-pedra-sabao"
           >
-            Roteiro Minas
+            ←
           </Link>
-          <Link
-            href="/"
-            className="font-body text-sm text-zinc-600 dark:text-zinc-400"
-          >
-            ← Início
-          </Link>
+          <div className="flex flex-col">
+            <span className="font-display text-[10px] uppercase tracking-[0.24em] text-zinc-500 dark:text-zinc-400">
+              Roteiro Minas
+            </span>
+            <h1 className="font-display text-2xl font-semibold uppercase text-verde-mata dark:text-pedra-sabao">
+              Roteiros disponíveis
+            </h1>
+          </div>
+        </div>
+
+        <div className="mx-auto w-full max-w-5xl px-8 pb-4">
+          <FiltroCategoriaChips />
         </div>
       </header>
 
       <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 p-8">
-        <div className="flex flex-col gap-1">
-          <h1 className="font-display text-2xl font-semibold">
-            Roteiros disponíveis
-          </h1>
-          <p className="font-body text-sm text-zinc-600 dark:text-zinc-400">
-            Escolha uma trilha, cachoeira ou travessia e reserve sua vaga.
-          </p>
-        </div>
-
-        <FiltroCategoriaChips />
-
         <div className="relative h-12 w-full">
           <TexturaTopografica variant="divisor" />
         </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { TexturaTopografica } from "@/components/TexturaTopografica";
 
 // Sem foto real ainda (nenhum campo de imagem existe em roteiros/vagas,
@@ -51,6 +52,12 @@ export function HeroCarousel() {
           Passeios guiados de ecoturismo em Ouro Preto e Mariana, com reserva
           online e ingresso na hora.
         </p>
+        <Link
+          href="/roteiros"
+          className="font-display bg-terracota hover:bg-terracota/90 mt-2 rounded-lg px-6 py-3 text-sm font-semibold tracking-wide uppercase text-pedra-sabao transition-colors"
+        >
+          Ver próximos roteiros →
+        </Link>
       </div>
     </div>
   );
