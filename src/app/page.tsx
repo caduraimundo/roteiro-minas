@@ -13,7 +13,7 @@ export default async function Home() {
   // "Próximo roteiro" e contagem de vaga não fazem sentido pro tipo
   // receptivo (preço fixo, sem vagas) - por isso ele nunca entra nesse
   // grid, tem seção própria logo abaixo.
-  const emissiveis = roteiros.filter((roteiro) => roteiro.tipo === "emissivel");
+  const emissiveis = roteiros.filter((roteiro) => roteiro.tipo !== "receptivo");
   const receptivos = roteiros.filter((roteiro) => roteiro.tipo === "receptivo");
 
   return (
