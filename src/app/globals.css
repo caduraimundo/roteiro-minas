@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* Site sempre em modo claro - o dark: do Tailwind passa a depender só
+   de uma classe .dark explícita (que não existe em lugar nenhum do
+   projeto hoje), não mais de prefers-color-scheme do sistema. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -33,13 +38,6 @@
      .font-wordmark abaixo), não estas duas. */
   --font-display: var(--font-oswald);
   --font-body: var(--font-mulish);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
