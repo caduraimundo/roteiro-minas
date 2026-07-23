@@ -61,7 +61,10 @@ export default async function RoteiroDetalhe({
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 p-8 pb-32 md:pb-8">
-      <Link href="/" className="text-sm text-zinc-600 dark:text-zinc-400">
+      <Link
+        href="/"
+        className="font-body text-sm text-zinc-600 dark:text-zinc-400"
+      >
         ← Voltar
       </Link>
 
@@ -73,7 +76,15 @@ export default async function RoteiroDetalhe({
           <GaleriaPlaceholder />
 
           <div className="flex flex-col gap-2">
-            <h1 className="text-2xl font-semibold">{roteiro.nome}</h1>
+            {/* Título ganha o mesmo tratamento de heading da Home
+                (font-display + font-extrabold) - antes ficava em
+                text-2xl font-semibold puro, sem font-display, herdando
+                o Arial de fallback do body em vez de Mulish. Tamanho
+                cresce no desktop (2xl -> 3xl), mesma lógica de escala
+                por breakpoint da Home. */}
+            <h1 className="font-display text-verde-mata dark:text-pedra-sabao text-2xl font-extrabold tracking-tight sm:text-3xl">
+              {roteiro.nome}
+            </h1>
 
             {/* Nota/contagem de avaliação ainda placeholder - igual aos
                 depoimentos da Home, não existe campo de nota por roteiro
@@ -87,7 +98,7 @@ export default async function RoteiroDetalhe({
             </div>
 
             {roteiro.descricao && (
-              <p className="text-zinc-600 dark:text-zinc-400">
+              <p className="font-body text-zinc-600 dark:text-zinc-400">
                 {roteiro.descricao}
               </p>
             )}
@@ -98,17 +109,17 @@ export default async function RoteiroDetalhe({
               href={roteiro.pdf_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm font-medium underline"
+              className="font-body text-terracota text-sm font-semibold underline underline-offset-2"
             >
               Ver roteiro em PDF
             </a>
           ) : (
-            <p className="text-sm text-zinc-500 dark:text-zinc-500">
+            <p className="font-body text-sm text-zinc-500 dark:text-zinc-500">
               Roteiro em PDF em breve.
             </p>
           )}
 
-          <div className="border-verde-mata/20 bg-verde-mata/5 flex items-start gap-3 rounded-lg border p-4">
+          <div className="border-verde-mata/20 bg-verde-mata/5 flex items-start gap-3 rounded-2xl border p-4">
             <span className="text-verde-mata dark:text-pedra-sabao mt-0.5 text-lg leading-none">
               ✓
             </span>
@@ -125,18 +136,22 @@ export default async function RoteiroDetalhe({
 
           {isReceptivo ? (
             <div className="flex flex-col gap-3">
-              <h2 className="font-semibold">Data e grupo sob consulta</h2>
-              <p className="text-zinc-600 dark:text-zinc-400">
+              <h2 className="font-display text-verde-mata dark:text-pedra-sabao text-xl font-extrabold tracking-tight">
+                Data e grupo sob consulta
+              </h2>
+              <p className="font-body text-zinc-600 dark:text-zinc-400">
                 Esse roteiro não tem vagas ou datas fixas - fale com a gente
                 pelo WhatsApp pra combinar data, tamanho do grupo e valor.
               </p>
             </div>
           ) : (
             <div id="datas" className="flex scroll-mt-8 flex-col gap-3">
-              <h2 className="font-semibold">Datas disponíveis</h2>
+              <h2 className="font-display text-verde-mata dark:text-pedra-sabao text-xl font-extrabold tracking-tight">
+                Datas disponíveis
+              </h2>
 
               {vagasOrdenadas.length === 0 ? (
-                <p className="text-zinc-600 dark:text-zinc-400">
+                <p className="font-body text-zinc-600 dark:text-zinc-400">
                   Nenhuma data cadastrada no momento.
                 </p>
               ) : (
@@ -148,10 +163,10 @@ export default async function RoteiroDetalhe({
                     return (
                       <li
                         key={vaga.id}
-                        className="flex items-center justify-between rounded-lg border border-zinc-200 p-4 dark:border-zinc-800"
+                        className="flex items-center justify-between gap-3 rounded-2xl border border-zinc-200 p-4 dark:border-zinc-800"
                       >
-                        <div className="flex flex-col">
-                          <span className="font-medium">
+                        <div className="font-body flex flex-col">
+                          <span className="font-semibold">
                             {formatarData(vaga.data)}
                           </span>
                           <span className="text-sm text-zinc-600 dark:text-zinc-400">
@@ -165,14 +180,14 @@ export default async function RoteiroDetalhe({
                           <button
                             type="button"
                             disabled
-                            className="rounded-full px-4 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500"
+                            className="font-display shrink-0 rounded-full px-4 py-2 text-xs font-semibold tracking-wide uppercase disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500"
                           >
                             Esgotado
                           </button>
                         ) : (
                           <Link
                             href={`/roteiros/${roteiro.slug}/checkout?vaga=${vaga.id}`}
-                            className="rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background"
+                            className="font-display bg-terracota hover:bg-terracota/90 text-pedra-sabao shrink-0 rounded-full px-4 py-2 text-xs font-semibold tracking-wide uppercase transition-colors"
                           >
                             Comprar
                           </Link>

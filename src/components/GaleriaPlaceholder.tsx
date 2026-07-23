@@ -9,7 +9,7 @@ const QUANTIDADE_SLIDES = 3;
 export function GaleriaPlaceholder() {
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex w-full snap-x snap-mandatory gap-0 overflow-x-auto rounded-lg [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="flex w-full snap-x snap-mandatory gap-0 overflow-x-auto rounded-2xl [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {Array.from({ length: QUANTIDADE_SLIDES }).map((_, indice) => (
           <FotoPlaceholder
             key={indice}
