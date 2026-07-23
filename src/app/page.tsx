@@ -1,6 +1,6 @@
 import { RoteiroCard } from "@/components/RoteiroCard";
 import { HeroCarousel } from "@/components/HeroCarousel";
-import { Header } from "@/components/Header";
+import { GlobalNav } from "@/components/GlobalNav";
 import { WhatsAppFloatButton } from "@/components/WhatsAppFloatButton";
 import { Depoimentos } from "@/components/Depoimentos";
 import { TexturaTopografica } from "@/components/TexturaTopografica";
@@ -19,7 +19,7 @@ export default async function Home() {
   return (
     <>
       <div className="relative">
-        <Header />
+        <GlobalNav variant="transparente" />
         <HeroCarousel />
       </div>
       <WhatsAppFloatButton />

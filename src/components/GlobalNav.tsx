@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 
 // Home/Roteiros/Sobre Nós/Contato - as 4 páginas que a navegação global
@@ -12,27 +13,67 @@ const LINKS = [
   { href: "/contato", label: "Contato" },
 ] as const;
 
+type GlobalNavProps = {
+  // "solido" (padrão): header opaco/sticky usado nas páginas de conteúdo
+  // (Parte 1). "transparente": overlay absoluto sobre o hero da Home -
+  // mesmo visual que Header.tsx tinha (gradiente, logo+wordmark de duas
+  // linhas, texto claro), sem virar sticky durante o scroll (some junto
+  // com o hero, igual já era antes).
+  variant?: "solido" | "transparente";
+};
+
 // Breakpoint md (mesmo usado em md:grid-cols-3 no resto do site) pro
 // corte desktop/mobile aqui - sm fica apertado pra 4 links + wordmark.
-export function GlobalNav() {
+export function GlobalNav({ variant = "solido" }: GlobalNavProps) {
   const [aberto, setAberto] = useState(false);
+  const transparente = variant === "transparente";
 
   return (
-    <header className="sticky top-0 z-30 border-b border-zinc-200 bg-pedra-sabao/95 backdrop-blur dark:border-zinc-800 dark:bg-verde-mata/95">
+    <header
+      className={
+        transparente
+          ? "absolute inset-x-0 top-0 z-30 bg-gradient-to-b from-verde-mata to-verde-mata/0"
+          : "sticky top-0 z-30 border-b border-zinc-200 bg-pedra-sabao/95 backdrop-blur dark:border-zinc-800 dark:bg-verde-mata/95"
+      }
+    >
       <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-8 py-4">
-        <Link
-          href="/"
-          className="font-wordmark text-sm uppercase tracking-wide text-verde-mata dark:text-pedra-sabao"
-        >
-          Roteiro Minas
-        </Link>
+        {transparente ? (
+          <Link href="/" className="flex items-center gap-3">
+            <Image
+              src="/logo.webp"
+              alt="Roteiro Minas"
+              width={36}
+              height={36}
+              className="rounded-full border border-pedra-sabao/50"
+            />
+            <span className="leading-none text-pedra-sabao">
+              <span className="font-wordmark block text-sm uppercase tracking-wide">
+                Roteiro
+              </span>
+              <span className="font-wordmark block text-[10px] uppercase tracking-[0.25em] opacity-80">
+                Minas
+              </span>
+            </span>
+          </Link>
+        ) : (
+          <Link
+            href="/"
+            className="font-wordmark text-sm uppercase tracking-wide text-verde-mata dark:text-pedra-sabao"
+          >
+            Roteiro Minas
+          </Link>
+        )}
 
         <nav className="hidden items-center gap-6 md:flex">
           {LINKS.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="font-body hover:text-terracota text-sm font-medium text-verde-mata transition-colors dark:text-pedra-sabao"
+              className={
+                transparente
+                  ? "font-body hover:text-ocre text-sm font-medium text-pedra-sabao transition-colors"
+                  : "font-body hover:text-terracota text-sm font-medium text-verde-mata transition-colors dark:text-pedra-sabao"
+              }
             >
               {link.label}
             </Link>
@@ -44,7 +85,11 @@ export function GlobalNav() {
           onClick={() => setAberto((atual) => !atual)}
           aria-label={aberto ? "Fechar menu" : "Abrir menu"}
           aria-expanded={aberto}
-          className="text-verde-mata flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-300 md:hidden dark:border-zinc-700 dark:text-pedra-sabao"
+          className={
+            transparente
+              ? "border-pedra-sabao/50 text-pedra-sabao flex h-10 w-10 items-center justify-center rounded-xl border md:hidden"
+              : "text-verde-mata flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-300 md:hidden dark:border-zinc-700 dark:text-pedra-sabao"
+          }
         >
           {aberto ? (
             <svg
@@ -75,14 +120,24 @@ export function GlobalNav() {
       </div>
 
       {aberto && (
-        <nav className="border-t border-zinc-200 bg-pedra-sabao/95 backdrop-blur md:hidden dark:border-zinc-800 dark:bg-verde-mata/95">
+        <nav
+          className={
+            transparente
+              ? "bg-verde-mata/95 backdrop-blur md:hidden"
+              : "border-t border-zinc-200 bg-pedra-sabao/95 backdrop-blur md:hidden dark:border-zinc-800 dark:bg-verde-mata/95"
+          }
+        >
           <div className="mx-auto flex w-full max-w-5xl flex-col px-8 py-2">
             {LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setAberto(false)}
-                className="font-body text-verde-mata border-zinc-200/60 border-b py-3 text-sm font-medium last:border-b-0 dark:text-pedra-sabao dark:border-zinc-800/60"
+                className={
+                  transparente
+                    ? "font-body border-pedra-sabao/20 text-pedra-sabao border-b py-3 text-sm font-medium last:border-b-0"
+                    : "font-body text-verde-mata border-zinc-200/60 border-b py-3 text-sm font-medium last:border-b-0 dark:text-pedra-sabao dark:border-zinc-800/60"
+                }
               >
                 {link.label}
               </Link>
