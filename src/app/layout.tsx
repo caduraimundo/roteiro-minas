@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Oswald, Mulish } from "next/font/google";
+import { Fraunces, Geist, Geist_Mono, Oswald, Mulish } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -26,6 +26,19 @@ const mulish = Mulish({
   weight: ["400", "500", "600", "700"],
 });
 
+// Fonte só do wordmark "Roteiro Minas" (não usar em headings/corpo -
+// aqueles continuam Oswald/Mulish via font-display/font-body).
+// `weight: "variable"` é obrigatório pro next/font aceitar `axes`
+// (erro de build confirmado ao tentar fixar weight: "700" junto com
+// axes) - os valores de SOFT/WONK/opsz/wght ficam todos por conta da
+// classe .font-wordmark em globals.css via font-variation-settings.
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
+  subsets: ["latin"],
+  weight: "variable",
+  axes: ["SOFT", "WONK", "opsz"],
+});
+
 export const metadata: Metadata = {
   title: "Roteiro Minas",
   description:
@@ -40,7 +53,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${oswald.variable} ${mulish.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${oswald.variable} ${mulish.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

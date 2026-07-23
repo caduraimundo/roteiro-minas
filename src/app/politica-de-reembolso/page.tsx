@@ -15,7 +15,7 @@ export default function PoliticaDeReembolso() {
             ←
           </Link>
           <div className="flex flex-col">
-            <span className="font-display text-[10px] uppercase tracking-[0.24em] text-zinc-500 dark:text-zinc-400">
+            <span className="font-wordmark text-[10px] uppercase tracking-[0.24em] text-zinc-500 dark:text-zinc-400">
               Roteiro Minas
             </span>
             <h1 className="font-display text-2xl font-semibold uppercase text-verde-mata dark:text-pedra-sabao">

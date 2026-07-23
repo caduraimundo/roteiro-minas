@@ -14,11 +14,11 @@ export function Header() {
             height={36}
             className="rounded-full border border-pedra-sabao/50"
           />
-          <span className="font-display leading-none text-pedra-sabao">
-            <span className="block text-sm font-semibold uppercase tracking-wide">
+          <span className="leading-none text-pedra-sabao">
+            <span className="font-wordmark block text-sm uppercase tracking-wide">
               Roteiro
             </span>
-            <span className="block text-[10px] font-normal uppercase tracking-[0.25em] opacity-80">
+            <span className="font-wordmark block text-[10px] uppercase tracking-[0.25em] opacity-80">
               Minas
             </span>
           </span>

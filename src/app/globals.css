@@ -10,10 +10,10 @@
    próximos cards). Cores fixas, sem variante de dark mode - são cor de
    marca, não semântica de fundo/texto. */
 :root {
-  --color-verde-mata: #1f3a2e;
-  --color-terracota: #c25a2c;
-  --color-ocre: #e7a15c;
-  --color-pedra-sabao: #ede8dd;
+  --color-verde-mata: #747c6d;
+  --color-terracota: #3e4029;
+  --color-ocre: #f3e6d4;
+  --color-pedra-sabao: #f6eee2;
 }
 
 @theme inline {
@@ -27,9 +27,10 @@
   --color-ocre: var(--color-ocre);
   --color-pedra-sabao: var(--color-pedra-sabao);
 
-  /* Oswald pro display (títulos, nomes de roteiro, headers de seção,
-     wordmark) e Mulish pro corpo/formulários - gera as utilities
-     font-display/font-body. */
+  /* Oswald pro display (títulos, nomes de roteiro, headers de seção) e
+     Mulish pro corpo/formulários - gera as utilities font-display/
+     font-body. Wordmark "Roteiro Minas" usa Fraunces à parte (ver
+     .font-wordmark abaixo), não estas duas. */
   --font-display: var(--font-oswald);
   --font-body: var(--font-mulish);
 }
@@ -45,4 +46,19 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Fonte exclusiva do wordmark "Roteiro Minas" (logotipo em texto) - não
+   usar em headings/corpo, aqueles continuam font-display/font-body.
+   Fraunces é carregada como variável (weight: "variable" em layout.tsx
+   - obrigatório pro next/font aceitar `axes`), então todos os eixos,
+   incluindo wght, são fixados aqui via font-variation-settings. */
+.font-wordmark {
+  font-family: var(--font-fraunces);
+  font-variation-settings:
+    "SOFT" 100,
+    "WONK" 1,
+    "opsz" 28,
+    "wght" 700;
+  font-weight: 700;
 }
