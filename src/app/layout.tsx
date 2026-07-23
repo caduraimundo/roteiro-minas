@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, Geist, Geist_Mono, Oswald, Mulish } from "next/font/google";
+import { Fraunces, Geist, Geist_Mono, Mulish } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,22 +12,18 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Fontes da marca (Claude Design) - disponíveis via font-display/font-body,
-// ainda não aplicadas em nenhuma tela (próximos cards).
-const oswald = Oswald({
-  variable: "--font-oswald",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
-
+// Fonte única pra heading e corpo (Oswald removido - decisão de reduzir
+// a plataforma pra 2 fontes). 800 incluído à parte pros headings
+// (font-display), que agora dependem só de peso/tamanho pra manter
+// contraste com o corpo (font-body), já que são a mesma família.
 const mulish = Mulish({
   variable: "--font-mulish",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 // Fonte só do wordmark "Roteiro Minas" (não usar em headings/corpo -
-// aqueles continuam Oswald/Mulish via font-display/font-body).
+// aqueles continuam Mulish via font-display/font-body).
 // `weight: "variable"` é obrigatório pro next/font aceitar `axes`
 // (erro de build confirmado ao tentar fixar weight: "700" junto com
 // axes) - os valores de SOFT/WONK/opsz/wght ficam todos por conta da
@@ -53,7 +49,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${oswald.variable} ${mulish.variable} ${fraunces.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${mulish.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

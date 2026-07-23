@@ -32,11 +32,14 @@
   --color-ocre: var(--color-ocre);
   --color-pedra-sabao: var(--color-pedra-sabao);
 
-  /* Oswald pro display (títulos, nomes de roteiro, headers de seção) e
-     Mulish pro corpo/formulários - gera as utilities font-display/
-     font-body. Wordmark "Roteiro Minas" usa Fraunces à parte (ver
-     .font-wordmark abaixo), não estas duas. */
-  --font-display: var(--font-oswald);
+  /* Mulish pra display (títulos, nomes de roteiro, headers de seção) e
+     pro corpo/formulários - só 2 fontes na plataforma agora (Oswald
+     removido), gera as utilities font-display/font-body a partir da
+     mesma família. Contraste entre heading e corpo passa a depender de
+     peso/tamanho (ver usos de font-display + font-extrabold), não mais
+     de fontes diferentes. Wordmark "Roteiro Minas" usa Fraunces à parte
+     (ver .font-wordmark abaixo), não estas duas. */
+  --font-display: var(--font-mulish);
   --font-body: var(--font-mulish);
 }
 

@@ -22,7 +22,7 @@ const TAXA_PLATAFORMA_PERCENTUAL = 6;
 
 // Tokens de visual reaproveitados das telas públicas já com o design
 // system aplicado (Home, Agenda, Detalhe do roteiro) - mesma paleta
-// verde-mata/terracota/ocre/pedra-sabão e tipografia Oswald/Mulish,
+// verde-mata/terracota/ocre/pedra-sabão e tipografia Mulish,
 // nada criado do zero.
 const CAMPO_CLASSE =
   "font-body rounded-xl border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-terracota focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-pedra-sabao";

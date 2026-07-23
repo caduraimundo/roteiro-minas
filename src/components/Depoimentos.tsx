@@ -39,7 +39,7 @@ function IconeInstagram({ className }: { className?: string }) {
 export function Depoimentos() {
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="font-display text-2xl font-semibold">
+      <h2 className="font-display text-2xl font-extrabold tracking-tight">
         O que dizem sobre a gente
       </h2>
 

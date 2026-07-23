@@ -45,7 +45,7 @@ export function HeroCarousel() {
         <span className="font-wordmark text-sm uppercase tracking-[0.3em]">
           Roteiro Minas
         </span>
-        <h1 className="font-display text-4xl font-semibold sm:text-5xl">
+        <h1 className="font-display text-4xl font-extrabold tracking-tight sm:text-5xl">
           Trilhas e cachoeiras de Minas Gerais
         </h1>
         <p className="font-body max-w-md text-base sm:text-lg">
