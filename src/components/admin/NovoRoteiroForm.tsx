@@ -10,7 +10,7 @@ const campoClasse =
 export function NovoRoteiroForm() {
   const router = useRouter();
   const [nome, setNome] = useState("");
-  const [tipo, setTipo] = useState<Roteiro["tipo"]>("fixo");
+  const [tipo, setTipo] = useState<Roteiro["tipo"]>("emissivel");
   const [descricao, setDescricao] = useState("");
   const [pdfUrl, setPdfUrl] = useState("");
   const [custoFixoExecucao, setCustoFixoExecucao] = useState("");
@@ -96,8 +96,8 @@ export function NovoRoteiroForm() {
           }
           className={campoClasse}
         >
-          <option value="fixo">Fixo</option>
-          <option value="personalizado">Personalizado</option>
+          <option value="emissivel">Emissível</option>
+          <option value="receptivo">Receptivo</option>
         </select>
       </label>
 

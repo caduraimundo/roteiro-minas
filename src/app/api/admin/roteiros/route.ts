@@ -6,7 +6,7 @@ import {
 import { createAdminClient } from "@/lib/supabase/admin";
 import { gerarSlug } from "@/lib/slug";
 
-const TIPOS_VALIDOS = ["fixo", "personalizado"];
+const TIPOS_VALIDOS = ["emissivel", "receptivo"];
 
 export async function GET() {
   try {
@@ -64,11 +64,32 @@ export async function POST(request: Request) {
   // insert quebraria com erro genérico do Postgres.
   if (typeof body?.tipo !== "string" || !TIPOS_VALIDOS.includes(body.tipo)) {
     return NextResponse.json(
-      { erro: "tipo deve ser 'fixo' ou 'personalizado'." },
+      { erro: "tipo deve ser 'emissivel' ou 'receptivo'." },
       { status: 400 },
     );
   }
   const tipo = body.tipo;
+
+  // preco_receptivo é obrigatório só pra tipo 'receptivo' (preço fixo,
+  // sem vaga) - pra 'emissivel' o preço vem por vaga (vagas.preco), então
+  // este campo fica sempre null, mesmo que venha preenchido por engano.
+  let precoReceptivo: number | null = null;
+  if (tipo === "receptivo") {
+    if (
+      typeof body?.preco_receptivo !== "number" ||
+      !Number.isFinite(body.preco_receptivo) ||
+      body.preco_receptivo <= 0
+    ) {
+      return NextResponse.json(
+        {
+          erro:
+            "preco_receptivo é obrigatório e deve ser um número positivo quando tipo = 'receptivo'.",
+        },
+        { status: 400 },
+      );
+    }
+    precoReceptivo = body.preco_receptivo;
+  }
 
   const slug = gerarSlug(nome);
   if (!slug) {
@@ -85,6 +106,7 @@ export async function POST(request: Request) {
       nome,
       descricao,
       tipo,
+      preco_receptivo: precoReceptivo,
       pdf_url: pdfUrl,
       slug,
       ativo: true,

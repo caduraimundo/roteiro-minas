@@ -6,8 +6,8 @@ import { formatarPreco } from "@/lib/format";
 import type { Roteiro } from "@/data/roteiros";
 
 const RUBRICAS_TIPO: Record<Roteiro["tipo"], string> = {
-  fixo: "Fixo",
-  personalizado: "Personalizado",
+  emissivel: "Emissível",
+  receptivo: "Receptivo",
 };
 
 const campoClasse =
@@ -134,8 +134,8 @@ export function RoteiroCabecalho({ roteiro }: { roteiro: Roteiro }) {
             }
             className={campoClasse}
           >
-            <option value="fixo">Fixo</option>
-            <option value="personalizado">Personalizado</option>
+            <option value="emissivel">Emissível</option>
+            <option value="receptivo">Receptivo</option>
           </select>
         </label>
 

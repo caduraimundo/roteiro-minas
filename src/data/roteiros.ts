@@ -11,20 +11,33 @@ export type Vaga = {
   created_at: string;
 };
 
+export type DataIndisponivel = {
+  data: string;
+};
+
 export type Roteiro = {
   id: string;
   slug: string;
   nome: string;
   descricao: string | null;
-  tipo: "fixo" | "personalizado";
+  tipo: "emissivel" | "receptivo";
   pdf_url: string | null;
   ativo: boolean;
   created_at: string;
   custo_fixo_execucao: number | null;
   custo_variavel_pessoa: number | null;
+  // Preço fixo pro tipo 'receptivo' - sempre null pra 'emissivel', que
+  // continua usando o preço por vaga (Vaga.preco).
+  preco_receptivo: number | null;
 };
 
-export type RoteiroComVagas = Roteiro & { vagas: Vaga[] };
+// Sempre presente (mesmo pra roteiros emissíveis, onde vem vazio) -
+// mesmo tratamento simétrico já dado a `vagas` abaixo. Só tem conteúdo
+// de fato pra roteiros receptivos (bloqueio manual de data pelo admin).
+export type RoteiroComVagas = Roteiro & {
+  vagas: Vaga[];
+  datas_indisponiveis: DataIndisponivel[];
+};
 
 function vagaTemVagaDisponivel(vaga: Vaga) {
   return vaga.status === "aberta" && vaga.vagas_disponiveis > 0;
@@ -40,18 +53,26 @@ export function proximaVagaDisponivel(vagas: Vaga[]): Vaga | null {
   );
 }
 
+// datas_indisponiveis: embed filtrado (sem !inner) - o roteiro continua
+// retornado mesmo sem nenhuma linha bloqueada (emissíveis, ou
+// receptivos sem bloqueio ativo no momento), só a lista de datas vem
+// vazia nesse caso.
+const SELECT_ROTEIRO_COM_VAGAS =
+  "*, vagas(*), datas_indisponiveis:roteiro_datas_indisponiveis(data)";
+
 export async function getRoteirosAtivos(): Promise<RoteiroComVagas[]> {
   const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("roteiros")
-    .select("*, vagas(*)")
+    .select(SELECT_ROTEIRO_COM_VAGAS)
     .eq("ativo", true)
+    .eq("datas_indisponiveis.ativo", true)
     .order("nome");
 
   if (error) throw error;
 
-  return data as RoteiroComVagas[];
+  return data as unknown as RoteiroComVagas[];
 }
 
 export async function getRoteiroPorSlug(
@@ -61,14 +82,15 @@ export async function getRoteiroPorSlug(
 
   const { data, error } = await supabase
     .from("roteiros")
-    .select("*, vagas(*)")
+    .select(SELECT_ROTEIRO_COM_VAGAS)
     .eq("slug", slug)
     .eq("ativo", true)
+    .eq("datas_indisponiveis.ativo", true)
     .maybeSingle();
 
   if (error) throw error;
 
-  return data as RoteiroComVagas | null;
+  return data as unknown as RoteiroComVagas | null;
 }
 
 export async function getVagaComRoteiro(

@@ -8,8 +8,8 @@ import { PopupCallbackNotifier } from "@/components/PopupCallbackNotifier";
 import type { Roteiro } from "@/data/roteiros";
 
 const RUBRICAS_TIPO: Record<Roteiro["tipo"], string> = {
-  fixo: "Fixo",
-  personalizado: "Personalizado",
+  emissivel: "Emissível",
+  receptivo: "Receptivo",
 };
 
 export default async function AdminHome() {
