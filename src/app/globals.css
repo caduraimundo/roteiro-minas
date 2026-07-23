@@ -37,8 +37,8 @@
      removido), gera as utilities font-display/font-body a partir da
      mesma família. Contraste entre heading e corpo passa a depender de
      peso/tamanho (ver usos de font-display + font-extrabold), não mais
-     de fontes diferentes. Wordmark "Roteiro Minas" usa Fraunces à parte
-     (ver .font-wordmark abaixo), não estas duas. */
+     de fontes diferentes. Wordmark "Roteiro Minas" usa TAN Headline à
+     parte (ver .font-wordmark abaixo), não estas duas. */
   --font-display: var(--font-mulish);
   --font-body: var(--font-mulish);
 }
@@ -51,15 +51,8 @@ body {
 
 /* Fonte exclusiva do wordmark "Roteiro Minas" (logotipo em texto) - não
    usar em headings/corpo, aqueles continuam font-display/font-body.
-   Fraunces é carregada como variável (weight: "variable" em layout.tsx
-   - obrigatório pro next/font aceitar `axes`), então todos os eixos,
-   incluindo wght, são fixados aqui via font-variation-settings. */
+   TAN Headline (fonte licenciada, carregada local em layout.tsx) só tem
+   o corte Regular, sem eixos variáveis como a Fraunces anterior. */
 .font-wordmark {
-  font-family: var(--font-fraunces);
-  font-variation-settings:
-    "SOFT" 100,
-    "WONK" 1,
-    "opsz" 28,
-    "wght" 700;
-  font-weight: 700;
+  font-family: var(--font-tan-headline);
 }
