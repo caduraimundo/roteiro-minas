@@ -19,23 +19,6 @@ const DEPOIMENTOS_PLACEHOLDER = [
   },
 ];
 
-function IconeInstagram({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      className={className}
-      aria-hidden="true"
-    >
-      <rect x="3" y="3" width="18" height="18" rx="5" />
-      <circle cx="12" cy="12" r="4" />
-      <circle cx="17.2" cy="6.8" r="0.6" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
-
 export function Depoimentos() {
   return (
     <section className="flex flex-col gap-4">
@@ -52,16 +35,9 @@ export function Depoimentos() {
             <p className="font-body text-sm text-zinc-700 dark:text-zinc-300">
               &ldquo;{depoimento.texto}&rdquo;
             </p>
-            <div className="flex items-center gap-2">
-              <span className="font-body text-sm font-medium">
-                {depoimento.nome}
-              </span>
-              {/* Só indicador visual - sem link/href, dado que os
-                  depoimentos ainda são placeholder. */}
-              <span className="font-body flex items-center gap-1 text-xs text-zinc-500 dark:text-zinc-500">
-                <IconeInstagram className="h-3.5 w-3.5" />@{depoimento.usuario}
-              </span>
-            </div>
+            <span className="font-body text-sm font-medium">
+              {depoimento.nome}
+            </span>
           </div>
         ))}
       </div>
