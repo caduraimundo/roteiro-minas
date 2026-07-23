@@ -4,14 +4,11 @@ import { Header } from "@/components/Header";
 import { WhatsAppFloatButton } from "@/components/WhatsAppFloatButton";
 import { Depoimentos } from "@/components/Depoimentos";
 import { TexturaTopografica } from "@/components/TexturaTopografica";
+import { Footer } from "@/components/Footer";
 import { getRoteirosAtivos } from "@/data/roteiros";
-import { getConfiguracoesSite } from "@/data/configuracoes";
 
 export default async function Home() {
-  const [roteiros, configuracoes] = await Promise.all([
-    getRoteirosAtivos(),
-    getConfiguracoesSite(),
-  ]);
+  const roteiros = await getRoteirosAtivos();
 
   // "Próximo roteiro" e contagem de vaga não fazem sentido pro tipo
   // receptivo (preço fixo, sem vagas) - por isso ele nunca entra nesse
@@ -29,7 +26,7 @@ export default async function Home() {
 
       <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-14 p-8">
         <section className="flex flex-col gap-5">
-          <h2 className="font-display text-2xl font-semibold">
+          <h2 className="font-display text-2xl font-extrabold tracking-tight">
             Próximos roteiros
           </h2>
 
@@ -52,7 +49,7 @@ export default async function Home() {
               <span className="font-body text-terracota text-xs font-semibold tracking-[0.2em] uppercase">
                 Sob encomenda
               </span>
-              <h2 className="font-display text-2xl font-semibold">
+              <h2 className="font-display text-2xl font-extrabold tracking-tight">
                 Roteiros receptivos
               </h2>
               <p className="font-body max-w-2xl text-sm text-zinc-600 dark:text-zinc-400">
@@ -76,17 +73,7 @@ export default async function Home() {
         <Depoimentos />
       </div>
 
-      <footer className="border-t border-zinc-200 py-6 text-center dark:border-zinc-800">
-        <p className="font-body text-xs text-zinc-500 dark:text-zinc-500">
-          Cadastur {configuracoes?.cadastur_numero ?? "—"}
-        </p>
-        <p className="font-body text-xs text-zinc-500 dark:text-zinc-500">
-          {configuracoes?.stats_seguidores_instagram ?? "—"} seguidores no
-          Instagram · {configuracoes?.stats_roteiros_realizados ?? "—"}{" "}
-          roteiros realizados · avaliação média{" "}
-          {configuracoes?.stats_avaliacao_media ?? "—"}
-        </p>
-      </footer>
+      <Footer />
     </>
   );
 }

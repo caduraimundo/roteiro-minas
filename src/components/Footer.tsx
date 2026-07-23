@@ -1,24 +1,42 @@
 import { getConfiguracoesSite } from "@/data/configuracoes";
 
-// Mesmo conteúdo/estilo do rodapé já usado na Home (src/app/page.tsx) -
-// extraído aqui pra reutilizar em páginas novas (Termos, Política de
-// reembolso) sem duplicar a busca de configuracoes_site nem o JSX. A
-// Home continua com o rodapé inline por enquanto, pra não misturar
-// refactor com as páginas novas desta rodada.
+// Usado na Home, Termos e Política de reembolso - só a Home tem o
+// WhatsAppFloatButton (fixed bottom-right, h-14 = 56px + bottom-6 =
+// 24px de offset), por isso o padding-bottom extra no mobile aqui, pra
+// a última linha nunca ficar escondida atrás do botão quando o texto de
+// estatísticas quebra em várias linhas. Nas outras duas páginas esse
+// espaço a mais é só uma folga inofensiva.
 export async function Footer() {
   const configuracoes = await getConfiguracoesSite();
 
   return (
-    <footer className="border-t border-zinc-200 py-6 text-center dark:border-zinc-800">
-      <p className="font-body text-xs text-zinc-500 dark:text-zinc-500">
-        Cadastur {configuracoes?.cadastur_numero ?? "—"}
-      </p>
-      <p className="font-body text-xs text-zinc-500 dark:text-zinc-500">
-        {configuracoes?.stats_seguidores_instagram ?? "—"} seguidores no
-        Instagram · {configuracoes?.stats_roteiros_realizados ?? "—"}{" "}
-        roteiros realizados · avaliação média{" "}
-        {configuracoes?.stats_avaliacao_media ?? "—"}
-      </p>
+    <footer className="border-t border-zinc-200 dark:border-zinc-800">
+      <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-3 px-8 pt-8 pb-24 text-center sm:pb-10">
+        <div className="font-body flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm font-medium text-zinc-600 dark:text-zinc-400">
+          <span>
+            {configuracoes?.stats_seguidores_instagram ?? "—"} seguidores no
+            Instagram
+          </span>
+          <span
+            aria-hidden="true"
+            className="h-1 w-1 rounded-full bg-zinc-300 dark:bg-zinc-700"
+          />
+          <span>
+            {configuracoes?.stats_roteiros_realizados ?? "—"} roteiros
+            realizados
+          </span>
+          <span
+            aria-hidden="true"
+            className="h-1 w-1 rounded-full bg-zinc-300 dark:bg-zinc-700"
+          />
+          <span>
+            avaliação média {configuracoes?.stats_avaliacao_media ?? "—"}
+          </span>
+        </div>
+        <p className="font-body text-xs text-zinc-500 dark:text-zinc-500">
+          Cadastur {configuracoes?.cadastur_numero ?? "—"}
+        </p>
+      </div>
     </footer>
   );
 }
