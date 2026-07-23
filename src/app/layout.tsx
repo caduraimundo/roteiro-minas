@@ -49,9 +49,15 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${mulish.variable} ${fraunces.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${mulish.variable} ${fraunces.variable} antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      {/* min-h-dvh (não min-h-full) - no mobile, a barra de endereço
+          aparente/some durante o scroll, e min-h-full baseado em % herda
+          a "large viewport" (barra recolhida), maior que o que está
+          visível no carregamento inicial. Isso deixava o rodapé sobrando
+          espaço abaixo do fold real no mobile (só lá, o desktop não tem
+          barra dinâmica). dvh acompanha o viewport visível de verdade. */}
+      <body className="min-h-dvh flex flex-col">{children}</body>
     </html>
   );
 }
