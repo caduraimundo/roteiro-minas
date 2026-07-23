@@ -21,6 +21,9 @@ export function RoteiroCabecalho({ roteiro }: { roteiro: Roteiro }) {
   const [nome, setNome] = useState(roteiro.nome);
   const [descricao, setDescricao] = useState(roteiro.descricao ?? "");
   const [tipo, setTipo] = useState<Roteiro["tipo"]>(roteiro.tipo);
+  const [precoReceptivo, setPrecoReceptivo] = useState(
+    roteiro.preco_receptivo !== null ? String(roteiro.preco_receptivo) : "",
+  );
   const [pdfUrl, setPdfUrl] = useState(roteiro.pdf_url ?? "");
   const [custoFixoExecucao, setCustoFixoExecucao] = useState(
     roteiro.custo_fixo_execucao !== null
@@ -39,6 +42,9 @@ export function RoteiroCabecalho({ roteiro }: { roteiro: Roteiro }) {
     setNome(roteiro.nome);
     setDescricao(roteiro.descricao ?? "");
     setTipo(roteiro.tipo);
+    setPrecoReceptivo(
+      roteiro.preco_receptivo !== null ? String(roteiro.preco_receptivo) : "",
+    );
     setPdfUrl(roteiro.pdf_url ?? "");
     setCustoFixoExecucao(
       roteiro.custo_fixo_execucao !== null
@@ -57,6 +63,15 @@ export function RoteiroCabecalho({ roteiro }: { roteiro: Roteiro }) {
   async function salvarEdicao(evento: React.FormEvent) {
     evento.preventDefault();
     setErro(null);
+
+    // Mesma regra da API (PATCH /api/admin/roteiros/[id]): preco_receptivo
+    // é obrigatório quando tipo = 'receptivo' - valida aqui antes pra não
+    // depender só do erro 400 da API.
+    if (tipo === "receptivo" && !precoReceptivo.trim()) {
+      setErro("Preço é obrigatório para roteiro receptivo.");
+      return;
+    }
+
     setEnviando(true);
 
     const resposta = await fetch(`/api/admin/roteiros/${roteiro.id}`, {
@@ -66,6 +81,8 @@ export function RoteiroCabecalho({ roteiro }: { roteiro: Roteiro }) {
         nome,
         descricao: descricao || null,
         tipo,
+        preco_receptivo:
+          tipo === "receptivo" ? Number(precoReceptivo) : null,
         pdf_url: pdfUrl || null,
         custo_fixo_execucao: custoFixoExecucao.trim()
           ? Number(custoFixoExecucao)
@@ -138,6 +155,21 @@ export function RoteiroCabecalho({ roteiro }: { roteiro: Roteiro }) {
             <option value="receptivo">Receptivo</option>
           </select>
         </label>
+
+        {tipo === "receptivo" && (
+          <label className="flex flex-col gap-1 text-sm">
+            Preço (roteiro receptivo - sem contagem de vaga)
+            <input
+              type="number"
+              required
+              min="0.01"
+              step="0.01"
+              value={precoReceptivo}
+              onChange={(evento) => setPrecoReceptivo(evento.target.value)}
+              className={campoClasse}
+            />
+          </label>
+        )}
 
         <label className="flex flex-col gap-1 text-sm">
           Descrição
@@ -232,6 +264,15 @@ export function RoteiroCabecalho({ roteiro }: { roteiro: Roteiro }) {
       {roteiro.descricao && (
         <p className="text-sm text-zinc-600 dark:text-zinc-400">
           {roteiro.descricao}
+        </p>
+      )}
+
+      {roteiro.tipo === "receptivo" && (
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+          Preço:{" "}
+          {roteiro.preco_receptivo !== null
+            ? formatarPreco(roteiro.preco_receptivo)
+            : "não cadastrado"}
         </p>
       )}
 

@@ -11,6 +11,7 @@ export function NovoRoteiroForm() {
   const router = useRouter();
   const [nome, setNome] = useState("");
   const [tipo, setTipo] = useState<Roteiro["tipo"]>("emissivel");
+  const [precoReceptivo, setPrecoReceptivo] = useState("");
   const [descricao, setDescricao] = useState("");
   const [pdfUrl, setPdfUrl] = useState("");
   const [custoFixoExecucao, setCustoFixoExecucao] = useState("");
@@ -21,6 +22,15 @@ export function NovoRoteiroForm() {
   async function handleSubmit(evento: React.FormEvent) {
     evento.preventDefault();
     setErro(null);
+
+    // Mesma regra da API (POST /api/admin/roteiros): preco_receptivo é
+    // obrigatório quando tipo = 'receptivo' - valida aqui antes pra não
+    // depender só do erro 400 da API.
+    if (tipo === "receptivo" && !precoReceptivo.trim()) {
+      setErro("Preço é obrigatório para roteiro receptivo.");
+      return;
+    }
+
     setEnviando(true);
 
     const resposta = await fetch("/api/admin/roteiros", {
@@ -29,6 +39,8 @@ export function NovoRoteiroForm() {
       body: JSON.stringify({
         nome,
         tipo,
+        preco_receptivo:
+          tipo === "receptivo" ? Number(precoReceptivo) : undefined,
         descricao: descricao || undefined,
         pdf_url: pdfUrl || undefined,
       }),
@@ -100,6 +112,21 @@ export function NovoRoteiroForm() {
           <option value="receptivo">Receptivo</option>
         </select>
       </label>
+
+      {tipo === "receptivo" && (
+        <label className="flex flex-col gap-1 text-sm">
+          Preço (roteiro receptivo - sem contagem de vaga)
+          <input
+            type="number"
+            required
+            min="0.01"
+            step="0.01"
+            value={precoReceptivo}
+            onChange={(evento) => setPrecoReceptivo(evento.target.value)}
+            className={campoClasse}
+          />
+        </label>
+      )}
 
       <label className="flex flex-col gap-1 text-sm">
         Descrição (opcional)
