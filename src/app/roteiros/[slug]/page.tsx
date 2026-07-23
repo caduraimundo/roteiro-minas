@@ -28,6 +28,20 @@ export default async function RoteiroDetalhe({
   );
   const vagaMaisBarata = proximaVagaDisponivel(roteiro.vagas);
 
+  // Receptivo não usa o sistema de vagas (roteiro.vagas vem sempre
+  // vazio pra esse tipo) - preço é o fixo cadastrado e o CTA leva pro
+  // WhatsApp em vez de reservar uma vaga específica.
+  const isReceptivo = roteiro.tipo === "receptivo";
+
+  const precoExibido = isReceptivo
+    ? roteiro.preco_receptivo
+    : (vagaMaisBarata?.preco ?? null);
+
+  const mensagemWhatsapp = encodeURIComponent(
+    `Olá! Quero saber mais sobre o roteiro ${roteiro.nome}.`,
+  );
+  const whatsappHref = `https://wa.me/553184743523?text=${mensagemWhatsapp}`;
+
   // Destino do botão de reserva (usado tanto na barra fixa do mobile
   // quanto no card lateral do desktop - mesma decisão, só muda onde
   // aparece). Na referência (Claude Design / Airbnb Experiences) cada
@@ -109,57 +123,67 @@ export default async function RoteiroDetalhe({
             </div>
           </div>
 
-          <div id="datas" className="flex scroll-mt-8 flex-col gap-3">
-            <h2 className="font-semibold">Datas disponíveis</h2>
-
-            {vagasOrdenadas.length === 0 ? (
+          {isReceptivo ? (
+            <div className="flex flex-col gap-3">
+              <h2 className="font-semibold">Data e grupo sob consulta</h2>
               <p className="text-zinc-600 dark:text-zinc-400">
-                Nenhuma data cadastrada no momento.
+                Esse roteiro não tem vagas ou datas fixas - fale com a gente
+                pelo WhatsApp pra combinar data, tamanho do grupo e valor.
               </p>
-            ) : (
-              <ul className="flex flex-col gap-2">
-                {vagasOrdenadas.map((vaga) => {
-                  const esgotada =
-                    vaga.status !== "aberta" || vaga.vagas_disponiveis <= 0;
+            </div>
+          ) : (
+            <div id="datas" className="flex scroll-mt-8 flex-col gap-3">
+              <h2 className="font-semibold">Datas disponíveis</h2>
 
-                  return (
-                    <li
-                      key={vaga.id}
-                      className="flex items-center justify-between rounded-lg border border-zinc-200 p-4 dark:border-zinc-800"
-                    >
-                      <div className="flex flex-col">
-                        <span className="font-medium">
-                          {formatarData(vaga.data)}
-                        </span>
-                        <span className="text-sm text-zinc-600 dark:text-zinc-400">
-                          {formatarPreco(vaga.preco)}
-                          {!esgotada &&
-                            ` · ${vaga.vagas_disponiveis} vaga(s) disponível(is)`}
-                        </span>
-                      </div>
+              {vagasOrdenadas.length === 0 ? (
+                <p className="text-zinc-600 dark:text-zinc-400">
+                  Nenhuma data cadastrada no momento.
+                </p>
+              ) : (
+                <ul className="flex flex-col gap-2">
+                  {vagasOrdenadas.map((vaga) => {
+                    const esgotada =
+                      vaga.status !== "aberta" || vaga.vagas_disponiveis <= 0;
 
-                      {esgotada ? (
-                        <button
-                          type="button"
-                          disabled
-                          className="rounded-full px-4 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500"
-                        >
-                          Esgotado
-                        </button>
-                      ) : (
-                        <Link
-                          href={`/roteiros/${roteiro.slug}/checkout?vaga=${vaga.id}`}
-                          className="rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background"
-                        >
-                          Comprar
-                        </Link>
-                      )}
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </div>
+                    return (
+                      <li
+                        key={vaga.id}
+                        className="flex items-center justify-between rounded-lg border border-zinc-200 p-4 dark:border-zinc-800"
+                      >
+                        <div className="flex flex-col">
+                          <span className="font-medium">
+                            {formatarData(vaga.data)}
+                          </span>
+                          <span className="text-sm text-zinc-600 dark:text-zinc-400">
+                            {formatarPreco(vaga.preco)}
+                            {!esgotada &&
+                              ` · ${vaga.vagas_disponiveis} vaga(s) disponível(is)`}
+                          </span>
+                        </div>
+
+                        {esgotada ? (
+                          <button
+                            type="button"
+                            disabled
+                            className="rounded-full px-4 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500"
+                          >
+                            Esgotado
+                          </button>
+                        ) : (
+                          <Link
+                            href={`/roteiros/${roteiro.slug}/checkout?vaga=${vaga.id}`}
+                            className="rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background"
+                          >
+                            Comprar
+                          </Link>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Card lateral sticky - só no desktop. Mesmo preço/CTA da barra
@@ -171,11 +195,20 @@ export default async function RoteiroDetalhe({
                 A partir de
               </div>
               <div className="font-display text-verde-mata dark:text-pedra-sabao text-2xl font-semibold">
-                {vagaMaisBarata ? formatarPreco(vagaMaisBarata.preco) : "—"}
+                {precoExibido != null ? formatarPreco(precoExibido) : "—"}
               </div>
             </div>
 
-            {!vagaMaisBarata ? (
+            {isReceptivo ? (
+              <a
+                href={whatsappHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-display bg-terracota hover:bg-terracota/90 text-pedra-sabao w-full rounded-xl py-4 text-center text-sm font-semibold tracking-wide uppercase transition-colors"
+              >
+                Falar no WhatsApp
+              </a>
+            ) : !vagaMaisBarata ? (
               <div className="font-display w-full cursor-not-allowed rounded-xl bg-zinc-200 py-4 text-center text-sm font-semibold tracking-wide text-zinc-500 uppercase dark:bg-zinc-800 dark:text-zinc-500">
                 Esgotado
               </div>
@@ -198,11 +231,20 @@ export default async function RoteiroDetalhe({
             A partir de
           </div>
           <div className="font-display text-verde-mata dark:text-pedra-sabao text-xl font-semibold">
-            {vagaMaisBarata ? formatarPreco(vagaMaisBarata.preco) : "—"}
+            {precoExibido != null ? formatarPreco(precoExibido) : "—"}
           </div>
         </div>
 
-        {!vagaMaisBarata ? (
+        {isReceptivo ? (
+          <a
+            href={whatsappHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-display bg-terracota hover:bg-terracota/90 text-pedra-sabao flex-1 rounded-xl py-4 text-center text-sm font-semibold tracking-wide uppercase transition-colors"
+          >
+            Falar no WhatsApp
+          </a>
+        ) : !vagaMaisBarata ? (
           <div className="font-display flex-1 cursor-not-allowed rounded-xl bg-zinc-200 py-4 text-center text-sm font-semibold tracking-wide text-zinc-500 uppercase dark:bg-zinc-800 dark:text-zinc-500">
             Esgotado
           </div>
