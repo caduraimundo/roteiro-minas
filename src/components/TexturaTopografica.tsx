@@ -9,7 +9,16 @@
 // em data URI não consegue ler custom properties da página de forma
 // confiável entre navegadores. Se o tom de ocre mudar, atualizar os dois
 // lugares.
-const OCRE = "#E7A15C";
+//
+// Troca de paleta (sessão de rebranding): o novo ocre (#F3E6D4) tem
+// contraste muito baixo contra o branco - 5 dos 6 usos deste componente
+// são variant="divisor" sobre fundo branco/quase-branco (não há
+// wrapper com fundo pedra-sabão nessas páginas), onde a linha ficaria
+// quase invisível. Usado o fallback combinado com o Cadu (#C3CEBD,
+// verde claro) em vez do valor de ocre em si, por ter mais contraste
+// tanto no branco quanto no overlay escuro do hero (o único uso
+// variant="fundo"). Confirmar visualmente em produção.
+const OCRE = "#C3CEBD";
 
 const SVG_CURVA_DE_NIVEL = encodeURIComponent(
   `<svg xmlns="http://www.w3.org/2000/svg" width="220" height="140">

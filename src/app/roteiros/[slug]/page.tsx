@@ -165,7 +165,7 @@ export default async function RoteiroDetalhe({
         {/* Card lateral sticky - só no desktop. Mesmo preço/CTA da barra
             fixa do mobile abaixo, sem recalcular nada. */}
         <aside className="hidden md:sticky md:top-8 md:block">
-          <div className="border-verde-mata/15 bg-pedra-sabao flex flex-col gap-4 rounded-2xl border p-6 shadow-[0_10px_26px_rgba(46,58,34,0.1)] dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="border-verde-mata/15 bg-pedra-sabao flex flex-col gap-4 rounded-2xl border p-6 shadow-[0_10px_26px_rgba(116,124,109,0.1)] dark:border-zinc-800 dark:bg-zinc-900">
             <div>
               <div className="font-body text-[11px] tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
                 A partir de

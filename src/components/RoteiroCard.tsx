@@ -14,7 +14,7 @@ export function RoteiroCard({ roteiro }: { roteiro: RoteiroComVagas }) {
   const esgotado = vaga === null;
 
   const classeBase =
-    "flex flex-col overflow-hidden rounded-[20px] border border-zinc-200 shadow-[0_10px_26px_rgba(46,58,34,0.1)] dark:border-zinc-800";
+    "flex flex-col overflow-hidden rounded-[20px] border border-zinc-200 shadow-[0_10px_26px_rgba(116,124,109,0.1)] dark:border-zinc-800";
 
   const conteudo = (
     <>
