@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { Footer } from "@/components/Footer";
+import { GlobalNav } from "@/components/GlobalNav";
 import { TexturaTopografica } from "@/components/TexturaTopografica";
 
 // Mesmo número usado em RoteiroCard/WhatsAppFloatButton/roteiro detalhe.
@@ -12,25 +12,13 @@ export default function Contato() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <header className="sticky top-0 z-20 border-b border-zinc-200 bg-pedra-sabao/95 backdrop-blur dark:border-zinc-800 dark:bg-verde-mata/95">
-        <div className="mx-auto flex w-full max-w-5xl items-center gap-3 px-8 py-4">
-          <Link
-            href="/"
-            aria-label="Voltar para o início"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-zinc-300 text-lg text-verde-mata dark:border-zinc-700 dark:text-pedra-sabao"
-          >
-            ←
-          </Link>
-          <div className="flex flex-col">
-            <span className="font-wordmark text-[10px] uppercase tracking-[0.24em] text-zinc-500 dark:text-zinc-400">
-              Roteiro Minas
-            </span>
-            <h1 className="font-display text-verde-mata dark:text-pedra-sabao text-2xl font-extrabold tracking-tight">
-              Contato
-            </h1>
-          </div>
-        </div>
-      </header>
+      <GlobalNav />
+
+      <div className="mx-auto flex w-full max-w-5xl px-8 py-4">
+        <h1 className="font-display text-verde-mata dark:text-pedra-sabao text-2xl font-extrabold tracking-tight">
+          Contato
+        </h1>
+      </div>
 
       <div className="relative h-12 w-full">
         <TexturaTopografica variant="divisor" />
