@@ -42,7 +42,7 @@ export function HeroCarousel() {
 
       {/* Texto fixo - não muda com o slide, só o fundo troca. */}
       <div className="relative z-10 flex flex-col items-center gap-3 px-8 text-center text-pedra-sabao">
-        <span className="font-wordmark text-sm uppercase tracking-[0.3em]">
+        <span className="font-wordmark text-sm uppercase tracking-[0.1em]">
           Roteiro Minas
         </span>
         <h1 className="font-display text-4xl font-extrabold tracking-tight sm:text-5xl">
