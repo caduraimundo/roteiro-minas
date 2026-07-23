@@ -10,7 +10,7 @@ export default async function AgendaRoteiros() {
   // Mesma separação já resolvida na Home - "próximo"/vaga não se aplica
   // a receptivo (preço fixo, sem vagas), então cada tipo tem sua própria
   // seção em vez de dividir um grid único.
-  const emissiveis = roteiros.filter((roteiro) => roteiro.tipo === "emissivel");
+  const emissiveis = roteiros.filter((roteiro) => roteiro.tipo !== "receptivo");
   const receptivos = roteiros.filter((roteiro) => roteiro.tipo === "receptivo");
 
   return (
