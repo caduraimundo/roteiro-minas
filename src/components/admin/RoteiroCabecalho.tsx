@@ -242,7 +242,7 @@ export function RoteiroCabecalho({ roteiro }: { roteiro: Roteiro }) {
         <div className="flex flex-col">
           <h1 className="text-xl font-semibold">{roteiro.nome}</h1>
           <span className="text-sm text-zinc-600 dark:text-zinc-400">
-            {RUBRICAS_TIPO[roteiro.tipo]}
+            {RUBRICAS_TIPO[roteiro.tipo] ?? roteiro.tipo}
           </span>
         </div>
 

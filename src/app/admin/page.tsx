@@ -103,7 +103,7 @@ export default async function AdminHome() {
                 <div className="flex flex-col">
                   <span className="font-medium">{roteiro.nome}</span>
                   <span className="text-sm text-zinc-600 dark:text-zinc-400">
-                    {RUBRICAS_TIPO[roteiro.tipo]}
+                    {RUBRICAS_TIPO[roteiro.tipo] ?? roteiro.tipo}
                   </span>
                 </div>
 
