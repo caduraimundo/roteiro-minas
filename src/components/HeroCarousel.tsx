@@ -7,7 +7,7 @@ import { TexturaTopografica } from "@/components/TexturaTopografica";
 // saíram de public/hero (não usados em lugar nenhum).
 export function HeroCarousel() {
   return (
-    <div className="relative flex h-[52vh] min-h-[380px] w-full items-center justify-center overflow-hidden">
+    <div className="relative flex h-[52dvh] max-h-[540px] min-h-[420px] w-full flex-col overflow-hidden">
       <Image
         src="/hero/hero-1.jpg"
         alt=""
@@ -25,12 +25,29 @@ export function HeroCarousel() {
 
       <TexturaTopografica variant="fundo" className="opacity-60" />
 
-      {/* Texto fixo - gap um pouco maior (4 em vez de 3) e mais respiro
-          antes do CTA (mt-3 em vez de mt-2): a altura do hero caiu de
-          60vh pra 52vh (menos vão vazio sobrando abaixo do botão), e a
-          pilha central ganha uma respiração um pouco mais generosa pra
-          preencher melhor o espaço, sem exagerar. */}
-      <div className="relative z-10 flex flex-col items-center gap-4 px-8 text-center text-pedra-sabao">
+      {/* Espaçador reservando a altura do GlobalNav (variante
+          "transparente", overlay absoluto - não empurra conteúdo por
+          conta própria). Altura real estimada no mobile: py-4 do header
+          (32px) + o botão de hambúrguer h-10 (40px, mais alto que o
+          logo de 36px) ≈ 72px. h-24 (96px) dá ~24px de folga de
+          segurança, já que não dá pra validar visualmente aqui.
+          Antes o texto era centralizado simetricamente no hero
+          inteiro (items-center no container de fora) - com padding-top
+          simples isso só desloca o conteúdo pela METADE do valor
+          adicionado (a caixa centralizada fica mais alta, mas o centro
+          dela se desloca só a metade), o que não garante nada contra
+          um h1 de altura variável (3 linhas em telas estreitas como
+          iPhone SE/13). Esse espaçador é um irmão físico ANTES do bloco
+          de texto (flex-col) - o texto nunca pode desenhar acima dele,
+          garantido estruturalmente, não por estimativa de
+          centralização. */}
+      <div aria-hidden="true" className="h-24 shrink-0" />
+
+      {/* Texto centralizado dentro do espaço que sobra (depois do
+          espaçador acima), não mais no hero inteiro - resolve a
+          sobreposição sem deixar o texto colado no topo em telas
+          altas. */}
+      <div className="relative z-10 flex flex-1 flex-col items-center justify-center gap-4 px-8 text-center text-pedra-sabao">
         <span className="font-wordmark text-sm uppercase tracking-[0.1em]">
           Roteiro Minas
         </span>
