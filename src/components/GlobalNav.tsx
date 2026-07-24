@@ -91,9 +91,12 @@ export function GlobalNav({ variant = "solido" }: GlobalNavProps) {
         <nav className="hidden items-center gap-6 md:flex">
           {LINKS.map((link) => {
             const ativo = linkEstaAtivo(pathname, link.href);
-            // Página atual: font-semibold em vez de font-medium - só o
-            // peso muda, sem trocar de cor, pra comunicar "aqui" sem
-            // gritar.
+            // Página atual: sublinhado tipo "tab" (border-bottom, não
+            // text-decoration) + font-bold - border-current usa a
+            // mesma cor do texto já definida por variante, sem
+            // duplicar lógica de cor. border-b-2 sempre presente
+            // (transparente quando inativo) pra não empurrar o layout
+            // quando o link fica ativo.
             return (
               <Link
                 key={link.href}
@@ -101,8 +104,8 @@ export function GlobalNav({ variant = "solido" }: GlobalNavProps) {
                 aria-current={ativo ? "page" : undefined}
                 className={
                   transparente
-                    ? `font-body hover:text-ocre text-sm text-pedra-sabao transition-colors ${ativo ? "font-semibold" : "font-medium"}`
-                    : `font-body hover:text-terracota text-sm text-verde-mata transition-colors dark:text-pedra-sabao ${ativo ? "font-semibold" : "font-medium"}`
+                    ? `font-body hover:text-ocre border-b-2 pb-1 text-sm text-pedra-sabao transition-colors ${ativo ? "border-current font-bold" : "border-transparent font-medium"}`
+                    : `font-body hover:text-terracota border-b-2 pb-1 text-sm text-verde-mata transition-colors dark:text-pedra-sabao ${ativo ? "border-current font-bold" : "border-transparent font-medium"}`
                 }
               >
                 {link.label}
@@ -161,6 +164,13 @@ export function GlobalNav({ variant = "solido" }: GlobalNavProps) {
           <div className="mx-auto flex w-full max-w-5xl flex-col px-8 py-2">
             {LINKS.map((link) => {
               const ativo = linkEstaAtivo(pathname, link.href);
+              // Item ativo sempre mostra border-b-2 border-current
+              // (sublinhado "tab" + font-bold), sem o modificador
+              // last:border-b-0 - se o link ativo calhar de ser o
+              // último da lista, last:border-b-0 removeria o
+              // sublinhado junto com o divisor fino normal. Os itens
+              // inativos continuam com o divisor fino de sempre
+              // (removido no último via last:border-b-0).
               return (
                 <Link
                   key={link.href}
@@ -169,8 +179,16 @@ export function GlobalNav({ variant = "solido" }: GlobalNavProps) {
                   aria-current={ativo ? "page" : undefined}
                   className={
                     transparente
-                      ? `font-body border-pedra-sabao/20 text-pedra-sabao border-b py-3 text-sm last:border-b-0 ${ativo ? "font-semibold" : "font-medium"}`
-                      : `font-body text-verde-mata border-zinc-200/60 border-b py-3 text-sm last:border-b-0 dark:text-pedra-sabao dark:border-zinc-800/60 ${ativo ? "font-semibold" : "font-medium"}`
+                      ? `font-body py-3 text-sm text-pedra-sabao ${
+                          ativo
+                            ? "border-b-2 border-current font-bold"
+                            : "border-pedra-sabao/20 border-b font-medium last:border-b-0"
+                        }`
+                      : `font-body text-verde-mata py-3 text-sm dark:text-pedra-sabao ${
+                          ativo
+                            ? "border-b-2 border-current font-bold"
+                            : "border-zinc-200/60 border-b font-medium last:border-b-0 dark:border-zinc-800/60"
+                        }`
                   }
                 >
                   {link.label}
