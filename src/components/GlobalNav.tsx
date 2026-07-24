@@ -14,11 +14,14 @@ const LINKS = [
 ] as const;
 
 type GlobalNavProps = {
-  // "solido" (padrão): header opaco/sticky usado nas páginas de conteúdo
-  // (Parte 1). "transparente": overlay absoluto sobre o hero da Home -
-  // mesmo visual que Header.tsx tinha (gradiente, logo+wordmark de duas
-  // linhas, texto claro), sem virar sticky durante o scroll (some junto
-  // com o hero, igual já era antes).
+  // "solido" (padrão): header opaco usado nas páginas de conteúdo
+  // (roteiros, sobre, contato, termos, politica-de-reembolso) - bloco
+  // normal no fluxo do documento (relative, não sticky), some ao rolar
+  // como qualquer conteúdo acima da dobra. "transparente": overlay
+  // absoluto sobre o hero da Home - mesmo visual que Header.tsx tinha
+  // (gradiente, logo+wordmark de duas linhas, texto claro), também some
+  // ao rolar (absolute, não sticky) - as duas variantes têm o mesmo
+  // comportamento de scroll agora, só o visual muda.
   variant?: "solido" | "transparente";
 };
 
@@ -33,7 +36,7 @@ export function GlobalNav({ variant = "solido" }: GlobalNavProps) {
       className={
         transparente
           ? "absolute inset-x-0 top-0 z-30 bg-gradient-to-b from-verde-mata to-verde-mata/0"
-          : "sticky top-0 z-30 border-b border-zinc-200 bg-pedra-sabao/95 backdrop-blur dark:border-zinc-800 dark:bg-verde-mata/95"
+          : "relative z-30 border-b border-zinc-200 bg-pedra-sabao/95 backdrop-blur dark:border-zinc-800 dark:bg-verde-mata/95"
       }
     >
       <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-8 py-4">
