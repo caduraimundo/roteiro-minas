@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { ADMIN_ALLOWLIST } from "@/lib/admin-allowlist";
-import { LogoutButton } from "@/components/LogoutButton";
 import { PopupCallbackNotifier } from "@/components/PopupCallbackNotifier";
 import type { Roteiro } from "@/data/roteiros";
 
@@ -40,10 +39,7 @@ export default async function AdminHome() {
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 p-8">
       <PopupCallbackNotifier />
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Roteiros</h1>
-        <LogoutButton />
-      </div>
+      <h1 className="text-xl font-semibold">Roteiros</h1>
 
       <div className="flex gap-2">
         <Link
