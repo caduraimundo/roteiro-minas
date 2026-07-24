@@ -376,12 +376,12 @@ export function CheckoutForm({
 
   if (resultado?.tipo === "pix") {
     return (
-      <div className="border-verde-mata/15 bg-pedra-sabao flex flex-col items-center gap-4 rounded-2xl border p-6 text-center shadow-[0_10px_26px_rgba(116,124,109,0.1)] dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="border-verde-mata/15 bg-pedra-sabao flex flex-col items-center gap-4 rounded-2xl border p-6 text-center shadow-[0_10px_26px_rgba(94,110,79,0.1)] dark:border-zinc-800 dark:bg-zinc-900">
         <span className="bg-terracota/10 flex h-12 w-12 items-center justify-center rounded-full">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path
               d="M5 13l4 4L19 7"
-              stroke="#3E4029"
+              stroke="#2A311E"
               strokeWidth="3"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -439,12 +439,12 @@ export function CheckoutForm({
 
   if (resultado?.tipo === "cartao_sucesso") {
     return (
-      <div className="border-verde-mata/15 bg-pedra-sabao flex flex-col items-center gap-2 rounded-2xl border p-6 text-center shadow-[0_10px_26px_rgba(116,124,109,0.1)] dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="border-verde-mata/15 bg-pedra-sabao flex flex-col items-center gap-2 rounded-2xl border p-6 text-center shadow-[0_10px_26px_rgba(94,110,79,0.1)] dark:border-zinc-800 dark:bg-zinc-900">
         <span className="bg-terracota/10 flex h-12 w-12 items-center justify-center rounded-full">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path
               d="M5 13l4 4L19 7"
-              stroke="#3E4029"
+              stroke="#2A311E"
               strokeWidth="3"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -923,7 +923,7 @@ export function CheckoutForm({
           igual à referência - ambos os blocos vivem dentro do mesmo
           <form>, então qualquer um dos dois botões dispara o submit. */}
       <aside className="hidden md:sticky md:top-8 md:block">
-        <div className="border-verde-mata/15 bg-pedra-sabao rounded-2xl border p-6 shadow-[0_10px_26px_rgba(116,124,109,0.1)] dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="border-verde-mata/15 bg-pedra-sabao rounded-2xl border p-6 shadow-[0_10px_26px_rgba(94,110,79,0.1)] dark:border-zinc-800 dark:bg-zinc-900">
           {resumoPreco}
         </div>
       </aside>

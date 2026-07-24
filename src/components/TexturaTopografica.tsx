@@ -11,12 +11,12 @@
 //
 // Cor trocada de um fallback verde-claro (#C3CEBD) escolhido numa sessão
 // anterior por causa do baixo contraste do ocre no branco - na prática
-// ficou estranho, sem relação com a paleta. Verde-mata (#747C6D) já é a
+// ficou estranho, sem relação com a paleta. Verde-mata (#5E6E4F) já é a
 // cor de marca usada em headings/texto por todo o site, então a linha
 // decorativa lê como um traço discreto da marca em vez de uma cor solta
 // - contraste ok tanto no branco quanto no overlay escuro do hero
 // (único uso variant="fundo").
-const VERDE_MATA = "#747C6D";
+const VERDE_MATA = "#5E6E4F";
 
 const SVG_CURVA_DE_NIVEL = encodeURIComponent(
   `<svg xmlns="http://www.w3.org/2000/svg" width="220" height="140">
