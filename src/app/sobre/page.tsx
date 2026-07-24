@@ -1,3 +1,4 @@
+import { BackButton } from "@/components/BackButton";
 import { Footer } from "@/components/Footer";
 import { GlobalNav } from "@/components/GlobalNav";
 import { TexturaTopografica } from "@/components/TexturaTopografica";
@@ -11,9 +12,12 @@ export default async function SobreNos() {
       <GlobalNav />
 
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-3 px-8 py-4">
-        <h1 className="font-display text-verde-mata dark:text-pedra-sabao text-2xl font-extrabold tracking-tight">
-          Sobre Nós
-        </h1>
+        <div className="flex items-center gap-3">
+          <BackButton href="/" />
+          <h1 className="font-display text-verde-mata dark:text-pedra-sabao text-2xl font-extrabold tracking-tight">
+            Sobre Nós
+          </h1>
+        </div>
       </div>
 
       <div className="relative h-12 w-full">

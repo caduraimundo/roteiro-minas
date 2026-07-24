@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 
 // Home/Roteiros/Sobre Nós/Contato - as 4 páginas que a navegação global
@@ -37,32 +36,21 @@ export function GlobalNav({ variant = "solido" }: GlobalNavProps) {
       }
     >
       <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-8 py-4">
-        {transparente ? (
-          <Link href="/" className="flex items-center gap-3">
-            <Image
-              src="/logo.webp"
-              alt="Roteiro Minas"
-              width={36}
-              height={36}
-              className="rounded-full border border-pedra-sabao/50"
-            />
-            <span className="leading-none text-pedra-sabao">
-              <span className="font-wordmark block text-sm uppercase tracking-wide">
-                Roteiro
-              </span>
-              <span className="font-wordmark block text-[10px] uppercase tracking-[0.25em] opacity-80">
-                Minas
-              </span>
-            </span>
-          </Link>
-        ) : (
-          <Link
-            href="/"
-            className="font-wordmark text-sm uppercase tracking-wide text-verde-mata dark:text-pedra-sabao"
-          >
-            Roteiro Minas
-          </Link>
-        )}
+        {/* Mesmo wordmark de uma linha só nas duas variantes - a
+            transparente usava logo+duas linhas de texto (mais alto,
+            por causa da imagem 36x36), o que deixava o header da Home
+            visualmente mais alto que o das outras páginas. Só a cor
+            muda (clara aqui, pro fundo escuro do hero). */}
+        <Link
+          href="/"
+          className={
+            transparente
+              ? "font-wordmark text-sm uppercase tracking-wide text-pedra-sabao"
+              : "font-wordmark text-sm uppercase tracking-wide text-verde-mata dark:text-pedra-sabao"
+          }
+        >
+          Roteiro Minas
+        </Link>
 
         <nav className="hidden items-center gap-6 md:flex">
           {LINKS.map((link) => (

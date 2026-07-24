@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BackButton } from "@/components/BackButton";
 import { GaleriaPlaceholder } from "@/components/GaleriaPlaceholder";
 import { GlobalNav } from "@/components/GlobalNav";
 import { getConfiguracoesSite } from "@/data/configuracoes";
@@ -65,6 +66,8 @@ export default async function RoteiroDetalhe({
       <GlobalNav />
 
       <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 p-8 pb-32 md:pb-8">
+        <BackButton href="/roteiros" />
+
         {/* Duas colunas a partir do md, inspirado na estrutura do Airbnb
             Experiences (conteúdo + card de reserva sticky ao lado) -
             mantendo nossa paleta/tipografia, não o visual deles. */}
