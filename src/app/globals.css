@@ -15,10 +15,10 @@
    próximos cards). Cores fixas, sem variante de dark mode - são cor de
    marca, não semântica de fundo/texto. */
 :root {
-  --color-verde-mata: #747c6d;
-  --color-terracota: #3e4029;
-  --color-ocre: #f3e6d4;
-  --color-pedra-sabao: #f6eee2;
+  --color-verde-mata: #5E6E4F;
+  --color-terracota: #2A311E;
+  --color-ocre: #FAF6EE;
+  --color-pedra-sabao: #EFEAE0;
 }
 
 @theme inline {
