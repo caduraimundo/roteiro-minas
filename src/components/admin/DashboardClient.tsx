@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { formatarPreco } from "@/lib/format";
+import { NovoRoteiroPanel } from "@/components/admin/NovoRoteiroPanel";
 
 type VendasMes = {
   mes: string;
@@ -50,6 +51,7 @@ export function DashboardClient() {
   const [dados, setDados] = useState<DashboardData | null>(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
+  const [panelAberto, setPanelAberto] = useState(false);
 
   useEffect(() => {
     let cancelado = false;
@@ -79,14 +81,37 @@ export function DashboardClient() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="font-display text-terracota text-2xl font-extrabold tracking-tight">
-          Dashboard
-        </h1>
-        <p className="font-body mt-1 text-sm text-zinc-600">
-          Gerencie roteiros, vendas e vagas em um só lugar.
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="font-display text-terracota text-2xl font-extrabold tracking-tight">
+            Dashboard
+          </h1>
+          <p className="font-body mt-1 text-sm text-zinc-600">
+            Gerencie roteiros, vendas e vagas em um só lugar.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            className="font-body text-terracota rounded-full border border-zinc-300 px-5 py-2.5 text-sm font-semibold"
+          >
+            Exportar dados
+          </button>
+          <button
+            type="button"
+            onClick={() => setPanelAberto(true)}
+            className="font-body bg-verde-mata text-pedra-sabao rounded-full px-5 py-2.5 text-sm font-semibold"
+          >
+            Novo Roteiro
+          </button>
+        </div>
       </div>
+
+      <NovoRoteiroPanel
+        aberto={panelAberto}
+        onClose={() => setPanelAberto(false)}
+      />
 
       {erro && <p className="font-body text-sm text-red-600">{erro}</p>}
 

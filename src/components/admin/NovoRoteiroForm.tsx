@@ -1,89 +1,35 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useNovoRoteiroForm } from "@/hooks/useNovoRoteiroForm";
 import type { Roteiro } from "@/data/roteiros";
 
 const campoClasse =
   "rounded-lg border border-zinc-300 bg-transparent px-3 py-2 text-sm dark:border-zinc-700";
 
 export function NovoRoteiroForm() {
-  const router = useRouter();
-  const [nome, setNome] = useState("");
-  const [tipo, setTipo] = useState<Roteiro["tipo"]>("emissivel");
-  const [precoReceptivo, setPrecoReceptivo] = useState("");
-  const [descricao, setDescricao] = useState("");
-  const [pdfUrl, setPdfUrl] = useState("");
-  const [custoFixoExecucao, setCustoFixoExecucao] = useState("");
-  const [custoVariavelPessoa, setCustoVariavelPessoa] = useState("");
-  const [enviando, setEnviando] = useState(false);
-  const [erro, setErro] = useState<string | null>(null);
+  const {
+    nome,
+    setNome,
+    tipo,
+    setTipo,
+    precoReceptivo,
+    setPrecoReceptivo,
+    descricao,
+    setDescricao,
+    pdfUrl,
+    setPdfUrl,
+    custoFixoExecucao,
+    setCustoFixoExecucao,
+    custoVariavelPessoa,
+    setCustoVariavelPessoa,
+    enviando,
+    erro,
+    criarRoteiro,
+  } = useNovoRoteiroForm();
 
   async function handleSubmit(evento: React.FormEvent) {
     evento.preventDefault();
-    setErro(null);
-
-    // Mesma regra da API (POST /api/admin/roteiros): preco_receptivo é
-    // obrigatório quando tipo = 'receptivo' - valida aqui antes pra não
-    // depender só do erro 400 da API.
-    if (tipo === "receptivo" && !precoReceptivo.trim()) {
-      setErro("Preço é obrigatório para roteiro receptivo.");
-      return;
-    }
-
-    setEnviando(true);
-
-    const resposta = await fetch("/api/admin/roteiros", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        nome,
-        tipo,
-        preco_receptivo:
-          tipo === "receptivo" ? Number(precoReceptivo) : undefined,
-        descricao: descricao || undefined,
-        pdf_url: pdfUrl || undefined,
-      }),
-    });
-
-    const corpo = await resposta.json().catch(() => null);
-
-    if (!resposta.ok) {
-      setErro(corpo?.erro ?? "Erro ao criar roteiro.");
-      setEnviando(false);
-      return;
-    }
-
-    const roteiroId = corpo.roteiro.id;
-
-    // Custo não é aceito na criação (rota de POST não tem esses campos) -
-    // faz um PATCH logo em seguida quando o Markys já preenche o custo na
-    // hora de criar o roteiro. Falha aqui não impede a navegação: o
-    // roteiro já foi criado, dá pra completar o custo depois na edição -
-    // mas não silencia, sinaliza via query param pra página de detalhe
-    // avisar que o custo não foi salvo.
-    let custoPendente = false;
-
-    if (custoFixoExecucao.trim() || custoVariavelPessoa.trim()) {
-      const respostaCusto = await fetch(`/api/admin/roteiros/${roteiroId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          custo_fixo_execucao: custoFixoExecucao.trim()
-            ? Number(custoFixoExecucao)
-            : null,
-          custo_variavel_pessoa: custoVariavelPessoa.trim()
-            ? Number(custoVariavelPessoa)
-            : null,
-        }),
-      }).catch(() => null);
-
-      custoPendente = !respostaCusto || !respostaCusto.ok;
-    }
-
-    router.push(
-      `/admin/roteiros/${roteiroId}${custoPendente ? "?custo_pendente=1" : ""}`,
-    );
+    await criarRoteiro();
   }
 
   return (
