@@ -16,20 +16,25 @@ export default async function AgendaRoteiros() {
     <div className="flex flex-1 flex-col">
       <GlobalNav />
 
-      {/* Sem divisor decorativo nem título próprio nessa página -
-          "Roteiros disponíveis" foi removido (redundante com o h2
-          "Roteiros emissíveis" logo abaixo), e o TexturaTopografica
-          também saiu (não é mais desejado aqui) - conteúdo vem direto
-          depois do GlobalNav, mesmo p-8 do container já dá o respiro. */}
+      {/* Faixa "seta + título" idêntica em estrutura à de sobre/contato
+          (mesmo container mx-auto max-w-5xl gap-3 px-8 py-4, mesma cor
+          text-verde-mata dark:text-pedra-sabao no heading) - antes o
+          BackButton+h2 ficavam dentro do container de conteúdo, sem
+          faixa própria e sem cor no h2 (herdava preto padrão). */}
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-3 px-8 py-4">
+        <div className="flex items-center gap-3">
+          <BackButton href="/" />
+          <h2 className="font-display text-verde-mata dark:text-pedra-sabao text-2xl font-extrabold tracking-tight">
+            Roteiros emissíveis
+          </h2>
+        </div>
+      </div>
+
+      {/* Sem divisor decorativo nessa página - o TexturaTopografica não
+          é mais desejado aqui. Conteúdo vem direto depois da faixa do
+          título, mesmo p-8 do container já dá o respiro. */}
       <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-14 p-8">
         <section className="flex flex-col gap-5">
-          <div className="flex items-center gap-3">
-            <BackButton href="/" />
-            <h2 className="font-display text-2xl font-extrabold tracking-tight">
-              Roteiros emissíveis
-            </h2>
-          </div>
-
           {emissiveis.length === 0 ? (
             <p className="font-body text-zinc-600 dark:text-zinc-400">
               Nenhum roteiro disponível no momento.
