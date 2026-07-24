@@ -1,14 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { TexturaTopografica } from "@/components/TexturaTopografica";
 
-// Sem foto real ainda (nenhum campo de imagem existe em roteiros/vagas,
-// nenhum asset de foto no projeto) - decisão registrada com o Cadu:
-// blocos de cor sólidos da paleta como "slides" do carrossel, trocados
-// por fotos de verdade quando existirem.
-const SLIDES = ["bg-verde-mata", "bg-terracota", "bg-ocre", "bg-pedra-sabao"];
+// Fotos reais de passeios (trilha/mirante e cachoeiras) - substituem os
+// blocos de cor sólida usados como placeholder até aqui.
+const SLIDES = ["/hero/hero-1.jpg", "/hero/hero-2.jpg", "/hero/hero-3.jpg"];
 const INTERVALO_MS = 5500;
 
 export function HeroCarousel() {
@@ -24,19 +23,31 @@ export function HeroCarousel() {
 
   return (
     <div className="relative flex h-[60vh] min-h-[360px] w-full items-center justify-center overflow-hidden">
-      {SLIDES.map((cor, indice) => (
+      {SLIDES.map((src, indice) => (
         <div
-          key={cor}
+          key={src}
           aria-hidden={indice !== indiceAtivo}
-          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${cor} ${
+          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
             indice === indiceAtivo ? "opacity-100" : "opacity-0"
           }`}
-        />
+        >
+          <Image
+            src={src}
+            alt=""
+            fill
+            priority={indice === 0}
+            sizes="100vw"
+            className="object-cover"
+          />
+        </div>
       ))}
 
-      {/* Escurece por cima de qualquer slide (inclusive o claro,
-          pedra-sabão) pra garantir contraste do texto claro fixo abaixo. */}
-      <div className="absolute inset-0 bg-verde-mata/45" />
+      {/* Escurece por cima de qualquer slide - opacidade subiu de 45%
+          pra 60% ao trocar cor sólida por foto real: fotos têm bem mais
+          ruído visual (céu claro, água, luz) que os blocos de cor lisa
+          de antes, e o texto claro (pedra-sabao) fixo por cima precisa
+          de mais contraste garantido pra continuar legível. */}
+      <div className="absolute inset-0 bg-verde-mata/60" />
 
       <TexturaTopografica variant="fundo" className="opacity-60" />
 
