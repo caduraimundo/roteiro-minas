@@ -14,7 +14,7 @@ export default function Contato() {
     <div className="flex flex-1 flex-col">
       <GlobalNav />
 
-      <div className="mx-auto flex w-full max-w-5xl px-8 py-4">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-3 px-8 py-4">
         <h1 className="font-display text-verde-mata dark:text-pedra-sabao text-2xl font-extrabold tracking-tight">
           Contato
         </h1>
@@ -24,7 +24,7 @@ export default function Contato() {
         <TexturaTopografica variant="divisor" />
       </div>
 
-      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-start gap-6 p-8">
+      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-start gap-8 p-8">
         <div className="flex flex-col gap-2">
           <h2 className="font-display text-verde-mata dark:text-pedra-sabao text-2xl font-extrabold tracking-tight sm:text-3xl">
             Bora conversar?

@@ -56,7 +56,7 @@ export function HeroCarousel() {
           href="/roteiros"
           className="font-display bg-terracota hover:bg-terracota/90 mt-2 rounded-lg px-6 py-3 text-sm font-semibold tracking-wide uppercase text-pedra-sabao transition-colors"
         >
-          Ver próximos roteiros →
+          Ver próximos roteiros
         </Link>
       </div>
     </div>

@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BackButton } from "@/components/BackButton";
 import { CheckoutForm } from "@/components/CheckoutForm";
 import { GlobalNav } from "@/components/GlobalNav";
 import { TexturaTopografica } from "@/components/TexturaTopografica";
@@ -31,12 +31,7 @@ export default async function Checkout({
         <GlobalNav />
 
         <div className="mx-auto flex w-full max-w-xl flex-1 flex-col gap-4 p-8">
-          <Link
-            href={`/roteiros/${roteiro.slug}`}
-            className="font-body text-sm text-zinc-600 dark:text-zinc-400"
-          >
-            ← Voltar
-          </Link>
+          <BackButton href={`/roteiros/${roteiro.slug}`} />
           <p className="font-body text-zinc-600 dark:text-zinc-400">
             Essa data não está mais disponível. Volte ao roteiro e escolha
             outra data.
@@ -51,12 +46,7 @@ export default async function Checkout({
       <GlobalNav />
 
       <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 p-8">
-        <Link
-          href={`/roteiros/${roteiro.slug}`}
-          className="font-body text-sm text-zinc-600 dark:text-zinc-400"
-        >
-          ← Voltar
-        </Link>
+        <BackButton href={`/roteiros/${roteiro.slug}`} />
 
         <div className="flex flex-col gap-1">
           <h1 className="font-display text-verde-mata dark:text-pedra-sabao text-2xl font-semibold uppercase">

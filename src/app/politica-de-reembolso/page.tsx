@@ -7,7 +7,7 @@ export default function PoliticaDeReembolso() {
     <div className="flex flex-1 flex-col">
       <GlobalNav />
 
-      <div className="mx-auto flex w-full max-w-5xl px-8 py-4">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-3 px-8 py-4">
         <h1 className="font-display text-2xl font-semibold uppercase text-verde-mata dark:text-pedra-sabao">
           Política de Reembolso e Cancelamento
         </h1>

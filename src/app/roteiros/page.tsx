@@ -19,7 +19,9 @@ export default async function AgendaRoteiros() {
 
       {/* Título + chips não são mais sticky (só o GlobalNav é) - chips
           continuam decorativos, sem filtro ligado, mesmo lugar de
-          sempre, só que agora fora da faixa de navegação. */}
+          sempre, só que agora fora da faixa de navegação. Mesma faixa
+          (classes idênticas) usada nas outras 4 páginas de header
+          padrão - gap-3 fica sem efeito visual quando só há o h1. */}
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-3 px-8 py-4">
         <h1 className="font-display text-verde-mata dark:text-pedra-sabao text-2xl font-extrabold tracking-tight">
           Roteiros disponíveis
