@@ -96,6 +96,26 @@ function SettingsIcon({ className }: { className?: string }) {
   );
 }
 
+function LayoutGridIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <rect x="3" y="3" width="8" height="8" rx="2" />
+      <rect x="13" y="3" width="8" height="8" rx="2" />
+      <rect x="3" y="13" width="8" height="8" rx="2" />
+      <rect x="13" y="13" width="8" height="8" rx="2" />
+    </svg>
+  );
+}
+
 function MapIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -200,6 +220,12 @@ function WalletIcon({ className }: { className?: string }) {
 // abaixo), não motivo pra duplicar a lógica de match().
 const LINKS = [
   {
+    href: "/admin/dashboard",
+    label: "Dashboard",
+    icon: LayoutGridIcon,
+    match: (pathname: string) => pathname === "/admin/dashboard",
+  },
+  {
     href: "/admin",
     label: "Roteiros",
     icon: MapIcon,
@@ -238,8 +264,8 @@ const LINKS = [
   },
 ] as const;
 
-const MENU_LINKS = LINKS.slice(0, 5);
-const GERAL_LINKS = LINKS.slice(5);
+const MENU_LINKS = LINKS.slice(0, 6);
+const GERAL_LINKS = LINKS.slice(6);
 
 // Rótulo de seção (MENU/GERAL) - mesmo tratamento tipográfico do
 // mockup (versalete pequeno, tracking largo, tom apagado), só na cor de
