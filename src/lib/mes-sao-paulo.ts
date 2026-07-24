@@ -20,6 +20,30 @@ export function hojeSaoPaulo(): string {
   return `${ano}-${mes}-${dia}`;
 }
 
+// Semana atual (segunda a domingo) em America/Sao_Paulo - mesmo padrão
+// de offset fixo -03:00 usado no resto do arquivo. `fim` é exclusivo
+// (início da segunda seguinte), pra combinar com `.lt("created_at", ...)`
+// do mesmo jeito que intervaloMesSaoPaulo.
+export function intervaloSemanaSaoPaulo() {
+  const agoraSp = new Date(Date.now() - OFFSET_SAO_PAULO_MS);
+  const diaDaSemana = agoraSp.getUTCDay(); // 0 (domingo) .. 6 (sábado)
+  const diasDesdeSegunda = diaDaSemana === 0 ? 6 : diaDaSemana - 1;
+
+  const inicio = new Date(
+    Date.UTC(
+      agoraSp.getUTCFullYear(),
+      agoraSp.getUTCMonth(),
+      agoraSp.getUTCDate() - diasDesdeSegunda,
+      3,
+      0,
+      0,
+    ),
+  );
+  const fim = new Date(inicio.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+  return { inicio, fim };
+}
+
 export function intervaloMesSaoPaulo(mes: string) {
   const [anoStr, mesStr] = mes.split("-");
   const ano = Number(anoStr);
