@@ -48,7 +48,7 @@ export function GlobalNav({ variant = "solido" }: GlobalNavProps) {
       className={
         transparente
           ? "absolute inset-x-0 top-0 z-30 bg-gradient-to-b from-black to-black/0"
-          : "relative z-30 border-b border-zinc-200 bg-pedra-sabao/95 backdrop-blur dark:border-zinc-800 dark:bg-verde-mata/95"
+          : "relative z-30 border-b border-zinc-200 bg-zinc-50/95 backdrop-blur dark:border-zinc-800 dark:bg-verde-mata/95"
       }
     >
       <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-8 py-4">
@@ -104,8 +104,8 @@ export function GlobalNav({ variant = "solido" }: GlobalNavProps) {
                 aria-current={ativo ? "page" : undefined}
                 className={
                   transparente
-                    ? `font-body hover:text-ocre border-b-2 pb-1 text-sm text-pedra-sabao transition-colors ${ativo ? "border-current font-bold" : "border-transparent font-medium"}`
-                    : `font-body hover:text-terracota border-b-2 pb-1 text-sm text-verde-mata transition-colors dark:text-pedra-sabao ${ativo ? "border-current font-bold" : "border-transparent font-medium"}`
+                    ? `font-body hover:text-ocre border-b-2 pb-0.5 text-sm text-pedra-sabao transition-colors ${ativo ? "border-current font-bold" : "border-transparent font-medium"}`
+                    : `font-body hover:text-terracota border-b-2 pb-0.5 text-sm text-verde-mata transition-colors dark:text-pedra-sabao ${ativo ? "border-current font-bold" : "border-transparent font-medium"}`
                 }
               >
                 {link.label}
@@ -158,7 +158,7 @@ export function GlobalNav({ variant = "solido" }: GlobalNavProps) {
           className={
             transparente
               ? "bg-verde-mata/95 backdrop-blur md:hidden"
-              : "border-t border-zinc-200 bg-pedra-sabao/95 backdrop-blur md:hidden dark:border-zinc-800 dark:bg-verde-mata/95"
+              : "border-t border-zinc-200 bg-zinc-50/95 backdrop-blur md:hidden dark:border-zinc-800 dark:bg-verde-mata/95"
           }
         >
           <div className="mx-auto flex w-full max-w-5xl flex-col px-8 py-2">
