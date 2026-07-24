@@ -18,12 +18,16 @@ export default async function AgendaRoteiros() {
 
       {/* Sem título próprio nessa página - "Roteiros disponíveis" foi
           removido (redundante com o h2 "Roteiros emissíveis" logo
-          abaixo, mesma revisão em produção que apontou o vão duplo).
-          mt-6 no wrapper do divisor (não padding - TexturaTopografica é
-          absolute inset-0, ignora padding do pai) dá uma respiração
-          pequena entre o GlobalNav e o divisor, sem colar nem abrir um
-          vão grande de novo. */}
-      <div className="relative mt-6 h-12 w-full">
+          abaixo). mt-4 (não padding - TexturaTopografica é absolute
+          inset-0, ignora padding do pai) dá uma respiração pequena
+          entre o GlobalNav e o divisor. Reduzido de mt-6 pra mt-4: o
+          componente forçava h-16 nele mesmo por cima do wrapper h-12
+          (corrigido na origem, TexturaTopografica.tsx), então o vão
+          real acabava maior do que o código sugeria - com isso
+          corrigido, mt-4 (16px) + p-8 do conteúdo abaixo (32px) fecha
+          em 48px de vão em branco real, dentro da faixa Airbnb pra
+          transição entre seções (40-64px). */}
+      <div className="relative mt-4 h-12 w-full">
         <TexturaTopografica variant="divisor" />
       </div>
 

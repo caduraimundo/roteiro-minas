@@ -24,7 +24,7 @@ export default async function Home() {
       </div>
       <WhatsAppFloatButton />
 
-      <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-14 p-8">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-14 p-8">
         <section className="flex flex-col gap-5">
           <h2 className="font-display text-2xl font-extrabold tracking-tight">
             Próximos roteiros
@@ -65,11 +65,23 @@ export default async function Home() {
             </div>
           </section>
         )}
+      </div>
 
-        <div className="relative h-16 w-full">
-          <TexturaTopografica variant="divisor" />
-        </div>
+      {/* Divisor como irmão solto, fora do container gap-14 acima -
+          antes ficava dentro dele, e cada lado ganhava o gap-14 inteiro
+          (56px + 56px = 112px de vão em branco, só de espaço vazio, ao
+          redor de um elemento puramente decorativo). Aqui o "vão em
+          branco" real é só o padding de cada wrapper (32px + 32px =
+          64px), dentro da faixa Airbnb pra transição entre seções
+          (40-64px) - o divisor em si (h-12, 48px) é conteúdo visual, não
+          vazio. Wrapper h-12 (igual às outras 5 páginas) em vez do h-16
+          antigo, que só existia pra bater com a altura que o componente
+          forçava nele mesmo (removida na origem). */}
+      <div className="relative h-12 w-full">
+        <TexturaTopografica variant="divisor" />
+      </div>
 
+      <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col p-8">
         <Depoimentos />
       </div>
 

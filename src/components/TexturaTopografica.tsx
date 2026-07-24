@@ -1,47 +1,48 @@
-// Textura de fundo estilo curva de nível (linhas finas em ocre) - base do
-// design system, ainda não aplicada em nenhuma tela (Home/Agenda/Detalhe/
-// Checkout ficam pros próximos cards). Server Component puro: o padrão vai
-// embutido como SVG num data URI de background-image, sem <pattern> vivo
-// no DOM (evita colisão de id se o componente for usado mais de uma vez
-// na mesma página) e sem JS no client.
+// Textura de fundo estilo curva de nível (linhas finas em verde-mata) -
+// base do design system. Server Component puro: o padrão vai embutido
+// como SVG num data URI de background-image, sem <pattern> vivo no DOM
+// (evita colisão de id se o componente for usado mais de uma vez na
+// mesma página) e sem JS no client.
 //
-// Hex duplicado do token --color-ocre (globals.css) de propósito - um SVG
-// em data URI não consegue ler custom properties da página de forma
-// confiável entre navegadores. Se o tom de ocre mudar, atualizar os dois
-// lugares.
+// Hex duplicado do token --color-verde-mata (globals.css) de propósito
+// - um SVG em data URI não consegue ler custom properties da página de
+// forma confiável entre navegadores. Se o tom de verde-mata mudar,
+// atualizar os dois lugares.
 //
-// Troca de paleta (sessão de rebranding): o novo ocre (#F3E6D4) tem
-// contraste muito baixo contra o branco - 5 dos 6 usos deste componente
-// são variant="divisor" sobre fundo branco/quase-branco (não há
-// wrapper com fundo pedra-sabão nessas páginas), onde a linha ficaria
-// quase invisível. Usado o fallback combinado com o Cadu (#C3CEBD,
-// verde claro) em vez do valor de ocre em si, por ter mais contraste
-// tanto no branco quanto no overlay escuro do hero (o único uso
-// variant="fundo"). Confirmar visualmente em produção.
-const OCRE = "#C3CEBD";
+// Cor trocada de um fallback verde-claro (#C3CEBD) escolhido numa sessão
+// anterior por causa do baixo contraste do ocre no branco - na prática
+// ficou estranho, sem relação com a paleta. Verde-mata (#747C6D) já é a
+// cor de marca usada em headings/texto por todo o site, então a linha
+// decorativa lê como um traço discreto da marca em vez de uma cor solta
+// - contraste ok tanto no branco quanto no overlay escuro do hero
+// (único uso variant="fundo").
+const VERDE_MATA = "#747C6D";
 
 const SVG_CURVA_DE_NIVEL = encodeURIComponent(
   `<svg xmlns="http://www.w3.org/2000/svg" width="220" height="140">
-    <path d="M0 70 Q 55 10 110 70 T 220 70" fill="none" stroke="${OCRE}" stroke-width="1" opacity="0.35" />
-    <path d="M0 105 Q 55 45 110 105 T 220 105" fill="none" stroke="${OCRE}" stroke-width="1" opacity="0.25" />
-    <path d="M0 35 Q 55 -25 110 35 T 220 35" fill="none" stroke="${OCRE}" stroke-width="1" opacity="0.2" />
+    <path d="M0 70 Q 55 10 110 70 T 220 70" fill="none" stroke="${VERDE_MATA}" stroke-width="1" opacity="0.35" />
+    <path d="M0 105 Q 55 45 110 105 T 220 105" fill="none" stroke="${VERDE_MATA}" stroke-width="1" opacity="0.25" />
+    <path d="M0 35 Q 55 -25 110 35 T 220 35" fill="none" stroke="${VERDE_MATA}" stroke-width="1" opacity="0.2" />
   </svg>`,
 );
 
 const BACKGROUND_CURVA_DE_NIVEL = `url("data:image/svg+xml,${SVG_CURVA_DE_NIVEL}")`;
 
 /**
- * Textura decorativa de curvas de nível, em ocre, opacidade baixa - não
- * deve competir com texto por cima. Duas variantes:
- * - "fundo": preenche o container pai (precisa de `relative` no pai,
- *   já que esse componente é `absolute inset-0`) - uso pretendido: hero.
- * - "divisor": faixa fina (altura fixa), pra usar entre seções.
+ * Textura decorativa de curvas de nível, em verde-mata, opacidade baixa
+ * - não deve competir com texto por cima. `absolute inset-0` sem altura
+ * própria em nenhuma variante - acompanha exatamente a altura que o
+ * container pai (`relative`) definir, nunca descasa de tamanho com ele
+ * (antes a variante "divisor" forçava h-16 fixo nela mesma, estourando
+ * containers menores como h-12 usados em várias páginas).
+ * - "fundo": preenche o container pai por completo - uso pretendido: hero.
+ * - "divisor": mesmo comportamento, pensado pra um wrapper baixo (faixa
+ *   fina) entre seções - a altura real vem sempre do wrapper.
  *
  * `aria-hidden` porque é puramente decorativo - não deve ser anunciado
  * por leitor de tela nem atrapalhar a ordem de foco/leitura.
  */
 export function TexturaTopografica({
-  variant = "fundo",
   className = "",
 }: {
   variant?: "fundo" | "divisor";
@@ -50,9 +51,7 @@ export function TexturaTopografica({
   return (
     <div
       aria-hidden="true"
-      className={`pointer-events-none absolute inset-0 w-full bg-repeat ${
-        variant === "divisor" ? "h-16" : "h-full"
-      } ${className}`}
+      className={`pointer-events-none absolute inset-0 h-full w-full bg-repeat ${className}`}
       style={{ backgroundImage: BACKGROUND_CURVA_DE_NIVEL }}
     />
   );
