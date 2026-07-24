@@ -187,7 +187,7 @@ function VendasSemanaCard({ dias }: { dias: VendaSemanaDia[] }) {
         {dias.map((dia) => (
           <div
             key={dia.data}
-            className="flex flex-1 flex-col items-center gap-2"
+            className="flex h-full flex-1 flex-col items-center gap-2"
           >
             <div className="flex h-full w-full items-end">
               <div
