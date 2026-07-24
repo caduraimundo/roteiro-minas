@@ -16,29 +16,14 @@ export default async function AgendaRoteiros() {
     <div className="flex flex-1 flex-col">
       <GlobalNav />
 
-      {/* Título não é mais sticky (só o GlobalNav é) - mesma faixa
-          (classes idênticas) usada nas outras 4 páginas de header
-          padrão. FiltroCategoriaChips removido (nunca foi filtro
-          funcional - não existe campo de categoria no banco - e o
-          volume de roteiros, ~12 no total, no máximo 2 passeios/mês,
-          não justifica simular um). */}
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-3 px-8 py-4">
-        <h1 className="font-display text-verde-mata dark:text-pedra-sabao text-2xl font-extrabold tracking-tight">
-          Roteiros disponíveis
-        </h1>
-      </div>
-
-      {/* Divisor como irmão solto entre o título e o conteúdo, mesma
-          posição usada nas outras 4 páginas - antes ficava dentro do
-          container gap-14, empilhando o próprio gap-14 por cima da
-          altura do divisor e do p-8 do container, e o respiro entre o
-          título e "Roteiros emissíveis" ficava exagerado (~152px:
-          py-4 + p-8 + h-12 + gap-14). Nessa posição o total cai pra
-          96px (py-4 + h-12 + p-8), igual ao que as outras 4 páginas já
-          usam entre título e primeiro conteúdo - gap-14 abaixo
-          continua só entre as seções (emissíveis/receptivos), mesmo
-          ritmo da Home. */}
-      <div className="relative h-12 w-full">
+      {/* Sem título próprio nessa página - "Roteiros disponíveis" foi
+          removido (redundante com o h2 "Roteiros emissíveis" logo
+          abaixo, mesma revisão em produção que apontou o vão duplo).
+          mt-6 no wrapper do divisor (não padding - TexturaTopografica é
+          absolute inset-0, ignora padding do pai) dá uma respiração
+          pequena entre o GlobalNav e o divisor, sem colar nem abrir um
+          vão grande de novo. */}
+      <div className="relative mt-6 h-12 w-full">
         <TexturaTopografica variant="divisor" />
       </div>
 
