@@ -32,8 +32,17 @@ export default async function AgendaRoteiros() {
 
       {/* Sem divisor decorativo nessa página - o TexturaTopografica não
           é mais desejado aqui. Conteúdo vem direto depois da faixa do
-          título, mesmo p-8 do container já dá o respiro. */}
-      <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-14 p-8">
+          título - pt-4 (não p-8 completo) no topo, porque a faixa
+          acima já tem seu próprio py-4 (16px embaixo); os dois somados
+          (antes 16+32=48px) ficavam grandes demais só pra separar o
+          título da grade - reduzido pra 16+16=32px, sem duplicar a
+          redução na faixa de título (que fica idêntica à de
+          sobre/contato). gap-14 entre as seções (emissíveis/receptivos)
+          reduzido pra gap-10 - ainda maior que o respiro de bloco
+          (32px) usado em outros pontos do site, coerente com serem
+          seções de conteúdo distintas, mas sem o vão exagerado de
+          antes. */}
+      <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-10 px-8 pt-4 pb-8">
         <section className="flex flex-col gap-5">
           {emissiveis.length === 0 ? (
             <p className="font-body text-zinc-600 dark:text-zinc-400">
