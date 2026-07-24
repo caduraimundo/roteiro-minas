@@ -27,8 +27,12 @@ export default function Contato() {
           logo acima, pra alinhar a margem esquerda com a seta/título.
           items-start já fazia os filhos encolherem pro próprio
           conteúdo em vez de esticar - max-w-3xl fica só no parágrafo de
-          texto corrido, restringindo a leitura sem recentralizar nada. */}
-      <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-start gap-8 p-8">
+          texto corrido, restringindo a leitura sem recentralizar nada.
+          pt-4 (não p-8 completo) no topo - mesmo ajuste já feito em
+          roteiros/page.tsx, pra nivelar a altura em que o conteúdo
+          começa nas três páginas (a faixa de título acima já tem seu
+          próprio py-4). */}
+      <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-start gap-8 px-8 pt-4 pb-8">
         <div className="flex flex-col gap-2">
           <h2 className="font-display text-verde-mata dark:text-pedra-sabao text-2xl font-extrabold tracking-tight sm:text-3xl">
             Bora conversar?

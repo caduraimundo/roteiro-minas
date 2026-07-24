@@ -24,8 +24,11 @@ export default async function SobreNos() {
           (os dois são mx-auto, então larguras diferentes centralizavam
           em posições diferentes). max-w-3xl fica só no parágrafo de
           texto corrido abaixo, restringindo a leitura sem recentralizar
-          nada nem estreitar a seção de números/grid. */}
-      <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-8 p-8">
+          nada nem estreitar a seção de números/grid. pt-4 (não p-8
+          completo) no topo - mesmo ajuste já feito em roteiros/page.tsx,
+          pra nivelar a altura em que o conteúdo começa nas três páginas
+          (a faixa de título acima já tem seu próprio py-4). */}
+      <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-8 px-8 pt-4 pb-8">
         <p className="font-display text-verde-mata dark:text-pedra-sabao text-2xl font-extrabold tracking-tight sm:text-3xl">
           Experiências que conectam você à natureza.
         </p>
