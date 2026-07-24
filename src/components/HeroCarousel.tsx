@@ -7,7 +7,7 @@ import { TexturaTopografica } from "@/components/TexturaTopografica";
 // saíram de public/hero (não usados em lugar nenhum).
 export function HeroCarousel() {
   return (
-    <div className="relative flex h-[52dvh] max-h-[540px] min-h-[420px] w-full flex-col overflow-hidden">
+    <div className="relative flex h-[52dvh] max-h-[540px] min-h-[460px] w-full flex-col overflow-hidden">
       <Image
         src="/hero/hero-1.jpg"
         alt=""
@@ -46,15 +46,20 @@ export function HeroCarousel() {
       {/* Texto centralizado dentro do espaço que sobra (depois do
           espaçador acima), não mais no hero inteiro - resolve a
           sobreposição sem deixar o texto colado no topo em telas
-          altas. pb-8 garante um respiro mínimo embaixo do botão - ao
-          contrário do padding-top testado no espaçador do topo,
-          padding-bottom num container flex NUNCA é "consumido" pelo
-          justify-center (fica sempre fora da caixa de conteúdo
-          centralizada), então garante fisicamente 32px de sobra abaixo
-          do botão em qualquer altura de tela, mesmo quando o conteúdo
-          quase preenche o espaço disponível (confirmado em celular real
-          que ficava colado sem essa garantia). */}
-      <div className="relative z-10 flex flex-1 flex-col items-center justify-center gap-4 px-8 pb-8 text-center text-pedra-sabao">
+          altas. pb-16 (64px, dobrado do pb-8 anterior) garante um
+          respiro embaixo do botão - padding-bottom num container flex
+          nunca é "consumido" pelo justify-center (fica sempre fora da
+          caixa de conteúdo centralizada), então garante fisicamente
+          esse respiro em qualquer altura de tela. O pb-8 (32px)
+          anterior não foi suficiente em celular real (iPhone SE/13) -
+          min-h-[420px] deixava só ~324px pro bloco de texto depois de
+          descontar o espaçador do topo (96px), espremendo demais um
+          conteúdo que já soma ~300px sozinho (wordmark + h1 de 3 linhas
+          + parágrafo + botão + gaps), sem sobrar folga real mesmo com o
+          padding garantido. min-h subiu pra 460px (mais 40px de
+          margem de manobra) - compensando pra mais dessa vez, não pra
+          menos. */}
+      <div className="relative z-10 flex flex-1 flex-col items-center justify-center gap-4 px-8 pb-16 text-center text-pedra-sabao">
         <span className="font-wordmark text-sm uppercase tracking-[0.1em]">
           Roteiro Minas
         </span>
