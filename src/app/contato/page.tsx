@@ -23,12 +23,17 @@ export default function Contato() {
         </div>
       </div>
 
-      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-start gap-8 p-8">
+      {/* max-w-5xl (não mais 3xl) - mesma largura da faixa do header
+          logo acima, pra alinhar a margem esquerda com a seta/título.
+          items-start já fazia os filhos encolherem pro próprio
+          conteúdo em vez de esticar - max-w-3xl fica só no parágrafo de
+          texto corrido, restringindo a leitura sem recentralizar nada. */}
+      <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-start gap-8 p-8">
         <div className="flex flex-col gap-2">
           <h2 className="font-display text-verde-mata dark:text-pedra-sabao text-2xl font-extrabold tracking-tight sm:text-3xl">
             Bora conversar?
           </h2>
-          <p className="font-body text-zinc-600 dark:text-zinc-400">
+          <p className="font-body max-w-3xl text-zinc-600 dark:text-zinc-400">
             Dúvidas sobre um roteiro, passeio personalizado pro seu grupo ou
             já reservou e precisa de ajuda? Fala com a gente pelo WhatsApp - a
             gente responde rapidinho.

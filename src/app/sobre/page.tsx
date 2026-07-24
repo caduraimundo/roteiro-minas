@@ -19,12 +19,18 @@ export default async function SobreNos() {
         </div>
       </div>
 
-      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 p-8">
+      {/* max-w-5xl (não mais 3xl) - mesma largura da faixa do header
+          logo acima, pra alinhar a margem esquerda com a seta/título
+          (os dois são mx-auto, então larguras diferentes centralizavam
+          em posições diferentes). max-w-3xl fica só no parágrafo de
+          texto corrido abaixo, restringindo a leitura sem recentralizar
+          nada nem estreitar a seção de números/grid. */}
+      <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-8 p-8">
         <p className="font-display text-verde-mata dark:text-pedra-sabao text-2xl font-extrabold tracking-tight sm:text-3xl">
           Experiências que conectam você à natureza.
         </p>
 
-        <p className="font-body text-zinc-600 dark:text-zinc-400">
+        <p className="font-body max-w-3xl text-zinc-600 dark:text-zinc-400">
           Somos uma agência especializada em ecoturismo e experiências de
           conexão com a natureza. Organizamos bate-voltas, travessias,
           expedições, roteiros de fim de semana e feriados, além de viagens

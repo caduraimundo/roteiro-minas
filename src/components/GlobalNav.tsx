@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -12,6 +13,16 @@ const LINKS = [
   { href: "/sobre", label: "Sobre Nós" },
   { href: "/contato", label: "Contato" },
 ] as const;
+
+// Home compara path exato - senão qualquer rota bateria como prefixo de
+// "/" e ficaria marcada como ativa junto. Os demais usam prefixo
+// (pathname === href ou começa com href + "/") pra cobrir sub-rotas que
+// também usam o GlobalNav, como /roteiros/[slug] e
+// /roteiros/[slug]/checkout - continuam marcando "Roteiros" como ativo.
+function linkEstaAtivo(pathname: string, href: string) {
+  if (href === "/") return pathname === "/";
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
 
 type GlobalNavProps = {
   // "solido" (padrão): header opaco usado nas páginas de conteúdo
@@ -29,6 +40,7 @@ type GlobalNavProps = {
 // corte desktop/mobile aqui - sm fica apertado pra 4 links + wordmark.
 export function GlobalNav({ variant = "solido" }: GlobalNavProps) {
   const [aberto, setAberto] = useState(false);
+  const pathname = usePathname();
   const transparente = variant === "transparente";
 
   return (
@@ -77,19 +89,26 @@ export function GlobalNav({ variant = "solido" }: GlobalNavProps) {
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex">
-          {LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={
-                transparente
-                  ? "font-body hover:text-ocre text-sm font-medium text-pedra-sabao transition-colors"
-                  : "font-body hover:text-terracota text-sm font-medium text-verde-mata transition-colors dark:text-pedra-sabao"
-              }
-            >
-              {link.label}
-            </Link>
-          ))}
+          {LINKS.map((link) => {
+            const ativo = linkEstaAtivo(pathname, link.href);
+            // Página atual: font-semibold em vez de font-medium - só o
+            // peso muda, sem trocar de cor, pra comunicar "aqui" sem
+            // gritar.
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                aria-current={ativo ? "page" : undefined}
+                className={
+                  transparente
+                    ? `font-body hover:text-ocre text-sm text-pedra-sabao transition-colors ${ativo ? "font-semibold" : "font-medium"}`
+                    : `font-body hover:text-terracota text-sm text-verde-mata transition-colors dark:text-pedra-sabao ${ativo ? "font-semibold" : "font-medium"}`
+                }
+              >
+                {link.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <button
@@ -140,20 +159,24 @@ export function GlobalNav({ variant = "solido" }: GlobalNavProps) {
           }
         >
           <div className="mx-auto flex w-full max-w-5xl flex-col px-8 py-2">
-            {LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setAberto(false)}
-                className={
-                  transparente
-                    ? "font-body border-pedra-sabao/20 text-pedra-sabao border-b py-3 text-sm font-medium last:border-b-0"
-                    : "font-body text-verde-mata border-zinc-200/60 border-b py-3 text-sm font-medium last:border-b-0 dark:text-pedra-sabao dark:border-zinc-800/60"
-                }
-              >
-                {link.label}
-              </Link>
-            ))}
+            {LINKS.map((link) => {
+              const ativo = linkEstaAtivo(pathname, link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setAberto(false)}
+                  aria-current={ativo ? "page" : undefined}
+                  className={
+                    transparente
+                      ? `font-body border-pedra-sabao/20 text-pedra-sabao border-b py-3 text-sm last:border-b-0 ${ativo ? "font-semibold" : "font-medium"}`
+                      : `font-body text-verde-mata border-zinc-200/60 border-b py-3 text-sm last:border-b-0 dark:text-pedra-sabao dark:border-zinc-800/60 ${ativo ? "font-semibold" : "font-medium"}`
+                  }
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </div>
         </nav>
       )}
