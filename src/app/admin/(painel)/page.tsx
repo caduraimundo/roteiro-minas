@@ -52,36 +52,6 @@ export default async function AdminHome() {
         >
           Novo roteiro
         </Link>
-        <Link
-          href="/admin/vendas"
-          className="self-start rounded-full border border-zinc-300 px-5 py-2 text-sm dark:border-zinc-700"
-        >
-          Vendas
-        </Link>
-        <Link
-          href="/admin/relatorio"
-          className="self-start rounded-full border border-zinc-300 px-5 py-2 text-sm dark:border-zinc-700"
-        >
-          Relatório
-        </Link>
-        <Link
-          href="/admin/custos"
-          className="self-start rounded-full border border-zinc-300 px-5 py-2 text-sm dark:border-zinc-700"
-        >
-          Custos
-        </Link>
-        <Link
-          href="/admin/cupons"
-          className="self-start rounded-full border border-zinc-300 px-5 py-2 text-sm dark:border-zinc-700"
-        >
-          Cupons
-        </Link>
-        <Link
-          href="/admin/configuracoes"
-          className="self-start rounded-full border border-zinc-300 px-5 py-2 text-sm dark:border-zinc-700"
-        >
-          Configurações
-        </Link>
       </div>
 
       {error ? (
