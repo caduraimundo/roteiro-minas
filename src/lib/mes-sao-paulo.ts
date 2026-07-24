@@ -12,6 +12,14 @@ export function mesAtualSaoPaulo(): string {
   return `${ano}-${mes}`;
 }
 
+export function hojeSaoPaulo(): string {
+  const agoraSp = new Date(Date.now() - OFFSET_SAO_PAULO_MS);
+  const ano = agoraSp.getUTCFullYear();
+  const mes = String(agoraSp.getUTCMonth() + 1).padStart(2, "0");
+  const dia = String(agoraSp.getUTCDate()).padStart(2, "0");
+  return `${ano}-${mes}-${dia}`;
+}
+
 export function intervaloMesSaoPaulo(mes: string) {
   const [anoStr, mesStr] = mes.split("-");
   const ano = Number(anoStr);
