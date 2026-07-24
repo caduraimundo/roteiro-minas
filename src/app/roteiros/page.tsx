@@ -1,6 +1,7 @@
 import { BackButton } from "@/components/BackButton";
 import { RoteiroCard } from "@/components/RoteiroCard";
 import { GlobalNav } from "@/components/GlobalNav";
+import { Footer } from "@/components/Footer";
 import { getRoteirosAtivos } from "@/data/roteiros";
 
 export default async function AgendaRoteiros() {
@@ -80,6 +81,8 @@ export default async function AgendaRoteiros() {
           </section>
         )}
       </div>
+
+      <Footer />
     </div>
   );
 }
