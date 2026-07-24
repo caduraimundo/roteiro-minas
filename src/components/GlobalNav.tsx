@@ -35,7 +35,7 @@ export function GlobalNav({ variant = "solido" }: GlobalNavProps) {
     <header
       className={
         transparente
-          ? "absolute inset-x-0 top-0 z-30 bg-gradient-to-b from-verde-mata to-verde-mata/0"
+          ? "absolute inset-x-0 top-0 z-30 bg-gradient-to-b from-black to-black/0"
           : "relative z-30 border-b border-zinc-200 bg-pedra-sabao/95 backdrop-blur dark:border-zinc-800 dark:bg-verde-mata/95"
       }
     >

@@ -1,7 +1,6 @@
 import { BackButton } from "@/components/BackButton";
 import { Footer } from "@/components/Footer";
 import { GlobalNav } from "@/components/GlobalNav";
-import { TexturaTopografica } from "@/components/TexturaTopografica";
 import { getConfiguracoesSite } from "@/data/configuracoes";
 
 export default async function SobreNos() {
@@ -18,10 +17,6 @@ export default async function SobreNos() {
             Sobre Nós
           </h1>
         </div>
-      </div>
-
-      <div className="relative h-12 w-full">
-        <TexturaTopografica variant="divisor" />
       </div>
 
       <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 p-8">

@@ -1,7 +1,6 @@
 import { BackButton } from "@/components/BackButton";
 import { Footer } from "@/components/Footer";
 import { GlobalNav } from "@/components/GlobalNav";
-import { TexturaTopografica } from "@/components/TexturaTopografica";
 
 // Mesmo número usado em RoteiroCard/WhatsAppFloatButton/roteiro detalhe.
 const NUMERO_WHATSAPP = "553184743523";
@@ -22,10 +21,6 @@ export default function Contato() {
             Contato
           </h1>
         </div>
-      </div>
-
-      <div className="relative h-12 w-full">
-        <TexturaTopografica variant="divisor" />
       </div>
 
       <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-start gap-8 p-8">
