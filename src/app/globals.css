@@ -17,8 +17,8 @@
 :root {
   --color-verde-mata: #5E6E4F;
   --color-terracota: #2A311E;
-  --color-ocre: #FAF6EE;
-  --color-pedra-sabao: #EFEAE0;
+  --color-ocre: #FAFAFA;
+  --color-pedra-sabao: #F4F4F5;
 }
 
 @theme inline {
