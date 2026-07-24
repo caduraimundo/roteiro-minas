@@ -1,5 +1,4 @@
 import { RoteiroCard } from "@/components/RoteiroCard";
-import { FiltroCategoriaChips } from "@/components/FiltroCategoriaChips";
 import { GlobalNav } from "@/components/GlobalNav";
 import { TexturaTopografica } from "@/components/TexturaTopografica";
 import { getRoteirosAtivos } from "@/data/roteiros";
@@ -17,23 +16,33 @@ export default async function AgendaRoteiros() {
     <div className="flex flex-1 flex-col">
       <GlobalNav />
 
-      {/* Título + chips não são mais sticky (só o GlobalNav é) - chips
-          continuam decorativos, sem filtro ligado, mesmo lugar de
-          sempre, só que agora fora da faixa de navegação. Mesma faixa
+      {/* Título não é mais sticky (só o GlobalNav é) - mesma faixa
           (classes idênticas) usada nas outras 4 páginas de header
-          padrão - gap-3 fica sem efeito visual quando só há o h1. */}
+          padrão. FiltroCategoriaChips removido (nunca foi filtro
+          funcional - não existe campo de categoria no banco - e o
+          volume de roteiros, ~12 no total, no máximo 2 passeios/mês,
+          não justifica simular um). */}
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-3 px-8 py-4">
         <h1 className="font-display text-verde-mata dark:text-pedra-sabao text-2xl font-extrabold tracking-tight">
           Roteiros disponíveis
         </h1>
-        <FiltroCategoriaChips />
+      </div>
+
+      {/* Divisor como irmão solto entre o título e o conteúdo, mesma
+          posição usada nas outras 4 páginas - antes ficava dentro do
+          container gap-14, empilhando o próprio gap-14 por cima da
+          altura do divisor e do p-8 do container, e o respiro entre o
+          título e "Roteiros emissíveis" ficava exagerado (~152px:
+          py-4 + p-8 + h-12 + gap-14). Nessa posição o total cai pra
+          96px (py-4 + h-12 + p-8), igual ao que as outras 4 páginas já
+          usam entre título e primeiro conteúdo - gap-14 abaixo
+          continua só entre as seções (emissíveis/receptivos), mesmo
+          ritmo da Home. */}
+      <div className="relative h-12 w-full">
+        <TexturaTopografica variant="divisor" />
       </div>
 
       <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-14 p-8">
-        <div className="relative h-12 w-full">
-          <TexturaTopografica variant="divisor" />
-        </div>
-
         <section className="flex flex-col gap-5">
           <h2 className="font-display text-2xl font-extrabold tracking-tight">
             Roteiros emissíveis
