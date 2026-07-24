@@ -46,8 +46,15 @@ export function HeroCarousel() {
       {/* Texto centralizado dentro do espaço que sobra (depois do
           espaçador acima), não mais no hero inteiro - resolve a
           sobreposição sem deixar o texto colado no topo em telas
-          altas. */}
-      <div className="relative z-10 flex flex-1 flex-col items-center justify-center gap-4 px-8 text-center text-pedra-sabao">
+          altas. pb-8 garante um respiro mínimo embaixo do botão - ao
+          contrário do padding-top testado no espaçador do topo,
+          padding-bottom num container flex NUNCA é "consumido" pelo
+          justify-center (fica sempre fora da caixa de conteúdo
+          centralizada), então garante fisicamente 32px de sobra abaixo
+          do botão em qualquer altura de tela, mesmo quando o conteúdo
+          quase preenche o espaço disponível (confirmado em celular real
+          que ficava colado sem essa garantia). */}
+      <div className="relative z-10 flex flex-1 flex-col items-center justify-center gap-4 px-8 pb-8 text-center text-pedra-sabao">
         <span className="font-wordmark text-sm uppercase tracking-[0.1em]">
           Roteiro Minas
         </span>
