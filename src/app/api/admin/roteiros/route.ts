@@ -7,6 +7,10 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { gerarSlug } from "@/lib/slug";
 
 const TIPOS_VALIDOS = ["emissivel", "receptivo"];
+// Mesmo conjunto do CHECK da migração
+// 20260724120000_roteiros_categoria_dificuldade.sql.
+const CATEGORIAS_VALIDAS = ["trilha", "cachoeira", "travessia", "cultural"];
+const NIVEIS_DIFICULDADE_VALIDOS = ["leve", "moderado", "dificil", "extremo"];
 
 export async function GET() {
   try {
@@ -91,6 +95,32 @@ export async function POST(request: Request) {
     precoReceptivo = body.preco_receptivo;
   }
 
+  const categoria =
+    typeof body?.categoria === "string" && body.categoria.trim() !== ""
+      ? body.categoria
+      : null;
+  if (categoria !== null && !CATEGORIAS_VALIDAS.includes(categoria)) {
+    return NextResponse.json(
+      { erro: "categoria inválida." },
+      { status: 400 },
+    );
+  }
+
+  const nivelDificuldade =
+    typeof body?.nivel_dificuldade === "string" &&
+    body.nivel_dificuldade.trim() !== ""
+      ? body.nivel_dificuldade
+      : null;
+  if (
+    nivelDificuldade !== null &&
+    !NIVEIS_DIFICULDADE_VALIDOS.includes(nivelDificuldade)
+  ) {
+    return NextResponse.json(
+      { erro: "nivel_dificuldade inválido." },
+      { status: 400 },
+    );
+  }
+
   const slug = gerarSlug(nome);
   if (!slug) {
     return NextResponse.json(
@@ -108,6 +138,8 @@ export async function POST(request: Request) {
       tipo,
       preco_receptivo: precoReceptivo,
       pdf_url: pdfUrl,
+      categoria,
+      nivel_dificuldade: nivelDificuldade,
       slug,
       ativo: true,
     })
