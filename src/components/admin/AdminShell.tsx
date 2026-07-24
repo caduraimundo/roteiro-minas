@@ -6,53 +6,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
-// Roteiros mora em /admin (não existe /admin/roteiros index, só
-// /admin/roteiros/[id] e /admin/roteiros/novo) - por isso o match dele é
-// especial (raiz exata OU prefixo /admin/roteiros), diferente dos demais
-// que só checam prefixo do próprio segmento. Sem essa distinção, um
-// match de prefixo ingênuo em "/admin" acenderia todos os links ao mesmo
-// tempo, já que todas as rotas do painel começam com "/admin".
-//
-// Um único array, na ordem visual completa (MENU + GERAL) - a divisão em
-// seções na sidebar é só de apresentação (ver MENU_LINKS/GERAL_LINKS
-// abaixo), não motivo pra duplicar a lógica de match().
-const LINKS = [
-  {
-    href: "/admin",
-    label: "Roteiros",
-    match: (pathname: string) =>
-      pathname === "/admin" || pathname.startsWith("/admin/roteiros"),
-  },
-  {
-    href: "/admin/vendas",
-    label: "Vendas",
-    match: (pathname: string) => pathname.startsWith("/admin/vendas"),
-  },
-  {
-    href: "/admin/cupons",
-    label: "Cupons",
-    match: (pathname: string) => pathname.startsWith("/admin/cupons"),
-  },
-  {
-    href: "/admin/relatorio",
-    label: "Relatório",
-    match: (pathname: string) => pathname.startsWith("/admin/relatorio"),
-  },
-  {
-    href: "/admin/custos",
-    label: "Custos",
-    match: (pathname: string) => pathname.startsWith("/admin/custos"),
-  },
-  {
-    href: "/admin/configuracoes",
-    label: "Configurações",
-    match: (pathname: string) => pathname.startsWith("/admin/configuracoes"),
-  },
-] as const;
-
-const MENU_LINKS = LINKS.slice(0, 5);
-const GERAL_LINKS = LINKS.slice(5);
-
 function SearchIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -143,6 +96,151 @@ function SettingsIcon({ className }: { className?: string }) {
   );
 }
 
+function MapIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z" />
+      <path d="M9 4v14M15 6v14" />
+    </svg>
+  );
+}
+
+function CalendarCheckIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <rect x="3" y="5" width="18" height="16" rx="3" />
+      <path d="M8 3v4M16 3v4M3 10h18" />
+      <path d="m9 15 2 2 4-4" />
+    </svg>
+  );
+}
+
+function TagIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M20 12.5 12.5 20a2 2 0 0 1-2.83 0l-6.67-6.67a2 2 0 0 1 0-2.83L10.5 3H20v9.5Z" />
+      <circle cx="15.5" cy="7.5" r="1.25" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+function BarChartIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M4 20V10M12 20V4M20 20v-7" />
+      <path d="M2 20h20" />
+    </svg>
+  );
+}
+
+function WalletIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M3 7a2 2 0 0 1 2-2h13a1 1 0 0 1 1 1v3" />
+      <path d="M3 7v11a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1h-5a2.5 2.5 0 0 1 0-5h5a1 1 0 0 0 1-1" />
+      <circle cx="16.5" cy="14.5" r="0.75" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+// Roteiros mora em /admin (não existe /admin/roteiros index, só
+// /admin/roteiros/[id] e /admin/roteiros/novo) - por isso o match dele é
+// especial (raiz exata OU prefixo /admin/roteiros), diferente dos demais
+// que só checam prefixo do próprio segmento. Sem essa distinção, um
+// match de prefixo ingênuo em "/admin" acenderia todos os links ao mesmo
+// tempo, já que todas as rotas do painel começam com "/admin".
+//
+// Um único array, na ordem visual completa (MENU + GERAL) - a divisão em
+// seções na sidebar é só de apresentação (ver MENU_LINKS/GERAL_LINKS
+// abaixo), não motivo pra duplicar a lógica de match().
+const LINKS = [
+  {
+    href: "/admin",
+    label: "Roteiros",
+    icon: MapIcon,
+    match: (pathname: string) =>
+      pathname === "/admin" || pathname.startsWith("/admin/roteiros"),
+  },
+  {
+    href: "/admin/vendas",
+    label: "Vendas",
+    icon: CalendarCheckIcon,
+    match: (pathname: string) => pathname.startsWith("/admin/vendas"),
+  },
+  {
+    href: "/admin/cupons",
+    label: "Cupons",
+    icon: TagIcon,
+    match: (pathname: string) => pathname.startsWith("/admin/cupons"),
+  },
+  {
+    href: "/admin/relatorio",
+    label: "Relatório",
+    icon: BarChartIcon,
+    match: (pathname: string) => pathname.startsWith("/admin/relatorio"),
+  },
+  {
+    href: "/admin/custos",
+    label: "Custos",
+    icon: WalletIcon,
+    match: (pathname: string) => pathname.startsWith("/admin/custos"),
+  },
+  {
+    href: "/admin/configuracoes",
+    label: "Configurações",
+    icon: SettingsIcon,
+    match: (pathname: string) => pathname.startsWith("/admin/configuracoes"),
+  },
+] as const;
+
+const MENU_LINKS = LINKS.slice(0, 5);
+const GERAL_LINKS = LINKS.slice(5);
+
 // Rótulo de seção (MENU/GERAL) - mesmo tratamento tipográfico do
 // mockup (versalete pequeno, tracking largo, tom apagado), só na cor de
 // marca em vez do cinza-esverdeado original.
@@ -167,18 +265,20 @@ function NavLinks({
     <nav className="flex flex-col gap-1">
       {links.map((link) => {
         const ativo = link.match(pathname);
+        const Icon = link.icon;
         return (
           <Link
             key={link.href}
             href={link.href}
             onClick={onNavigate}
             aria-current={ativo ? "page" : undefined}
-            className={`font-body rounded-xl px-4 py-2.5 text-sm transition-colors ${
+            className={`font-body flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm transition-colors ${
               ativo
                 ? "bg-verde-mata text-pedra-sabao font-semibold"
                 : "text-terracota hover:bg-pedra-sabao/60 font-medium"
             }`}
           >
+            <Icon className="h-4 w-4 shrink-0" />
             {link.label}
           </Link>
         );
@@ -219,7 +319,7 @@ function SidebarConteudo({
         <NavLinks links={MENU_LINKS} onNavigate={onNavigate} />
       </div>
 
-      <div className="flex flex-col">
+      <div className="mt-auto flex flex-col">
         <RotuloSecao>Geral</RotuloSecao>
         <NavLinks links={GERAL_LINKS} onNavigate={onNavigate} />
         <button
@@ -302,12 +402,9 @@ export function AdminShell({
   const [menuAberto, setMenuAberto] = useState(false);
   const [perfilAberto, setPerfilAberto] = useState(false);
 
-  // Mesma lógica do LogoutButton (src/components/LogoutButton.tsx),
-  // duplicada aqui em vez de reaproveitar o componente diretamente -
-  // ele é um <button> com marcação própria (pílula solta), e agora o
   // "Sair" aparece em dois lugares com apresentação diferente (item de
-  // menu na sidebar, item de dropdown no header), nenhum dos dois é a
-  // pílula original.
+  // menu na sidebar, item de dropdown no header) - nenhum é uma pílula
+  // solta, por isso a lógica vive aqui em vez de num componente próprio.
   async function handleLogout() {
     const supabase = createClient();
     await supabase.auth.signOut();
@@ -318,7 +415,7 @@ export function AdminShell({
   return (
     <div className="bg-pedra-sabao flex min-h-dvh w-full gap-4 p-4">
       {/* Sidebar desktop - fixa à esquerda, sempre visível a partir de lg. */}
-      <aside className="bg-ocre hidden w-64 shrink-0 flex-col justify-between gap-6 rounded-3xl p-5 lg:flex">
+      <aside className="bg-ocre hidden w-64 shrink-0 flex-col gap-6 rounded-3xl p-5 lg:flex">
         <SidebarConteudo onLogout={handleLogout} />
       </aside>
 
@@ -332,7 +429,7 @@ export function AdminShell({
             onClick={() => setMenuAberto(false)}
             className="absolute inset-0 bg-black/40"
           />
-          <aside className="bg-ocre relative flex h-full w-64 flex-col justify-between gap-6 p-5">
+          <aside className="bg-ocre relative flex h-full w-64 flex-col gap-6 p-5">
             <SidebarConteudo
               onNavigate={() => setMenuAberto(false)}
               onLogout={handleLogout}
