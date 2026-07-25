@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { formatarPreco } from "@/lib/format";
+import { formatarPreco, formatarDataCurta } from "@/lib/format";
 import { NovoRoteiroPanel } from "@/components/admin/NovoRoteiroPanel";
 
 type VendasMes = {
@@ -38,14 +38,6 @@ type DashboardData = {
 // proximas_vagas sem filtro de estoque, isso não filtra nada, só
 // estiliza os itens com pouca vaga sobrando.
 const LIMITE_VAGAS_BAIXAS = 3;
-
-// `data` vem da API como "AAAA-MM-DD" (coluna date do Postgres) - parse
-// por string, sem passar por Date, evita qualquer ambiguidade de fuso
-// só pra extrair dia/mês.
-function formatarDataCurta(data: string) {
-  const [, mes, dia] = data.split("-");
-  return `${dia}/${mes}`;
-}
 
 export function DashboardClient() {
   const [dados, setDados] = useState<DashboardData | null>(null);

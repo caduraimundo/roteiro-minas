@@ -29,6 +29,10 @@ export type Roteiro = {
   // Preço fixo pro tipo 'receptivo' - sempre null pra 'emissivel', que
   // continua usando o preço por vaga (Vaga.preco).
   preco_receptivo: number | null;
+  // Opcionais, NULL nos roteiros criados antes desses campos existirem
+  // (migração 20260724120000_roteiros_categoria_dificuldade.sql).
+  categoria: string | null;
+  nivel_dificuldade: string | null;
 };
 
 // Sempre presente (mesmo pra roteiros emissíveis, onde vem vazio) -

@@ -14,6 +14,17 @@ export function formatarData(data: string) {
 }
 
 /**
+ * Versão curta (dd/mm) pra contextos compactos - cards e tabelas do
+ * admin. `data` vem sempre como "AAAA-MM-DD" (coluna date do
+ * Postgres), parseado por string em vez de Date pra não depender de
+ * fuso só pra extrair dia/mês.
+ */
+export function formatarDataCurta(data: string) {
+  const [, mes, dia] = data.split("-");
+  return `${dia}/${mes}`;
+}
+
+/**
  * CPF é salvo no banco como 11 dígitos crus, sem pontuação
  * (confirmado via SQL antes de escrever isso). Mascara tudo exceto os
  * últimos 4 dígitos, depois aplica a pontuação padrão (XXX.XXX.XXX-XX)
