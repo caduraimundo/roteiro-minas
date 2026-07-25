@@ -13,7 +13,45 @@ type Cupom = {
 type RoteiroResumo = { id: string; nome: string };
 
 const campoClasse =
-  "rounded-lg border border-zinc-300 bg-transparent px-2 py-1 text-sm dark:border-zinc-700";
+  "font-body text-terracota rounded-xl border border-zinc-200 bg-white px-2.5 py-1.5 text-sm outline-none focus:border-verde-mata";
+const labelClasse =
+  "font-body text-terracota flex flex-col gap-1 text-xs font-medium";
+
+function PencilIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M12 20h9" />
+      <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+    </svg>
+  );
+}
+
+function PowerIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M12 3v8" />
+      <path d="M6.3 6.3a8 8 0 1 0 11.4 0" />
+    </svg>
+  );
+}
 
 export function CupomLinha({
   cupom,
@@ -97,11 +135,11 @@ export function CupomLinha({
 
   if (editando) {
     return (
-      <tr className="border-t border-zinc-200 dark:border-zinc-800">
-        <td colSpan={4} className="py-2">
+      <tr className="font-body border-t border-zinc-100 text-sm">
+        <td colSpan={5} className="px-4 py-4">
           <form onSubmit={salvarEdicao} className="flex flex-col gap-3">
             <div className="flex flex-wrap gap-3">
-              <label className="flex flex-col gap-1 text-xs">
+              <label className={labelClasse}>
                 Código
                 <input
                   type="text"
@@ -112,7 +150,7 @@ export function CupomLinha({
                 />
               </label>
 
-              <label className="flex flex-col gap-1 text-xs">
+              <label className={labelClasse}>
                 Roteiro
                 <select
                   value={roteiroId}
@@ -127,7 +165,7 @@ export function CupomLinha({
                 </select>
               </label>
 
-              <label className="flex flex-col gap-1 text-xs">
+              <label className={labelClasse}>
                 Desconto (%)
                 <input
                   type="number"
@@ -142,13 +180,13 @@ export function CupomLinha({
               </label>
             </div>
 
-            {erro && <p className="text-sm text-red-600">{erro}</p>}
+            {erro && <p className="font-body text-sm text-red-600">{erro}</p>}
 
             <div className="flex gap-2">
               <button
                 type="submit"
                 disabled={enviando}
-                className="rounded-full bg-foreground px-4 py-1 text-xs font-medium text-background disabled:opacity-50"
+                className="font-body bg-verde-mata text-pedra-sabao rounded-2xl px-4 py-1.5 text-xs font-semibold disabled:opacity-50"
               >
                 {enviando ? "Salvando..." : "Salvar"}
               </button>
@@ -156,7 +194,7 @@ export function CupomLinha({
                 type="button"
                 onClick={cancelarEdicao}
                 disabled={enviando}
-                className="rounded-full border border-zinc-300 px-4 py-1 text-xs dark:border-zinc-700"
+                className="font-body text-terracota rounded-2xl border border-zinc-300 px-4 py-1.5 text-xs font-medium disabled:opacity-50"
               >
                 Cancelar
               </button>
@@ -168,32 +206,54 @@ export function CupomLinha({
   }
 
   return (
-    <tr className="border-t border-zinc-200 dark:border-zinc-800">
-      <td className="py-2">{cupom.codigo}</td>
-      <td className="py-2">{roteiroNome}</td>
-      <td className="py-2">{cupom.percentual_desconto}%</td>
-      <td className="py-2">
-        <div className="flex flex-wrap items-center justify-end gap-2">
-          {!cupom.ativo && (
-            <span className="rounded-full bg-zinc-200 px-3 py-1 text-xs font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
-              Pausado
-            </span>
+    <tr className="font-body border-t border-zinc-100 text-sm">
+      <td className="px-4 py-4">
+        <span className="text-terracota bg-pedra-sabao rounded-lg px-2.5 py-1 font-mono text-xs font-bold">
+          {cupom.codigo}
+        </span>
+      </td>
+      <td className="text-terracota/70 px-4 py-4 font-medium">
+        {roteiroNome}
+      </td>
+      <td className="text-terracota px-4 py-4 font-semibold">
+        {cupom.percentual_desconto}%
+      </td>
+      <td className="px-4 py-4">
+        <span
+          className={`rounded-full px-3 py-1 text-xs font-semibold ${
+            cupom.ativo
+              ? "bg-verde-mata/10 text-verde-mata"
+              : "bg-pedra-sabao text-terracota/60"
+          }`}
+        >
+          {cupom.ativo ? "Ativo" : "Pausado"}
+        </span>
+      </td>
+      <td className="px-4 py-4">
+        <div className="flex items-center justify-end gap-2">
+          {erro && (
+            <span className="font-body text-xs text-red-600">{erro}</span>
           )}
-          {erro && <span className="text-xs text-red-600">{erro}</span>}
           <button
             type="button"
             onClick={() => setEditando(true)}
-            className="rounded-full border border-zinc-300 px-3 py-1 text-xs dark:border-zinc-700"
+            aria-label={`Editar cupom ${cupom.codigo}`}
+            className="text-terracota flex h-9 w-9 items-center justify-center rounded-xl border border-zinc-200 bg-white"
           >
-            Editar
+            <PencilIcon className="h-4 w-4" />
           </button>
           <button
             type="button"
             onClick={alternarAtivo}
             disabled={enviando}
-            className="rounded-full border border-zinc-300 px-3 py-1 text-xs disabled:opacity-50 dark:border-zinc-700"
+            aria-label={
+              cupom.ativo
+                ? `Pausar cupom ${cupom.codigo}`
+                : `Despausar cupom ${cupom.codigo}`
+            }
+            className="text-terracota flex h-9 w-9 items-center justify-center rounded-xl border border-zinc-200 bg-white disabled:opacity-50"
           >
-            {cupom.ativo ? "Pausar" : "Despausar"}
+            <PowerIcon className="h-4 w-4" />
           </button>
         </div>
       </td>

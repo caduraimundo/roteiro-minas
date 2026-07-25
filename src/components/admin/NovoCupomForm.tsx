@@ -6,7 +6,9 @@ import { useRouter } from "next/navigation";
 type RoteiroResumo = { id: string; nome: string };
 
 const campoClasse =
-  "rounded-lg border border-zinc-300 bg-transparent px-3 py-2 text-sm dark:border-zinc-700";
+  "font-body text-terracota rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none focus:border-verde-mata";
+const labelClasse =
+  "font-body text-terracota flex flex-col gap-1 text-sm font-medium";
 
 export function NovoCupomForm() {
   const router = useRouter();
@@ -58,8 +60,11 @@ export function NovoCupomForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <label className="flex flex-col gap-1 text-sm">
+    <form
+      onSubmit={handleSubmit}
+      className="bg-pedra-sabao flex flex-col gap-4 rounded-2xl p-6"
+    >
+      <label className={labelClasse}>
         Código (salvo em MAIÚSCULO automaticamente)
         <input
           type="text"
@@ -70,7 +75,7 @@ export function NovoCupomForm() {
         />
       </label>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className={labelClasse}>
         Roteiro
         <select
           required
@@ -89,7 +94,7 @@ export function NovoCupomForm() {
         </select>
       </label>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className={labelClasse}>
         Percentual de desconto
         <input
           type="number"
@@ -103,12 +108,12 @@ export function NovoCupomForm() {
         />
       </label>
 
-      {erro && <p className="text-sm text-red-600">{erro}</p>}
+      {erro && <p className="font-body text-sm text-red-600">{erro}</p>}
 
       <button
         type="submit"
         disabled={enviando}
-        className="self-start rounded-full bg-foreground px-5 py-2 text-sm font-medium text-background disabled:opacity-50"
+        className="font-body bg-verde-mata text-pedra-sabao self-start rounded-2xl px-5 py-2.5 text-sm font-semibold disabled:opacity-50"
       >
         {enviando ? "Criando..." : "Criar cupom"}
       </button>
