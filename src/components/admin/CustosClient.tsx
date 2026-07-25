@@ -69,93 +69,133 @@ export function CustosClient({ mesInicial }: { mesInicial: string }) {
     <div className="flex flex-col gap-6">
       <SeletorMes mes={mes} onChange={handleMesChange} />
 
-      {erro && <p className="text-sm text-red-600">{erro}</p>}
+      {erro && <p className="font-body text-sm text-red-600">{erro}</p>}
 
       {carregando ? (
-        <p className="text-zinc-600 dark:text-zinc-400">Carregando...</p>
+        <p className="font-body text-terracota/60 text-sm">Carregando...</p>
       ) : (
         dados && (
           <>
-            <div className="flex flex-col gap-1 rounded-lg border border-zinc-200 p-3 dark:border-zinc-800">
-              <span className="text-xs text-zinc-600 dark:text-zinc-400">
-                Margem total do mês
-              </span>
-              <span className="font-medium">
-                {formatarPreco(dados.resumo.margem_total)}
-              </span>
+            <div className="max-w-xs">
+              <MetricCard
+                titulo="Margem total do mês"
+                valor={formatarPreco(dados.resumo.margem_total)}
+                destaque
+              />
             </div>
 
             {dados.resumo.roteiros_com_custo_incompleto > 0 && (
-              <p className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm font-medium text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-300">
+              <p className="font-body rounded-2xl border border-amber-300 bg-amber-50 p-4 text-sm font-semibold text-amber-800">
                 {dados.resumo.roteiros_com_custo_incompleto} roteiro
                 {dados.resumo.roteiros_com_custo_incompleto > 1 ? "s" : ""} sem
                 custo cadastrado - a margem total acima é parcial.
               </p>
             )}
 
-            <div className="flex flex-col gap-2">
-              <h2 className="font-semibold">Por roteiro</h2>
+            <div className="flex flex-col gap-3">
+              <h2 className="font-display text-terracota text-lg font-bold">
+                Por roteiro
+              </h2>
               {dados.por_roteiro.length === 0 ? (
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                <p className="font-body text-terracota/60 text-sm">
                   Nenhuma venda no período.
                 </p>
               ) : (
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="text-left text-zinc-600 dark:text-zinc-400">
-                      <th className="pb-2 font-medium">Roteiro</th>
-                      <th className="pb-2 font-medium">Execuções</th>
-                      <th className="pb-2 font-medium">Vendas</th>
-                      <th className="pb-2 font-medium">Receita líquida</th>
-                      <th className="pb-2 font-medium">Custo</th>
-                      <th className="pb-2 font-medium">Margem</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {dados.por_roteiro.map((item) => (
-                      <tr
-                        key={item.roteiro_id}
-                        className="border-t border-zinc-200 dark:border-zinc-800"
-                      >
-                        <td className="py-2">{item.nome}</td>
-                        <td className="py-2">{item.quantidade_execucoes}</td>
-                        <td className="py-2">{item.quantidade_vendas}</td>
-                        <td className="py-2">
-                          {formatarPreco(item.receita_liquida)}
-                        </td>
-                        {item.custo_incompleto ? (
-                          <td colSpan={2} className="py-2">
-                            <div className="flex items-center gap-2">
-                              <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-800 dark:bg-amber-900 dark:text-amber-300">
-                                Custo não cadastrado
-                              </span>
-                              <Link
-                                href={`/admin/roteiros/${item.roteiro_id}`}
-                                className="text-xs font-medium underline"
-                              >
-                                Cadastrar
-                              </Link>
-                            </div>
-                          </td>
-                        ) : (
-                          <>
-                            <td className="py-2">
-                              {formatarPreco(item.custo_total as number)}
-                            </td>
-                            <td className="py-2">
-                              {formatarPreco(item.margem as number)}
-                            </td>
-                          </>
-                        )}
+                <div className="overflow-x-auto rounded-2xl border border-zinc-200 bg-white p-2">
+                  <table className="w-full min-w-[720px] border-collapse">
+                    <thead>
+                      <tr className="font-body text-terracota/50 text-left text-[11px] font-bold tracking-wide uppercase">
+                        <th className="px-4 py-3">Roteiro</th>
+                        <th className="px-4 py-3">Execuções</th>
+                        <th className="px-4 py-3">Vendas</th>
+                        <th className="px-4 py-3">Receita líquida</th>
+                        <th className="px-4 py-3">Custo</th>
+                        <th className="px-4 py-3">Margem</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {dados.por_roteiro.map((item) => (
+                        <tr
+                          key={item.roteiro_id}
+                          className="font-body border-t border-zinc-100 text-sm"
+                        >
+                          <td className="text-terracota px-4 py-4 font-medium">
+                            {item.nome}
+                          </td>
+                          <td className="text-terracota/70 px-4 py-4">
+                            {item.quantidade_execucoes}
+                          </td>
+                          <td className="text-terracota/70 px-4 py-4">
+                            {item.quantidade_vendas}
+                          </td>
+                          <td className="text-terracota px-4 py-4 font-semibold">
+                            {formatarPreco(item.receita_liquida)}
+                          </td>
+                          {item.custo_incompleto ? (
+                            <td colSpan={2} className="px-4 py-4">
+                              <div className="flex items-center gap-2.5">
+                                <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
+                                  Custo não cadastrado
+                                </span>
+                                <Link
+                                  href={`/admin/roteiros/${item.roteiro_id}`}
+                                  className="text-verde-mata text-xs font-semibold underline"
+                                >
+                                  Cadastrar
+                                </Link>
+                              </div>
+                            </td>
+                          ) : (
+                            <>
+                              <td className="text-terracota px-4 py-4 font-semibold">
+                                {formatarPreco(item.custo_total as number)}
+                              </td>
+                              <td className="text-terracota px-4 py-4 font-semibold">
+                                {formatarPreco(item.margem as number)}
+                              </td>
+                            </>
+                          )}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </div>
           </>
         )
       )}
+    </div>
+  );
+}
+
+function MetricCard({
+  titulo,
+  valor,
+  destaque,
+}: {
+  titulo: string;
+  valor: string;
+  destaque?: boolean;
+}) {
+  return (
+    <div
+      className={`flex flex-col gap-3 rounded-2xl p-5 ${
+        destaque
+          ? "bg-verde-mata text-pedra-sabao"
+          : "bg-pedra-sabao text-terracota"
+      }`}
+    >
+      <span
+        className={`font-body text-xs font-semibold ${
+          destaque ? "text-pedra-sabao/80" : "text-terracota/60"
+        }`}
+      >
+        {titulo}
+      </span>
+      <span className="font-display text-2xl font-extrabold tracking-tight">
+        {valor}
+      </span>
     </div>
   );
 }
