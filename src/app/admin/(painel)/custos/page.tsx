@@ -17,7 +17,7 @@ export default async function AdminCustos() {
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 p-8">
-      <Link href="/admin" className="text-sm text-zinc-600 dark:text-zinc-400">
+      <Link href="/admin/roteiros" className="text-sm text-zinc-600 dark:text-zinc-400">
         ← Roteiros
       </Link>
 

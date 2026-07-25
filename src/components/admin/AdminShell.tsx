@@ -208,12 +208,8 @@ function WalletIcon({ className }: { className?: string }) {
   );
 }
 
-// Roteiros mora em /admin (não existe /admin/roteiros index, só
-// /admin/roteiros/[id] e /admin/roteiros/novo) - por isso o match dele é
-// especial (raiz exata OU prefixo /admin/roteiros), diferente dos demais
-// que só checam prefixo do próprio segmento. Sem essa distinção, um
-// match de prefixo ingênuo em "/admin" acenderia todos os links ao mesmo
-// tempo, já que todas as rotas do painel começam com "/admin".
+// /admin (raiz) só redireciona pra /admin/dashboard - não é mais a home
+// de Roteiros, então nenhum link daqui aponta mais pra "/admin" puro.
 //
 // Um único array, na ordem visual completa (MENU + GERAL) - a divisão em
 // seções na sidebar é só de apresentação (ver MENU_LINKS/GERAL_LINKS
@@ -226,11 +222,10 @@ const LINKS = [
     match: (pathname: string) => pathname === "/admin/dashboard",
   },
   {
-    href: "/admin",
+    href: "/admin/roteiros",
     label: "Roteiros",
     icon: MapIcon,
-    match: (pathname: string) =>
-      pathname === "/admin" || pathname.startsWith("/admin/roteiros"),
+    match: (pathname: string) => pathname.startsWith("/admin/roteiros"),
   },
   {
     href: "/admin/vendas",
@@ -322,7 +317,7 @@ function SidebarConteudo({
 }) {
   return (
     <>
-      <Link href="/admin" className="flex items-center gap-3 px-1 pb-2">
+      <Link href="/admin/dashboard" className="flex items-center gap-3 px-1 pb-2">
         <Image
           src="/logo.webp"
           alt="Roteiro Minas"

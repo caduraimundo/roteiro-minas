@@ -98,7 +98,7 @@ export default async function AdminRoteiroDetalhe({
     return (
       <div className="flex w-full flex-1 flex-col gap-6 p-8">
         <Link
-          href="/admin"
+          href="/admin/roteiros"
           className="font-body text-terracota/60 hover:text-terracota text-sm font-medium"
         >
           ← Roteiros
@@ -172,7 +172,7 @@ export default async function AdminRoteiroDetalhe({
   return (
     <div className="flex w-full flex-1 flex-col gap-6 p-8">
       <Link
-        href="/admin"
+        href="/admin/roteiros"
         className="font-body text-terracota/60 hover:text-terracota text-sm font-medium"
       >
         ← Roteiros
