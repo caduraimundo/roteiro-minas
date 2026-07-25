@@ -236,7 +236,7 @@ export function NovoRoteiroPanel({
           <button
             type="button"
             onClick={onClose}
-            className="font-body text-terracota rounded-full border border-zinc-300 px-5 py-2 text-sm font-medium"
+            className="font-body text-terracota rounded-2xl border border-zinc-300 px-5 py-2 text-sm font-medium"
           >
             Cancelar
           </button>
@@ -244,7 +244,7 @@ export function NovoRoteiroPanel({
             type="submit"
             form={ID_FORM}
             disabled={enviando}
-            className="font-body bg-verde-mata text-pedra-sabao rounded-full px-5 py-2 text-sm font-semibold disabled:opacity-50"
+            className="font-body bg-verde-mata text-pedra-sabao rounded-2xl px-5 py-2 text-sm font-semibold disabled:opacity-50"
           >
             {enviando ? "Criando..." : "Criar roteiro"}
           </button>
