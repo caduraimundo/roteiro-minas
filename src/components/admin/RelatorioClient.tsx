@@ -43,6 +43,25 @@ function numeroOuZero(valor: number | null | undefined) {
   return valor ?? 0;
 }
 
+function DownloadIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M12 3v12" />
+      <path d="m7 10 5 5 5-5" />
+      <path d="M4 19h16" />
+    </svg>
+  );
+}
+
 export function RelatorioClient({ mesInicial }: { mesInicial: string }) {
   const [mes, setMes] = useState(mesInicial);
   const [dados, setDados] = useState<Relatorio | null>(null);
@@ -87,7 +106,30 @@ export function RelatorioClient({ mesInicial }: { mesInicial: string }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <SeletorMes mes={mes} onChange={handleMesChange} />
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="font-display text-terracota text-2xl font-extrabold tracking-tight">
+            Relatório mensal
+          </h1>
+          <p className="font-body mt-1 text-sm text-zinc-600">
+            Acompanhe o desempenho financeiro por mês.
+          </p>
+        </div>
+
+        <div className="flex items-end gap-3">
+          <SeletorMes mes={mes} onChange={handleMesChange} />
+          {/* Decorativo por enquanto, sem função real - mesmo padrão de
+              botão primário já usado em "Nova venda manual"/"Novo
+              cupom". */}
+          <button
+            type="button"
+            className="font-body bg-verde-mata text-pedra-sabao flex items-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-semibold"
+          >
+            <DownloadIcon className="h-4 w-4" />
+            Exportar PDF
+          </button>
+        </div>
+      </div>
 
       {erro && <p className="font-body text-sm text-red-600">{erro}</p>}
 

@@ -67,7 +67,18 @@ export function CustosClient({ mesInicial }: { mesInicial: string }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <SeletorMes mes={mes} onChange={handleMesChange} />
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="font-display text-terracota text-2xl font-extrabold tracking-tight">
+            Painel de custos
+          </h1>
+          <p className="font-body mt-1 text-sm text-zinc-600">
+            Acompanhe custo e margem por roteiro, mês a mês.
+          </p>
+        </div>
+
+        <SeletorMes mes={mes} onChange={handleMesChange} />
+      </div>
 
       {erro && <p className="font-body text-sm text-red-600">{erro}</p>}
 

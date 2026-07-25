@@ -29,15 +29,6 @@ export default async function AdminRelatorio() {
 
   return (
     <div className="flex w-full flex-1 flex-col gap-6 p-8">
-      <div>
-        <h1 className="font-display text-terracota text-2xl font-extrabold tracking-tight">
-          Relatório mensal
-        </h1>
-        <p className="font-body mt-1 text-sm text-zinc-600">
-          Acompanhe o desempenho financeiro por mês.
-        </p>
-      </div>
-
       <RelatorioClient mesInicial={mesAtualSaoPaulo()} />
     </div>
   );
