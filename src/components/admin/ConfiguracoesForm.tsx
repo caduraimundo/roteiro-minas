@@ -11,7 +11,9 @@ type Configuracoes = {
 };
 
 const campoClasse =
-  "rounded-lg border border-zinc-300 bg-transparent px-3 py-2 text-sm dark:border-zinc-700";
+  "font-body text-terracota rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none focus:border-verde-mata";
+const labelClasse =
+  "font-body text-terracota flex flex-col gap-1 text-sm font-medium";
 
 export function ConfiguracoesForm() {
   const [cadasturNumero, setCadasturNumero] = useState("");
@@ -89,13 +91,16 @@ export function ConfiguracoesForm() {
 
   if (carregando) {
     return (
-      <p className="text-zinc-600 dark:text-zinc-400">Carregando...</p>
+      <p className="font-body text-terracota/60 text-sm">Carregando...</p>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <label className="flex flex-col gap-1 text-sm">
+    <form
+      onSubmit={handleSubmit}
+      className="bg-pedra-sabao flex flex-col gap-4 rounded-2xl p-6"
+    >
+      <label className={labelClasse}>
         Número do Cadastur
         <input
           type="text"
@@ -105,7 +110,7 @@ export function ConfiguracoesForm() {
         />
       </label>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className={labelClasse}>
         Seguidores no Instagram
         <input
           type="text"
@@ -117,7 +122,7 @@ export function ConfiguracoesForm() {
         />
       </label>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className={labelClasse}>
         Roteiros realizados
         <input
           type="text"
@@ -129,7 +134,7 @@ export function ConfiguracoesForm() {
         />
       </label>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className={labelClasse}>
         Avaliação média
         <input
           type="text"
@@ -139,7 +144,7 @@ export function ConfiguracoesForm() {
         />
       </label>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className={labelClasse}>
         Texto de política de cancelamento
         <textarea
           value={cancelamentoTexto}
@@ -149,9 +154,9 @@ export function ConfiguracoesForm() {
         />
       </label>
 
-      {erro && <p className="text-sm text-red-600">{erro}</p>}
+      {erro && <p className="font-body text-sm text-red-600">{erro}</p>}
       {sucesso && (
-        <p className="text-sm text-green-700 dark:text-green-500">
+        <p className="font-body text-verde-mata text-sm font-semibold">
           Configurações salvas.
         </p>
       )}
@@ -159,7 +164,7 @@ export function ConfiguracoesForm() {
       <button
         type="submit"
         disabled={enviando}
-        className="self-start rounded-full bg-foreground px-5 py-2 text-sm font-medium text-background disabled:opacity-50"
+        className="font-body bg-verde-mata text-pedra-sabao self-start rounded-2xl px-5 py-2.5 text-sm font-semibold disabled:opacity-50"
       >
         {enviando ? "Salvando..." : "Salvar"}
       </button>

@@ -16,11 +16,22 @@ export default async function AdminConfiguracoes() {
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 p-8">
-      <Link href="/admin/roteiros" className="text-sm text-zinc-600 dark:text-zinc-400">
+      <Link
+        href="/admin/roteiros"
+        className="font-body text-terracota/60 hover:text-terracota text-sm font-medium"
+      >
         ← Roteiros
       </Link>
 
-      <h1 className="text-xl font-semibold">Configurações do site</h1>
+      <div>
+        <h1 className="font-display text-terracota text-2xl font-extrabold tracking-tight">
+          Configurações do site
+        </h1>
+        <p className="font-body mt-1 text-sm text-zinc-600">
+          Dados usados no site público (Cadastur, estatísticas e
+          política de cancelamento).
+        </p>
+      </div>
 
       <ConfiguracoesForm />
     </div>
