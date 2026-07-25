@@ -94,14 +94,14 @@ export function DashboardClient() {
         <div className="flex items-center gap-3">
           <button
             type="button"
-            className="font-body text-terracota rounded-full border border-zinc-300 px-5 py-2.5 text-sm font-semibold"
+            className="font-body text-terracota rounded-2xl border border-zinc-300 px-5 py-2.5 text-sm font-semibold"
           >
             Exportar dados
           </button>
           <button
             type="button"
             onClick={() => setPanelAberto(true)}
-            className="font-body bg-verde-mata text-pedra-sabao rounded-full px-5 py-2.5 text-sm font-semibold"
+            className="font-body bg-verde-mata text-pedra-sabao rounded-2xl px-5 py-2.5 text-sm font-semibold"
           >
             Novo Roteiro
           </button>
