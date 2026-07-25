@@ -72,20 +72,20 @@ export default async function AdminVagaDetalhe({
   const vagaTipada = vaga as Vaga;
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 p-8">
+    <div className="flex w-full flex-1 flex-col gap-6 p-8">
       <Link
         href={`/admin/roteiros/${id}`}
-        className="text-sm text-zinc-600 dark:text-zinc-400"
+        className="font-body text-terracota/60 hover:text-terracota text-sm font-medium"
       >
         ← {roteiroTipado.nome}
       </Link>
 
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex flex-col gap-1">
-          <h1 className="text-xl font-semibold">
+          <h1 className="font-display text-terracota text-2xl font-extrabold tracking-tight">
             {formatarData(vagaTipada.data)}
           </h1>
-          <span className="text-sm text-zinc-600 dark:text-zinc-400">
+          <span className="font-body text-terracota/60 text-sm">
             {formatarPreco(vagaTipada.preco)} ·{" "}
             {vagaTipada.vagas_disponiveis}/{vagaTipada.vagas_totais} vagas ·{" "}
             {RUBRICAS_STATUS_VAGA[vagaTipada.status]}
@@ -94,7 +94,7 @@ export default async function AdminVagaDetalhe({
 
         <Link
           href={`/admin/roteiros/${id}/vagas/${vagaId}/lista`}
-          className="self-start rounded-full border border-zinc-300 px-5 py-2 text-sm dark:border-zinc-700"
+          className="font-body text-terracota self-start rounded-2xl border border-zinc-300 px-5 py-2.5 text-sm font-medium"
         >
           Lista do dia
         </Link>

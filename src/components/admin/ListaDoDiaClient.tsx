@@ -62,17 +62,17 @@ export function ListaDoDiaClient({
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 p-8 print:max-w-none">
       <Link
         href={`/admin/roteiros/${roteiroId}/vagas/${vagaId}`}
-        className="text-sm text-zinc-600 dark:text-zinc-400 print:hidden"
+        className="font-body text-terracota/60 hover:text-terracota text-sm font-medium print:hidden"
       >
         ← Voltar
       </Link>
 
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
-          <h1 className="text-xl font-semibold print:text-black">
+          <h1 className="font-display text-terracota text-2xl font-extrabold tracking-tight print:text-black">
             {roteiroNome}
           </h1>
-          <span className="text-sm text-zinc-600 dark:text-zinc-400 print:text-black">
+          <span className="font-body text-terracota/60 text-sm print:text-black">
             {formatarData(vagaData)}
           </span>
         </div>
@@ -80,40 +80,42 @@ export function ListaDoDiaClient({
         <button
           type="button"
           onClick={() => window.print()}
-          className="rounded-full border border-zinc-300 px-5 py-2 text-sm dark:border-zinc-700 print:hidden"
+          className="font-body text-terracota rounded-2xl border border-zinc-300 px-5 py-2.5 text-sm font-medium print:hidden"
         >
           Imprimir
         </button>
       </div>
 
-      {erro && <p className="text-sm text-red-600 print:hidden">{erro}</p>}
+      {erro && (
+        <p className="font-body text-sm text-red-600 print:hidden">{erro}</p>
+      )}
 
       {carregando ? (
-        <p className="text-zinc-600 dark:text-zinc-400 print:hidden">
+        <p className="font-body text-terracota/60 text-sm print:hidden">
           Carregando...
         </p>
       ) : vendas.length === 0 ? (
-        <p className="text-zinc-600 dark:text-zinc-400">
+        <p className="font-body text-terracota/60 text-sm print:text-black">
           Nenhuma venda confirmada pra essa data.
         </p>
       ) : (
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-zinc-600 dark:text-zinc-400 print:text-black">
-              <th className="pb-2 font-medium">Nome</th>
-              <th className="pb-2 font-medium">CPF</th>
-              <th className="pb-2 font-medium">Código</th>
+            <tr className="font-body text-terracota/50 text-left text-[11px] font-bold tracking-wide uppercase print:text-black">
+              <th className="pb-2">Nome</th>
+              <th className="pb-2">CPF</th>
+              <th className="pb-2">Código</th>
             </tr>
           </thead>
           <tbody>
             {vendas.map((venda) => (
               <tr
                 key={venda.id}
-                className="border-t border-zinc-200 dark:border-zinc-800 print:border-black print:text-black"
+                className="font-body text-terracota border-t border-zinc-200 text-sm print:border-black print:text-black"
               >
-                <td className="py-2">{venda.comprador_nome}</td>
-                <td className="py-2">{mascararCpf(venda.comprador_cpf)}</td>
-                <td className="py-2">{venda.codigo_verificacao ?? "-"}</td>
+                <td className="py-2.5">{venda.comprador_nome}</td>
+                <td className="py-2.5">{mascararCpf(venda.comprador_cpf)}</td>
+                <td className="py-2.5">{venda.codigo_verificacao ?? "-"}</td>
               </tr>
             ))}
           </tbody>

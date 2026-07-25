@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation";
 import { formatarPreco } from "@/lib/format";
 
 const campoClasse =
-  "rounded-lg border border-zinc-300 bg-transparent px-3 py-2 text-sm dark:border-zinc-700";
+  "font-body text-terracota rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none focus:border-verde-mata";
+const labelClasse =
+  "font-body text-terracota flex flex-col gap-1 text-sm font-medium";
 
 type Resultado = {
   vendaId: string;
@@ -93,20 +95,25 @@ export function VendaManualForm({
 
   if (esgotada) {
     return (
-      <div className="flex flex-col gap-2">
-        <h2 className="font-semibold">Venda manual</h2>
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">
-          Vaga esgotada.
-        </p>
+      <div className="bg-pedra-sabao flex flex-col gap-2 rounded-2xl p-6">
+        <h2 className="font-display text-terracota text-lg font-bold">
+          Venda manual
+        </h2>
+        <p className="font-body text-terracota/60 text-sm">Vaga esgotada.</p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <h2 className="font-semibold">Venda manual</h2>
+    <form
+      onSubmit={handleSubmit}
+      className="bg-pedra-sabao flex flex-col gap-4 rounded-2xl p-6"
+    >
+      <h2 className="font-display text-terracota text-lg font-bold">
+        Venda manual
+      </h2>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className={labelClasse}>
         Nome do comprador
         <input
           type="text"
@@ -117,7 +124,7 @@ export function VendaManualForm({
         />
       </label>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className={labelClasse}>
         CPF do comprador
         <input
           type="text"
@@ -128,7 +135,7 @@ export function VendaManualForm({
         />
       </label>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className={labelClasse}>
         E-mail do comprador
         <input
           type="text"
@@ -139,7 +146,7 @@ export function VendaManualForm({
         />
       </label>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className={labelClasse}>
         Data de nascimento
         <input
           type="date"
@@ -150,7 +157,7 @@ export function VendaManualForm({
         />
       </label>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className={labelClasse}>
         CEP
         <input
           type="text"
@@ -161,7 +168,7 @@ export function VendaManualForm({
         />
       </label>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className={labelClasse}>
         Rua
         <input
           type="text"
@@ -173,7 +180,7 @@ export function VendaManualForm({
       </label>
 
       <div className="flex gap-3">
-        <label className="flex flex-1 flex-col gap-1 text-sm">
+        <label className={`flex-1 ${labelClasse}`}>
           Número
           <input
             type="text"
@@ -184,7 +191,7 @@ export function VendaManualForm({
           />
         </label>
 
-        <label className="flex flex-1 flex-col gap-1 text-sm">
+        <label className={`flex-1 ${labelClasse}`}>
           Complemento (opcional)
           <input
             type="text"
@@ -195,7 +202,7 @@ export function VendaManualForm({
         </label>
       </div>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className={labelClasse}>
         Bairro
         <input
           type="text"
@@ -207,7 +214,7 @@ export function VendaManualForm({
       </label>
 
       <div className="flex gap-3">
-        <label className="flex flex-1 flex-col gap-1 text-sm">
+        <label className={`flex-1 ${labelClasse}`}>
           Cidade
           <input
             type="text"
@@ -218,7 +225,7 @@ export function VendaManualForm({
           />
         </label>
 
-        <label className="flex w-24 flex-col gap-1 text-sm">
+        <label className={`w-24 ${labelClasse}`}>
           UF
           <input
             type="text"
@@ -231,22 +238,24 @@ export function VendaManualForm({
         </label>
       </div>
 
-      {erro && <p className="text-sm text-red-600">{erro}</p>}
+      {erro && <p className="font-body text-sm text-red-600">{erro}</p>}
 
       {resultado && (
-        <div className="flex flex-col gap-1 rounded-lg border border-zinc-200 p-3 text-sm dark:border-zinc-800">
-          <p>Venda registrada (id: {resultado.vendaId}).</p>
+        <div className="bg-verde-mata/10 flex flex-col gap-1 rounded-xl p-4 text-sm">
+          <p className="font-body text-verde-mata font-semibold">
+            Venda registrada (id: {resultado.vendaId}).
+          </p>
           {resultado.taxaDevida !== null && (
-            <p className="text-zinc-600 dark:text-zinc-400">
+            <p className="font-body text-terracota/70">
               Taxa devida: {formatarPreco(resultado.taxaDevida)}
             </p>
           )}
           {resultado.ticketEnviado ? (
-            <p className="text-zinc-600 dark:text-zinc-400">
+            <p className="font-body text-terracota/70">
               Ticket enviado por e-mail.
             </p>
           ) : (
-            <p className="text-zinc-600 dark:text-zinc-400">
+            <p className="font-body text-terracota/70">
               Ticket não pôde ser enviado por e-mail automaticamente -
               reenvie manualmente depois.
             </p>
@@ -257,7 +266,7 @@ export function VendaManualForm({
       <button
         type="submit"
         disabled={enviando}
-        className="self-start rounded-full bg-foreground px-5 py-2 text-sm font-medium text-background disabled:opacity-50"
+        className="font-body bg-verde-mata text-pedra-sabao self-start rounded-2xl px-5 py-2.5 text-sm font-semibold disabled:opacity-50"
       >
         {enviando ? "Registrando..." : "Registrar venda"}
       </button>
