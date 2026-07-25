@@ -89,31 +89,32 @@ export function RelatorioClient({ mesInicial }: { mesInicial: string }) {
     <div className="flex flex-col gap-6">
       <SeletorMes mes={mes} onChange={handleMesChange} />
 
-      {erro && <p className="text-sm text-red-600">{erro}</p>}
+      {erro && <p className="font-body text-sm text-red-600">{erro}</p>}
 
       {carregando ? (
-        <p className="text-zinc-600 dark:text-zinc-400">Carregando...</p>
+        <p className="font-body text-terracota/60 text-sm">Carregando...</p>
       ) : (
         dados && (
           <>
-            <div className="grid grid-cols-2 gap-3">
-              <CardResumo
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+              <MetricCard
                 titulo="Total de vendas"
                 valor={String(numeroOuZero(dados.resumo.total_vendas))}
               />
-              <CardResumo
+              <MetricCard
                 titulo="Receita bruta"
                 valor={formatarPreco(numeroOuZero(dados.resumo.receita_bruta))}
+                destaque
               />
-              <CardResumo
+              <MetricCard
                 titulo="Valor dos roteiros"
                 valor={formatarPreco(numeroOuZero(dados.resumo.valor_roteiros))}
               />
-              <CardResumo
+              <MetricCard
                 titulo="Taxa online (recebida)"
                 valor={formatarPreco(numeroOuZero(dados.resumo.taxa_online))}
               />
-              <CardResumo
+              <MetricCard
                 titulo="Taxa manual (a receber do Markys)"
                 valor={formatarPreco(
                   numeroOuZero(dados.resumo.taxa_manual_pendente),
@@ -121,72 +122,86 @@ export function RelatorioClient({ mesInicial }: { mesInicial: string }) {
               />
             </div>
 
-            <div className="flex flex-col gap-2">
-              <h2 className="font-semibold">Por roteiro</h2>
+            <div className="flex flex-col gap-3">
+              <h2 className="font-display text-terracota text-lg font-bold">
+                Por roteiro
+              </h2>
               {dados.por_roteiro.length === 0 ? (
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                <p className="font-body text-terracota/60 text-sm">
                   Nenhuma venda no período.
                 </p>
               ) : (
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="text-left text-zinc-600 dark:text-zinc-400">
-                      <th className="pb-2 font-medium">Roteiro</th>
-                      <th className="pb-2 font-medium">Vendas</th>
-                      <th className="pb-2 font-medium">Valor</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {dados.por_roteiro.map((item) => (
-                      <tr
-                        key={item.roteiro_id}
-                        className="border-t border-zinc-200 dark:border-zinc-800"
-                      >
-                        <td className="py-2">{item.nome}</td>
-                        <td className="py-2">{item.total_vendas}</td>
-                        <td className="py-2">
-                          {formatarPreco(item.valor_roteiros)}
-                        </td>
+                <div className="overflow-x-auto rounded-2xl border border-zinc-200 bg-white p-2">
+                  <table className="w-full min-w-[480px] border-collapse">
+                    <thead>
+                      <tr className="font-body text-terracota/50 text-left text-[11px] font-bold tracking-wide uppercase">
+                        <th className="px-4 py-3">Roteiro</th>
+                        <th className="px-4 py-3">Vendas</th>
+                        <th className="px-4 py-3">Valor</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {dados.por_roteiro.map((item) => (
+                        <tr
+                          key={item.roteiro_id}
+                          className="font-body border-t border-zinc-100 text-sm"
+                        >
+                          <td className="text-terracota px-4 py-4 font-medium">
+                            {item.nome}
+                          </td>
+                          <td className="text-terracota/70 px-4 py-4">
+                            {item.total_vendas}
+                          </td>
+                          <td className="text-terracota px-4 py-4 font-semibold">
+                            {formatarPreco(item.valor_roteiros)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </div>
 
-            <div className="flex flex-col gap-2">
-              <h2 className="font-semibold">Por forma de pagamento</h2>
+            <div className="flex flex-col gap-3">
+              <h2 className="font-display text-terracota text-lg font-bold">
+                Por forma de pagamento
+              </h2>
               {dados.por_forma_pagamento.length === 0 ? (
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                <p className="font-body text-terracota/60 text-sm">
                   Nenhuma venda no período.
                 </p>
               ) : (
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="text-left text-zinc-600 dark:text-zinc-400">
-                      <th className="pb-2 font-medium">Forma</th>
-                      <th className="pb-2 font-medium">Vendas</th>
-                      <th className="pb-2 font-medium">Valor</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {dados.por_forma_pagamento.map((item) => (
-                      <tr
-                        key={item.forma_pagamento}
-                        className="border-t border-zinc-200 dark:border-zinc-800"
-                      >
-                        <td className="py-2">
-                          {RUBRICAS_FORMA_PAGAMENTO[item.forma_pagamento] ??
-                            item.forma_pagamento}
-                        </td>
-                        <td className="py-2">{item.total_vendas}</td>
-                        <td className="py-2">
-                          {formatarPreco(item.valor_roteiros)}
-                        </td>
+                <div className="overflow-x-auto rounded-2xl border border-zinc-200 bg-white p-2">
+                  <table className="w-full min-w-[480px] border-collapse">
+                    <thead>
+                      <tr className="font-body text-terracota/50 text-left text-[11px] font-bold tracking-wide uppercase">
+                        <th className="px-4 py-3">Forma</th>
+                        <th className="px-4 py-3">Vendas</th>
+                        <th className="px-4 py-3">Valor</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {dados.por_forma_pagamento.map((item) => (
+                        <tr
+                          key={item.forma_pagamento}
+                          className="font-body border-t border-zinc-100 text-sm"
+                        >
+                          <td className="text-terracota px-4 py-4 font-medium">
+                            {RUBRICAS_FORMA_PAGAMENTO[item.forma_pagamento] ??
+                              item.forma_pagamento}
+                          </td>
+                          <td className="text-terracota/70 px-4 py-4">
+                            {item.total_vendas}
+                          </td>
+                          <td className="text-terracota px-4 py-4 font-semibold">
+                            {formatarPreco(item.valor_roteiros)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </div>
           </>
@@ -196,11 +211,33 @@ export function RelatorioClient({ mesInicial }: { mesInicial: string }) {
   );
 }
 
-function CardResumo({ titulo, valor }: { titulo: string; valor: string }) {
+function MetricCard({
+  titulo,
+  valor,
+  destaque,
+}: {
+  titulo: string;
+  valor: string;
+  destaque?: boolean;
+}) {
   return (
-    <div className="flex flex-col gap-1 rounded-lg border border-zinc-200 p-3 dark:border-zinc-800">
-      <span className="text-xs text-zinc-600 dark:text-zinc-400">{titulo}</span>
-      <span className="font-medium">{valor}</span>
+    <div
+      className={`flex flex-col gap-3 rounded-2xl p-5 ${
+        destaque
+          ? "bg-verde-mata text-pedra-sabao"
+          : "bg-pedra-sabao text-terracota"
+      }`}
+    >
+      <span
+        className={`font-body text-xs font-semibold ${
+          destaque ? "text-pedra-sabao/80" : "text-terracota/60"
+        }`}
+      >
+        {titulo}
+      </span>
+      <span className="font-display text-2xl font-extrabold tracking-tight">
+        {valor}
+      </span>
     </div>
   );
 }

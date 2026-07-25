@@ -29,12 +29,22 @@ export default async function AdminRelatorio() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 p-8">
-      <Link href="/admin/roteiros" className="text-sm text-zinc-600 dark:text-zinc-400">
+    <div className="flex w-full flex-1 flex-col gap-6 p-8">
+      <Link
+        href="/admin/roteiros"
+        className="font-body text-terracota/60 hover:text-terracota text-sm font-medium"
+      >
         ← Roteiros
       </Link>
 
-      <h1 className="text-xl font-semibold">Relatório mensal</h1>
+      <div>
+        <h1 className="font-display text-terracota text-2xl font-extrabold tracking-tight">
+          Relatório mensal
+        </h1>
+        <p className="font-body mt-1 text-sm text-zinc-600">
+          Acompanhe o desempenho financeiro por mês.
+        </p>
+      </div>
 
       <RelatorioClient mesInicial={mesAtualSaoPaulo()} />
     </div>
