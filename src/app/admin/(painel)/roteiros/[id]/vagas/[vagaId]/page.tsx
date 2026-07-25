@@ -5,6 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { ADMIN_ALLOWLIST } from "@/lib/admin-allowlist";
 import { formatarData, formatarPreco } from "@/lib/format";
 import { VendaManualForm } from "@/components/admin/VendaManualForm";
+import { VoltarLink } from "@/components/admin/VoltarLink";
 import type { Roteiro, Vaga } from "@/data/roteiros";
 
 const RUBRICAS_STATUS_VAGA: Record<Vaga["status"], string> = {
@@ -73,12 +74,10 @@ export default async function AdminVagaDetalhe({
 
   return (
     <div className="flex w-full flex-1 flex-col gap-6 p-8">
-      <Link
+      <VoltarLink
         href={`/admin/roteiros/${id}`}
-        className="font-body text-terracota/60 hover:text-terracota text-sm font-medium"
-      >
-        ← {roteiroTipado.nome}
-      </Link>
+        label={roteiroTipado.nome}
+      />
 
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex flex-col gap-1">

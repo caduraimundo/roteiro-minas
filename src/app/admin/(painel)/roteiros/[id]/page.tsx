@@ -8,6 +8,7 @@ import { RoteiroCabecalho } from "@/components/admin/RoteiroCabecalho";
 import { NovaVagaForm } from "@/components/admin/NovaVagaForm";
 import { NovaDataIndisponivelForm } from "@/components/admin/NovaDataIndisponivelForm";
 import { AlternarDataIndisponivelButton } from "@/components/admin/AlternarDataIndisponivelButton";
+import { VoltarLink } from "@/components/admin/VoltarLink";
 import type { Roteiro, Vaga } from "@/data/roteiros";
 
 const RUBRICAS_STATUS_VAGA: Record<"lotada" | "cancelada", string> = {
@@ -97,12 +98,7 @@ export default async function AdminRoteiroDetalhe({
 
     return (
       <div className="flex w-full flex-1 flex-col gap-6 p-8">
-        <Link
-          href="/admin/roteiros"
-          className="font-body text-terracota/60 hover:text-terracota text-sm font-medium"
-        >
-          ← Roteiros
-        </Link>
+        <VoltarLink href="/admin/roteiros" label="Roteiros" />
 
         <RoteiroCabecalho roteiro={roteiroTipado} />
 
@@ -171,12 +167,7 @@ export default async function AdminRoteiroDetalhe({
 
   return (
     <div className="flex w-full flex-1 flex-col gap-6 p-8">
-      <Link
-        href="/admin/roteiros"
-        className="font-body text-terracota/60 hover:text-terracota text-sm font-medium"
-      >
-        ← Roteiros
-      </Link>
+      <VoltarLink href="/admin/roteiros" label="Roteiros" />
 
       <RoteiroCabecalho roteiro={roteiroTipado} />
 

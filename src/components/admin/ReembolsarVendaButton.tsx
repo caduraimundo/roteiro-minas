@@ -39,7 +39,7 @@ export function ReembolsarVendaButton({ vendaId }: { vendaId: string }) {
         type="button"
         onClick={handleClick}
         disabled={enviando}
-        className="font-body self-start rounded-xl border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 disabled:opacity-50"
+        className="font-body self-start rounded-2xl border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 disabled:opacity-50"
       >
         {enviando ? "Reembolsando..." : "Reembolsar"}
       </button>

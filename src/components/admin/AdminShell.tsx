@@ -483,7 +483,7 @@ export function AdminShell({
             <button
               type="button"
               aria-label="Notificações"
-              className="bg-pedra-sabao text-terracota relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl"
+              className="bg-pedra-sabao text-terracota relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
             >
               <BellIcon className="h-5 w-5" />
               <span className="border-pedra-sabao bg-verde-mata absolute top-2.5 right-2.5 h-2 w-2 rounded-full border-2" />

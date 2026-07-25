@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { formatarData, mascararCpf } from "@/lib/format";
+import { VoltarLink } from "@/components/admin/VoltarLink";
 
 type Venda = {
   id: string;
@@ -60,12 +60,11 @@ export function ListaDoDiaClient({
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 p-8 print:max-w-none">
-      <Link
+      <VoltarLink
         href={`/admin/roteiros/${roteiroId}/vagas/${vagaId}`}
-        className="font-body text-terracota/60 hover:text-terracota text-sm font-medium print:hidden"
-      >
-        ← Voltar
-      </Link>
+        label="Voltar"
+        className="print:hidden"
+      />
 
       <div className="flex items-center justify-between">
         <div className="flex flex-col">

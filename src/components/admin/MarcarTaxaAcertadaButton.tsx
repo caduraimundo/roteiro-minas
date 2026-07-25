@@ -35,7 +35,7 @@ export function MarcarTaxaAcertadaButton({ vendaId }: { vendaId: string }) {
         type="button"
         onClick={handleClick}
         disabled={enviando}
-        className="font-body text-terracota self-start rounded-xl border border-zinc-300 px-3 py-1.5 text-xs font-medium disabled:opacity-50"
+        className="font-body text-terracota self-start rounded-2xl border border-zinc-300 px-3 py-1.5 text-xs font-medium disabled:opacity-50"
       >
         {enviando ? "Marcando..." : "Marcar taxa acertada"}
       </button>

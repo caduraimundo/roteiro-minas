@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ADMIN_ALLOWLIST } from "@/lib/admin-allowlist";
 import { NovoRoteiroForm } from "@/components/admin/NovoRoteiroForm";
+import { VoltarLink } from "@/components/admin/VoltarLink";
 
 export default async function AdminNovoRoteiro() {
   const supabase = await createClient();
@@ -16,12 +16,7 @@ export default async function AdminNovoRoteiro() {
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 p-8">
-      <Link
-        href="/admin/roteiros"
-        className="font-body text-terracota/60 hover:text-terracota text-sm font-medium"
-      >
-        ← Roteiros
-      </Link>
+      <VoltarLink href="/admin/roteiros" label="Roteiros" />
 
       <div>
         <h1 className="font-display text-terracota text-2xl font-extrabold tracking-tight">
