@@ -3,15 +3,22 @@ import { PopupCallbackNotifier } from "@/components/PopupCallbackNotifier";
 
 export default function AcessoNegado() {
   return (
-    <div className="mx-auto flex w-full max-w-sm flex-1 flex-col items-center justify-center gap-4 p-8 text-center">
-      <PopupCallbackNotifier />
-      <h1 className="text-xl font-semibold">Acesso negado</h1>
-      <p className="text-sm text-zinc-600 dark:text-zinc-400">
-        Essa conta não tem permissão para acessar o painel admin.
-      </p>
-      <Link href="/admin/login" className="text-sm font-medium underline">
-        Voltar ao login
-      </Link>
+    <div className="bg-pedra-sabao flex min-h-dvh w-full items-center justify-center p-4">
+      <div className="bg-ocre mx-auto flex w-full max-w-sm flex-col items-center gap-4 rounded-3xl p-8 text-center">
+        <PopupCallbackNotifier />
+        <h1 className="font-display text-terracota text-2xl font-extrabold tracking-tight">
+          Acesso negado
+        </h1>
+        <p className="font-body text-terracota/60 text-sm">
+          Essa conta não tem permissão para acessar o painel admin.
+        </p>
+        <Link
+          href="/admin/login"
+          className="font-body text-verde-mata text-sm font-semibold underline"
+        >
+          Voltar ao login
+        </Link>
+      </div>
     </div>
   );
 }

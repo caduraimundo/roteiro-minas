@@ -60,7 +60,7 @@ export default function AdminLogin() {
     setCarregando(false);
 
     if (user.email && ADMIN_ALLOWLIST.includes(user.email)) {
-      router.push("/admin");
+      router.push("/admin/dashboard");
       router.refresh();
       return;
     }
@@ -195,22 +195,26 @@ export default function AdminLogin() {
   }, []);
 
   return (
-    <div className="mx-auto flex w-full max-w-sm flex-1 flex-col items-center justify-center gap-6 p-8 text-center">
-      <h1 className="text-xl font-semibold">Painel Admin</h1>
-      <p className="text-sm text-zinc-600 dark:text-zinc-400">
-        Acesso restrito. Entre com a conta Google autorizada.
-      </p>
+    <div className="bg-pedra-sabao flex min-h-dvh w-full items-center justify-center p-4">
+      <div className="bg-ocre mx-auto flex w-full max-w-sm flex-col items-center gap-6 rounded-3xl p-8 text-center">
+        <h1 className="font-display text-terracota text-2xl font-extrabold tracking-tight">
+          Painel Admin
+        </h1>
+        <p className="font-body text-terracota/60 text-sm">
+          Acesso restrito. Entre com a conta Google autorizada.
+        </p>
 
-      <button
-        type="button"
-        onClick={handleLogin}
-        disabled={carregando}
-        className="rounded-full bg-foreground px-5 py-3 text-sm font-medium text-background disabled:opacity-50"
-      >
-        {carregando ? "Aguardando login..." : "Entrar com Google"}
-      </button>
+        <button
+          type="button"
+          onClick={handleLogin}
+          disabled={carregando}
+          className="font-body bg-verde-mata text-pedra-sabao w-full rounded-2xl px-5 py-3 text-sm font-semibold disabled:opacity-50"
+        >
+          {carregando ? "Aguardando login..." : "Entrar com Google"}
+        </button>
 
-      {erro && <p className="text-sm text-red-600">{erro}</p>}
+        {erro && <p className="font-body text-sm text-red-600">{erro}</p>}
+      </div>
     </div>
   );
 }
