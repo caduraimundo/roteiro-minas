@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -138,13 +137,6 @@ export default async function AdminVendas() {
 
   return (
     <div className="flex w-full flex-1 flex-col gap-6 p-8">
-      <Link
-        href="/admin/roteiros"
-        className="font-body text-terracota/60 hover:text-terracota text-sm font-medium"
-      >
-        ← Roteiros
-      </Link>
-
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="font-display text-terracota text-2xl font-extrabold tracking-tight">

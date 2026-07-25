@@ -98,7 +98,7 @@ export function ConfiguracoesForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-pedra-sabao flex flex-col gap-4 rounded-2xl p-6"
+      className="bg-pedra-sabao flex w-full max-w-2xl flex-col gap-4 rounded-2xl p-6"
     >
       <label className={labelClasse}>
         Número do Cadastur
