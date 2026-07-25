@@ -11,7 +11,9 @@ const RUBRICAS_TIPO: Record<Roteiro["tipo"], string> = {
 };
 
 const campoClasse =
-  "rounded-lg border border-zinc-300 bg-transparent px-3 py-2 text-sm dark:border-zinc-700";
+  "font-body text-terracota rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm outline-none focus:border-verde-mata";
+const labelClasse =
+  "font-body text-terracota flex flex-col gap-1 text-sm font-medium";
 
 export function RoteiroCabecalho({ roteiro }: { roteiro: Roteiro }) {
   const router = useRouter();
@@ -130,8 +132,11 @@ export function RoteiroCabecalho({ roteiro }: { roteiro: Roteiro }) {
 
   if (editando) {
     return (
-      <form onSubmit={salvarEdicao} className="flex flex-col gap-4">
-        <label className="flex flex-col gap-1 text-sm">
+      <form
+        onSubmit={salvarEdicao}
+        className="bg-pedra-sabao flex flex-col gap-4 rounded-2xl p-6"
+      >
+        <label className={labelClasse}>
           Nome
           <input
             type="text"
@@ -142,7 +147,7 @@ export function RoteiroCabecalho({ roteiro }: { roteiro: Roteiro }) {
           />
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className={labelClasse}>
           Tipo
           <select
             value={tipo}
@@ -157,7 +162,7 @@ export function RoteiroCabecalho({ roteiro }: { roteiro: Roteiro }) {
         </label>
 
         {tipo === "receptivo" && (
-          <label className="flex flex-col gap-1 text-sm">
+          <label className={labelClasse}>
             Preço (roteiro receptivo - sem contagem de vaga)
             <input
               type="number"
@@ -171,7 +176,7 @@ export function RoteiroCabecalho({ roteiro }: { roteiro: Roteiro }) {
           </label>
         )}
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className={labelClasse}>
           Descrição
           <textarea
             value={descricao}
@@ -181,7 +186,7 @@ export function RoteiroCabecalho({ roteiro }: { roteiro: Roteiro }) {
           />
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className={labelClasse}>
           URL do PDF
           <input
             type="text"
@@ -191,7 +196,7 @@ export function RoteiroCabecalho({ roteiro }: { roteiro: Roteiro }) {
           />
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className={labelClasse}>
           Custo fixo por execução (van, guia, hospedagem)
           <input
             type="number"
@@ -202,7 +207,7 @@ export function RoteiroCabecalho({ roteiro }: { roteiro: Roteiro }) {
           />
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className={labelClasse}>
           Custo por pessoa (ingresso de atrativo)
           <input
             type="number"
@@ -213,13 +218,13 @@ export function RoteiroCabecalho({ roteiro }: { roteiro: Roteiro }) {
           />
         </label>
 
-        {erro && <p className="text-sm text-red-600">{erro}</p>}
+        {erro && <p className="font-body text-sm text-red-600">{erro}</p>}
 
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <button
             type="submit"
             disabled={enviando}
-            className="rounded-full bg-foreground px-5 py-2 text-sm font-medium text-background disabled:opacity-50"
+            className="font-body bg-verde-mata text-pedra-sabao rounded-2xl px-5 py-2.5 text-sm font-semibold disabled:opacity-50"
           >
             {enviando ? "Salvando..." : "Salvar"}
           </button>
@@ -227,7 +232,7 @@ export function RoteiroCabecalho({ roteiro }: { roteiro: Roteiro }) {
             type="button"
             onClick={cancelarEdicao}
             disabled={enviando}
-            className="rounded-full border border-zinc-300 px-5 py-2 text-sm dark:border-zinc-700"
+            className="font-body text-terracota rounded-2xl border border-zinc-300 px-5 py-2.5 text-sm font-medium disabled:opacity-50"
           >
             Cancelar
           </button>
@@ -237,24 +242,26 @@ export function RoteiroCabecalho({ roteiro }: { roteiro: Roteiro }) {
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between gap-4">
+    <div className="bg-pedra-sabao flex flex-col gap-4 rounded-2xl p-6">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex flex-col">
-          <h1 className="text-xl font-semibold">{roteiro.nome}</h1>
-          <span className="text-sm text-zinc-600 dark:text-zinc-400">
+          <h1 className="font-display text-terracota text-2xl font-extrabold tracking-tight">
+            {roteiro.nome}
+          </h1>
+          <span className="font-body text-terracota/60 text-sm">
             {RUBRICAS_TIPO[roteiro.tipo] ?? roteiro.tipo}
           </span>
         </div>
 
         {!roteiro.ativo && (
-          <span className="rounded-full bg-zinc-200 px-3 py-1 text-xs font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
+          <span className="font-body bg-white text-terracota/60 rounded-full px-3 py-1 text-xs font-semibold">
             Pausado
           </span>
         )}
       </div>
 
       {custoPendente && (
-        <p className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm font-medium text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-300">
+        <p className="font-body rounded-xl border border-amber-300 bg-amber-50 p-3 text-sm font-medium text-amber-800">
           O custo digitado na criação não foi salvo (falha ao gravar). O
           roteiro foi criado normalmente - clique em &quot;Editar&quot; abaixo
           e preencha o custo de novo.
@@ -262,13 +269,13 @@ export function RoteiroCabecalho({ roteiro }: { roteiro: Roteiro }) {
       )}
 
       {roteiro.descricao && (
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="font-body text-terracota/70 text-sm">
           {roteiro.descricao}
         </p>
       )}
 
       {roteiro.tipo === "receptivo" && (
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="font-body text-terracota text-sm font-semibold">
           Preço:{" "}
           {roteiro.preco_receptivo !== null
             ? formatarPreco(roteiro.preco_receptivo)
@@ -276,7 +283,7 @@ export function RoteiroCabecalho({ roteiro }: { roteiro: Roteiro }) {
         </p>
       )}
 
-      <p className="text-sm text-zinc-600 dark:text-zinc-400">
+      <p className="font-body text-terracota/70 text-sm">
         Custo fixo por execução:{" "}
         {roteiro.custo_fixo_execucao !== null
           ? formatarPreco(roteiro.custo_fixo_execucao)
@@ -287,13 +294,13 @@ export function RoteiroCabecalho({ roteiro }: { roteiro: Roteiro }) {
           : "não cadastrado"}
       </p>
 
-      {erro && <p className="text-sm text-red-600">{erro}</p>}
+      {erro && <p className="font-body text-sm text-red-600">{erro}</p>}
 
-      <div className="flex gap-2">
+      <div className="flex gap-3">
         <button
           type="button"
           onClick={() => setEditando(true)}
-          className="rounded-full border border-zinc-300 px-5 py-2 text-sm dark:border-zinc-700"
+          className="font-body text-terracota rounded-2xl border border-zinc-300 px-5 py-2.5 text-sm font-medium"
         >
           Editar
         </button>
@@ -301,7 +308,7 @@ export function RoteiroCabecalho({ roteiro }: { roteiro: Roteiro }) {
           type="button"
           onClick={alternarAtivo}
           disabled={enviando}
-          className="rounded-full border border-zinc-300 px-5 py-2 text-sm disabled:opacity-50 dark:border-zinc-700"
+          className="font-body text-terracota rounded-2xl border border-zinc-300 px-5 py-2.5 text-sm font-medium disabled:opacity-50"
         >
           {roteiro.ativo ? "Pausar" : "Despausar"}
         </button>
