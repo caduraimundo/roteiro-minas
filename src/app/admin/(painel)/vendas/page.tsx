@@ -6,6 +6,7 @@ import { ADMIN_ALLOWLIST } from "@/lib/admin-allowlist";
 import { formatarData, formatarPreco } from "@/lib/format";
 import { MarcarTaxaAcertadaButton } from "@/components/admin/MarcarTaxaAcertadaButton";
 import { ReembolsarVendaButton } from "@/components/admin/ReembolsarVendaButton";
+import { NovaVendaManualPanel } from "@/components/admin/NovaVendaManualPanel";
 
 type StatusVenda =
   | "confirmada"
@@ -144,13 +145,17 @@ export default async function AdminVendas() {
         ← Roteiros
       </Link>
 
-      <div>
-        <h1 className="font-display text-terracota text-2xl font-extrabold tracking-tight">
-          Vendas
-        </h1>
-        <p className="font-body mt-1 text-sm text-zinc-600">
-          Acompanhe vendas, taxas pendentes e reembolsos.
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="font-display text-terracota text-2xl font-extrabold tracking-tight">
+            Vendas
+          </h1>
+          <p className="font-body mt-1 text-sm text-zinc-600">
+            Acompanhe vendas, taxas pendentes e reembolsos.
+          </p>
+        </div>
+
+        <NovaVendaManualPanel />
       </div>
 
       {/* Resumo usado pra cobrar o Markys mensalmente - soma agregada de
