@@ -35,11 +35,11 @@ export function MarcarTaxaAcertadaButton({ vendaId }: { vendaId: string }) {
         type="button"
         onClick={handleClick}
         disabled={enviando}
-        className="self-start rounded-full border border-zinc-300 px-3 py-1 text-xs disabled:opacity-50 dark:border-zinc-700"
+        className="font-body text-terracota self-start rounded-xl border border-zinc-300 px-3 py-1.5 text-xs font-medium disabled:opacity-50"
       >
         {enviando ? "Marcando..." : "Marcar taxa acertada"}
       </button>
-      {erro && <p className="text-xs text-red-600">{erro}</p>}
+      {erro && <p className="font-body text-xs text-red-600">{erro}</p>}
     </div>
   );
 }

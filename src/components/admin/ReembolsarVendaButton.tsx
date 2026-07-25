@@ -34,16 +34,16 @@ export function ReembolsarVendaButton({ vendaId }: { vendaId: string }) {
   }
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col items-end gap-1">
       <button
         type="button"
         onClick={handleClick}
         disabled={enviando}
-        className="self-start rounded-full border border-zinc-300 px-3 py-1 text-xs disabled:opacity-50 dark:border-zinc-700"
+        className="font-body self-start rounded-xl border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 disabled:opacity-50"
       >
         {enviando ? "Reembolsando..." : "Reembolsar"}
       </button>
-      {erro && <p className="text-xs text-red-600">{erro}</p>}
+      {erro && <p className="font-body text-xs text-red-600">{erro}</p>}
     </div>
   );
 }
