@@ -4,6 +4,7 @@ import { GlobalNav } from "@/components/GlobalNav";
 import { WhatsAppFloatButton } from "@/components/WhatsAppFloatButton";
 import { FotoPlaceholder } from "@/components/FotoPlaceholder";
 import { TexturaTopografica } from "@/components/TexturaTopografica";
+import { Depoimentos } from "@/components/Depoimentos";
 import { Footer } from "@/components/Footer";
 import { getRoteirosAtivos, proximaVagaDisponivel } from "@/data/roteiros";
 import { formatarData, formatarPreco } from "@/lib/format";
@@ -222,7 +223,7 @@ export default async function Home() {
         </section>
 
         {receptivos.length > 0 && (
-          <section className="bg-ocre/70 flex flex-col gap-5 rounded-2xl p-6 sm:p-8">
+          <section className="bg-pedra-sabao flex flex-col gap-5 rounded-2xl p-6 sm:p-8">
             <div className="flex flex-col gap-1">
               <span className="font-body text-terracota text-xs font-semibold tracking-[0.2em] uppercase">
                 Sob encomenda
@@ -335,6 +336,10 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      <div className="mx-auto flex w-full max-w-5xl flex-col p-8 py-16">
+        <Depoimentos />
+      </div>
 
       <Footer />
     </>

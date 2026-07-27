@@ -1,44 +1,94 @@
+import Image from "next/image";
+import Link from "next/link";
 import { getConfiguracoesSite } from "@/data/configuracoes";
+import { LINKS } from "@/components/GlobalNav";
+
+// Mesmo número usado em WhatsAppFloatButton.tsx, RoteiroCard.tsx e
+// page.tsx - se mudar, atualizar nos 4 lugares.
+const NUMERO_WHATSAPP = "553184743523";
+// Confirmado com o Cadu - não existe campo de e-mail em
+// configuracoes_site hoje, então fica fixo aqui até esse dado passar a
+// vir do banco (mesmo caso do WhatsApp acima).
+const EMAIL_CONTATO = "roteirominasgerais@gmail.com";
 
 // Usado na Home, Termos e Política de reembolso. Só a Home tem o
 // WhatsAppFloatButton, mas ele já se esconde sozinho quando o rodapé
 // entra na tela (IntersectionObserver em WhatsAppFloatButton.tsx) - não
-// depende mais de um padding-bottom extra aqui pra não sobrepor. Um
-// padding de largura total calibrado pro botão (que só ocupa um
-// cantinho de 56px na ponta direita) sempre deixava uma faixa de
-// espaço em branco vazio do lado esquerdo - medido em produção: mesmo
-// com a folga "certa" pro pior caso, o texto já encostava no botão com
-// margem zero, e ainda sobrava espaço em branco visível ao lado.
+// depende de padding-bottom extra aqui pra não sobrepor.
 export async function Footer() {
   const configuracoes = await getConfiguracoesSite();
 
   return (
     <footer className="bg-verde-mata">
-      <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-3 px-8 py-10 text-center">
-        <div className="font-body text-pedra-sabao/90 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm font-medium">
-          <span>
-            {configuracoes?.stats_seguidores_instagram ?? "—"} seguidores no
-            Instagram
-          </span>
-          <span
-            aria-hidden="true"
-            className="bg-ocre/40 h-1 w-1 rounded-full"
-          />
-          <span>
-            {configuracoes?.stats_roteiros_realizados ?? "—"} roteiros
-            realizados
-          </span>
-          <span
-            aria-hidden="true"
-            className="bg-ocre/40 h-1 w-1 rounded-full"
-          />
-          <span>
-            avaliação média {configuracoes?.stats_avaliacao_media ?? "—"}
-          </span>
+      <div className="mx-auto grid w-full max-w-5xl grid-cols-1 gap-10 px-8 py-12 sm:grid-cols-3">
+        <div className="flex flex-col gap-3 sm:col-span-1">
+          <Link href="/" className="flex items-center gap-3">
+            <Image
+              src="/logo.webp"
+              alt="Roteiro Minas"
+              width={40}
+              height={40}
+              className="rounded-full border border-pedra-sabao/50"
+            />
+            <span className="font-wordmark text-pedra-sabao text-lg uppercase tracking-wide">
+              Roteiro Minas
+            </span>
+          </Link>
+          {/* Texto reaproveitado do badge + parágrafo do hero
+              (HeroCarousel.tsx) - mesma descrição real usada lá, sem
+              inventar copy nova. */}
+          <p className="font-body text-pedra-sabao/70 max-w-xs text-sm leading-relaxed">
+            Ecoturismo em Minas Gerais. Passeios guiados em Ouro Preto e
+            Mariana, com reserva online e ingresso na hora.
+          </p>
         </div>
-        <p className="font-body text-pedra-sabao/60 text-xs">
-          Cadastur {configuracoes?.cadastur_numero ?? "—"}
-        </p>
+
+        <div className="flex flex-col gap-3">
+          <span className="font-body text-pedra-sabao/50 text-xs font-bold tracking-[0.14em] uppercase">
+            Navegação
+          </span>
+          <nav className="flex flex-col gap-2">
+            {LINKS.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="font-body text-pedra-sabao/80 hover:text-pedra-sabao text-sm transition-colors"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <span className="font-body text-pedra-sabao/50 text-xs font-bold tracking-[0.14em] uppercase">
+            Fale com a gente
+          </span>
+          <div className="flex flex-col gap-2">
+            <a
+              href={`https://wa.me/${NUMERO_WHATSAPP}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-body text-pedra-sabao/80 hover:text-pedra-sabao text-sm transition-colors"
+            >
+              Falar no WhatsApp
+            </a>
+            <a
+              href={`mailto:${EMAIL_CONTATO}`}
+              className="font-body text-pedra-sabao/80 hover:text-pedra-sabao text-sm transition-colors"
+            >
+              {EMAIL_CONTATO}
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div className="border-pedra-sabao/15 border-t">
+        <div className="mx-auto flex w-full max-w-5xl justify-center px-8 py-5">
+          <p className="font-body text-pedra-sabao/60 text-xs">
+            Cadastur {configuracoes?.cadastur_numero ?? "—"}
+          </p>
+        </div>
       </div>
     </footer>
   );

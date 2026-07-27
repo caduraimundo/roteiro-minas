@@ -7,7 +7,9 @@ import Link from "next/link";
 
 // Home/Roteiros/Sobre Nós/Contato - as 4 páginas que a navegação global
 // cobre nesta rodada (Parte 1). Detalhe/Checkout ficam pra depois.
-const LINKS = [
+// Exportado - Footer.tsx reaproveita a mesma lista na coluna "Navegação"
+// em vez de duplicar os hrefs.
+export const LINKS = [
   { href: "/", label: "Home" },
   { href: "/roteiros", label: "Roteiros" },
   { href: "/sobre", label: "Sobre Nós" },
@@ -51,7 +53,7 @@ export function GlobalNav({ variant = "solido" }: GlobalNavProps) {
           : "border-pedra-sabao bg-ocre/95 relative z-30 border-b backdrop-blur"
       }
     >
-      <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-8 py-4">
+      <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-8 py-5">
         {/* Wordmark de logo + duas linhas nas duas variantes (volta a
             decisão anterior, que unificou tudo pro texto de uma linha
             só) - como as duas usam a mesma marcação agora, a altura do
@@ -112,6 +114,17 @@ export function GlobalNav({ variant = "solido" }: GlobalNavProps) {
               </Link>
             );
           })}
+          {/* CTA junto dos links - só aparece com eles (hidden md:flex
+              já cobre os dois), mesmo padrão visual do botão primário
+              do hero (bg-terracota, rounded-2xl). No mobile fica de
+              fora, coberto pelo mesmo link "Roteiros" dentro do menu
+              hambúrguer - não duplica CTA num espaço já apertado. */}
+          <Link
+            href="/roteiros"
+            className="font-display bg-terracota hover:bg-terracota/90 text-pedra-sabao ml-2 shrink-0 rounded-2xl px-5 py-2.5 text-sm font-semibold tracking-wide uppercase transition-colors"
+          >
+            Ver próximos roteiros
+          </Link>
         </nav>
 
         <button
