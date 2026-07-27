@@ -26,7 +26,18 @@ const SVG_CURVA_DE_NIVEL = encodeURIComponent(
   </svg>`,
 );
 
+// Tile baixo (48px de altura, uma curva só) pensado pra caber sem cortar
+// nos wrappers finos usados como divisor entre seções (h-12 = 48px) -
+// o tile de 140px da variante "fundo" era alto demais pra esse uso e
+// ficava cortado, misturando pedaços de duas ondas na faixa fina.
+const SVG_CURVA_DIVISOR = encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="48">
+    <path d="M0 24 Q 40 4 80 24 T 160 24" fill="none" stroke="${VERDE_MATA}" stroke-width="1" opacity="0.3" />
+  </svg>`,
+);
+
 const BACKGROUND_CURVA_DE_NIVEL = `url("data:image/svg+xml,${SVG_CURVA_DE_NIVEL}")`;
+const BACKGROUND_CURVA_DIVISOR = `url("data:image/svg+xml,${SVG_CURVA_DIVISOR}")`;
 
 /**
  * Textura decorativa de curvas de nível, em verde-mata, opacidade baixa
@@ -35,14 +46,18 @@ const BACKGROUND_CURVA_DE_NIVEL = `url("data:image/svg+xml,${SVG_CURVA_DE_NIVEL}
  * container pai (`relative`) definir, nunca descasa de tamanho com ele
  * (antes a variante "divisor" forçava h-16 fixo nela mesma, estourando
  * containers menores como h-12 usados em várias páginas).
- * - "fundo": preenche o container pai por completo - uso pretendido: hero.
- * - "divisor": mesmo comportamento, pensado pra um wrapper baixo (faixa
- *   fina) entre seções - a altura real vem sempre do wrapper.
+ * - "fundo": tile de 220x140 (três curvas) - preenche o container pai
+ *   por completo - uso pretendido: hero.
+ * - "divisor": tile de 160x48 (uma curva só, baixa) - pensado pra um
+ *   wrapper baixo (faixa fina, ~48px) entre seções - o tile de "fundo"
+ *   cortava e misturava ondas nessa altura. A altura real em ambas
+ *   variantes vem sempre do wrapper, o SVG só muda de proporção.
  *
  * `aria-hidden` porque é puramente decorativo - não deve ser anunciado
  * por leitor de tela nem atrapalhar a ordem de foco/leitura.
  */
 export function TexturaTopografica({
+  variant = "fundo",
   className = "",
 }: {
   variant?: "fundo" | "divisor";
@@ -52,7 +67,12 @@ export function TexturaTopografica({
     <div
       aria-hidden="true"
       className={`pointer-events-none absolute inset-0 h-full w-full bg-repeat ${className}`}
-      style={{ backgroundImage: BACKGROUND_CURVA_DE_NIVEL }}
+      style={{
+        backgroundImage:
+          variant === "divisor"
+            ? BACKGROUND_CURVA_DIVISOR
+            : BACKGROUND_CURVA_DE_NIVEL,
+      }}
     />
   );
 }

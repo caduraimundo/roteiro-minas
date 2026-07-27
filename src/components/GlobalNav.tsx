@@ -91,11 +91,11 @@ export function GlobalNav({ variant = "solido" }: GlobalNavProps) {
         <nav className="hidden items-center gap-6 md:flex">
           {LINKS.map((link) => {
             const ativo = linkEstaAtivo(pathname, link.href);
-            // Página atual: sublinhado tipo "tab" (border-bottom, não
-            // text-decoration) + font-bold - border-current usa a
-            // mesma cor do texto já definida por variante, sem
-            // duplicar lógica de cor. border-b-2 sempre presente
-            // (transparente quando inativo) pra não empurrar o layout
+            // Página atual: pílula de fundo (rounded-xl) em vez de
+            // sublinhado - bg-verde-mata/10 na variante solida,
+            // bg-pedra-sabao/15 na transparente (mais visível sobre o
+            // fundo escuro do hero). px-3 py-2 sempre presente (fundo
+            // transparente quando inativo) pra não empurrar o layout
             // quando o link fica ativo.
             return (
               <Link
@@ -104,8 +104,8 @@ export function GlobalNav({ variant = "solido" }: GlobalNavProps) {
                 aria-current={ativo ? "page" : undefined}
                 className={
                   transparente
-                    ? `font-body hover:text-ocre border-b-2 pb-0.5 text-sm text-pedra-sabao transition-colors ${ativo ? "border-current font-bold" : "border-transparent font-medium"}`
-                    : `font-body hover:text-terracota text-verde-mata border-b-2 pb-0.5 text-sm transition-colors ${ativo ? "border-current font-bold" : "border-transparent font-medium"}`
+                    ? `font-body hover:text-ocre rounded-xl px-3 py-2 text-sm text-pedra-sabao transition-colors ${ativo ? "bg-pedra-sabao/15 font-bold" : "font-medium"}`
+                    : `font-body hover:text-terracota text-verde-mata rounded-xl px-3 py-2 text-sm transition-colors ${ativo ? "bg-verde-mata/10 font-bold" : "font-medium"}`
                 }
               >
                 {link.label}
@@ -164,13 +164,10 @@ export function GlobalNav({ variant = "solido" }: GlobalNavProps) {
           <div className="mx-auto flex w-full max-w-5xl flex-col px-8 py-2">
             {LINKS.map((link) => {
               const ativo = linkEstaAtivo(pathname, link.href);
-              // Item ativo sempre mostra border-b-2 border-current
-              // (sublinhado "tab" + font-bold), sem o modificador
-              // last:border-b-0 - se o link ativo calhar de ser o
-              // último da lista, last:border-b-0 removeria o
-              // sublinhado junto com o divisor fino normal. Os itens
-              // inativos continuam com o divisor fino de sempre
-              // (removido no último via last:border-b-0).
+              // Item ativo vira pílula (rounded-xl + fundo), sem o
+              // divisor fino que os itens inativos têm entre si -
+              // last:border-b-0 continua só nos inativos, já que o
+              // ativo nunca mostra esse divisor de qualquer forma.
               return (
                 <Link
                   key={link.href}
@@ -179,14 +176,14 @@ export function GlobalNav({ variant = "solido" }: GlobalNavProps) {
                   aria-current={ativo ? "page" : undefined}
                   className={
                     transparente
-                      ? `font-body py-3 text-sm text-pedra-sabao ${
+                      ? `font-body rounded-xl px-3 py-3 text-sm text-pedra-sabao ${
                           ativo
-                            ? "border-b-2 border-current font-bold"
+                            ? "bg-pedra-sabao/15 font-bold"
                             : "border-pedra-sabao/20 border-b font-medium last:border-b-0"
                         }`
-                      : `font-body text-verde-mata py-3 text-sm ${
+                      : `font-body text-verde-mata rounded-xl px-3 py-3 text-sm ${
                           ativo
-                            ? "border-b-2 border-current font-bold"
+                            ? "bg-verde-mata/10 font-bold"
                             : "border-pedra-sabao/60 border-b font-medium last:border-b-0"
                         }`
                   }
