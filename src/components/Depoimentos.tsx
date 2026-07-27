@@ -14,7 +14,7 @@ const DEPOIMENTOS_PLACEHOLDER = [
   },
   {
     nome: "Lucas Andrade",
-    roteiro: "Cachoeira do Tabuleiro",
+    roteiro: "Travessia da Serra Fina",
     iniciais: "LA",
     texto: "Organização impecável do início ao fim, recomendo muito!",
   },
