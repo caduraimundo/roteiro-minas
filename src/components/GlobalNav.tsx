@@ -48,7 +48,7 @@ export function GlobalNav({ variant = "solido" }: GlobalNavProps) {
       className={
         transparente
           ? "absolute inset-x-0 top-0 z-30 bg-gradient-to-b from-black to-black/0"
-          : "relative z-30 border-b border-zinc-200 bg-zinc-50/95 backdrop-blur dark:border-zinc-800 dark:bg-verde-mata/95"
+          : "border-pedra-sabao bg-ocre/95 relative z-30 border-b backdrop-blur"
       }
     >
       <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-8 py-4">
@@ -69,14 +69,14 @@ export function GlobalNav({ variant = "solido" }: GlobalNavProps) {
             className={
               transparente
                 ? "rounded-full border border-pedra-sabao/50"
-                : "rounded-full border border-zinc-300 dark:border-zinc-700"
+                : "border-pedra-sabao rounded-full border"
             }
           />
           <span
             className={
               transparente
                 ? "leading-none text-pedra-sabao"
-                : "leading-none text-verde-mata dark:text-pedra-sabao"
+                : "text-verde-mata leading-none"
             }
           >
             <span className="font-wordmark block text-sm uppercase tracking-wide">
@@ -105,7 +105,7 @@ export function GlobalNav({ variant = "solido" }: GlobalNavProps) {
                 className={
                   transparente
                     ? `font-body hover:text-ocre border-b-2 pb-0.5 text-sm text-pedra-sabao transition-colors ${ativo ? "border-current font-bold" : "border-transparent font-medium"}`
-                    : `font-body hover:text-terracota border-b-2 pb-0.5 text-sm text-verde-mata transition-colors dark:text-pedra-sabao ${ativo ? "border-current font-bold" : "border-transparent font-medium"}`
+                    : `font-body hover:text-terracota text-verde-mata border-b-2 pb-0.5 text-sm transition-colors ${ativo ? "border-current font-bold" : "border-transparent font-medium"}`
                 }
               >
                 {link.label}
@@ -121,8 +121,8 @@ export function GlobalNav({ variant = "solido" }: GlobalNavProps) {
           aria-expanded={aberto}
           className={
             transparente
-              ? "border-pedra-sabao/50 text-pedra-sabao flex h-10 w-10 items-center justify-center rounded-xl border md:hidden"
-              : "text-verde-mata flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-300 md:hidden dark:border-zinc-700 dark:text-pedra-sabao"
+              ? "border-pedra-sabao/50 text-pedra-sabao flex h-10 w-10 items-center justify-center rounded-2xl border md:hidden"
+              : "text-verde-mata border-pedra-sabao flex h-10 w-10 items-center justify-center rounded-2xl border md:hidden"
           }
         >
           {aberto ? (
@@ -158,7 +158,7 @@ export function GlobalNav({ variant = "solido" }: GlobalNavProps) {
           className={
             transparente
               ? "bg-verde-mata/95 backdrop-blur md:hidden"
-              : "border-t border-zinc-200 bg-zinc-50/95 backdrop-blur md:hidden dark:border-zinc-800 dark:bg-verde-mata/95"
+              : "border-pedra-sabao bg-ocre/95 border-t backdrop-blur md:hidden"
           }
         >
           <div className="mx-auto flex w-full max-w-5xl flex-col px-8 py-2">
@@ -184,10 +184,10 @@ export function GlobalNav({ variant = "solido" }: GlobalNavProps) {
                             ? "border-b-2 border-current font-bold"
                             : "border-pedra-sabao/20 border-b font-medium last:border-b-0"
                         }`
-                      : `font-body text-verde-mata py-3 text-sm dark:text-pedra-sabao ${
+                      : `font-body text-verde-mata py-3 text-sm ${
                           ativo
                             ? "border-b-2 border-current font-bold"
-                            : "border-zinc-200/60 border-b font-medium last:border-b-0 dark:border-zinc-800/60"
+                            : "border-pedra-sabao/60 border-b font-medium last:border-b-0"
                         }`
                   }
                 >

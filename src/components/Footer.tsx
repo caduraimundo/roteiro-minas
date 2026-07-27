@@ -13,16 +13,16 @@ export async function Footer() {
   const configuracoes = await getConfiguracoesSite();
 
   return (
-    <footer className="border-t border-zinc-200 dark:border-zinc-800">
-      <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-3 px-8 py-8 text-center">
-        <div className="font-body flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm font-medium text-zinc-600 dark:text-zinc-400">
+    <footer className="bg-verde-mata">
+      <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-3 px-8 py-10 text-center">
+        <div className="font-body text-pedra-sabao/90 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm font-medium">
           <span>
             {configuracoes?.stats_seguidores_instagram ?? "—"} seguidores no
             Instagram
           </span>
           <span
             aria-hidden="true"
-            className="h-1 w-1 rounded-full bg-zinc-300 dark:bg-zinc-700"
+            className="bg-ocre/40 h-1 w-1 rounded-full"
           />
           <span>
             {configuracoes?.stats_roteiros_realizados ?? "—"} roteiros
@@ -30,13 +30,13 @@ export async function Footer() {
           </span>
           <span
             aria-hidden="true"
-            className="h-1 w-1 rounded-full bg-zinc-300 dark:bg-zinc-700"
+            className="bg-ocre/40 h-1 w-1 rounded-full"
           />
           <span>
             avaliação média {configuracoes?.stats_avaliacao_media ?? "—"}
           </span>
         </div>
-        <p className="font-body text-xs text-zinc-500 dark:text-zinc-500">
+        <p className="font-body text-pedra-sabao/60 text-xs">
           Cadastur {configuracoes?.cadastur_numero ?? "—"}
         </p>
       </div>

@@ -36,19 +36,17 @@ export function RoteiroCard({ roteiro }: { roteiro: RoteiroComVagas }) {
           {roteiro.nome}
         </h2>
         {!esgotado && (
-          <div className="font-body flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
+          <div className="font-body text-verde-mata/70 flex items-center gap-2 text-sm">
             <span className="bg-terracota h-1.5 w-1.5 shrink-0 rounded-full" />
             {formatarData(vaga.data)}
           </div>
         )}
         <div className="mt-1 flex items-center justify-between gap-2">
           {esgotado ? (
-            <span className="font-body text-sm text-red-600 dark:text-red-400">
-              Esgotado
-            </span>
+            <span className="font-body text-sm text-red-600">Esgotado</span>
           ) : (
             <>
-              <span className="font-body text-sm font-semibold">
+              <span className="font-body text-verde-mata text-sm font-semibold">
                 A partir de {formatarPreco(vaga.preco)}
               </span>
               <span className="font-body text-terracota shrink-0 text-xs font-medium">
@@ -105,11 +103,11 @@ function RoteiroCardReceptivo({ roteiro }: { roteiro: RoteiroComVagas }) {
           <h2 className="font-display text-lg font-extrabold uppercase sm:text-base">
             {roteiro.nome}
           </h2>
-          <span className="font-body text-sm text-zinc-600 dark:text-zinc-400">
+          <span className="font-body text-verde-mata/70 text-sm">
             Data e grupo combinados direto com a gente
           </span>
           <div className="mt-2 flex items-center justify-between gap-2">
-            <span className="font-body text-sm font-semibold">
+            <span className="font-body text-verde-mata text-sm font-semibold">
               {roteiro.preco_receptivo != null
                 ? `A partir de ${formatarPreco(roteiro.preco_receptivo)}`
                 : "Consulte o valor"}
@@ -118,7 +116,7 @@ function RoteiroCardReceptivo({ roteiro }: { roteiro: RoteiroComVagas }) {
               href={`https://wa.me/${NUMERO_WHATSAPP}?text=${mensagem}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-display pointer-events-auto relative z-10 shrink-0 rounded-lg bg-[#25D366] px-3 py-2 text-xs font-semibold uppercase tracking-wide text-white transition-transform hover:scale-105"
+              className="font-display pointer-events-auto relative z-10 shrink-0 rounded-2xl bg-[#25D366] px-3 py-2 text-xs font-semibold uppercase tracking-wide text-white transition-transform hover:scale-105"
             >
               Falar no WhatsApp
             </a>
