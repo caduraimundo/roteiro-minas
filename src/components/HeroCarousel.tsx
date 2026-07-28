@@ -31,8 +31,8 @@ export function HeroCarousel() {
           com folga de segurança. */}
       <div aria-hidden="true" className="h-24 shrink-0" />
 
-      <div className="relative z-10 flex flex-1 items-center px-8 pb-16">
-        <div className="text-pedra-sabao mx-auto flex w-full max-w-5xl flex-col items-start gap-5">
+      <div className="relative z-10 flex flex-1 items-center">
+        <div className="text-pedra-sabao mx-auto flex w-full max-w-5xl flex-col items-start gap-5 px-8 pb-16">
           <span className="font-body border-pedra-sabao/30 bg-pedra-sabao/10 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-semibold tracking-[0.15em] uppercase">
             <span
               className="bg-ocre h-1.5 w-1.5 rounded-full"
