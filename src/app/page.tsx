@@ -5,14 +5,10 @@ import { WhatsAppFloatButton } from "@/components/WhatsAppFloatButton";
 import { FotoPlaceholder } from "@/components/FotoPlaceholder";
 import { TexturaTopografica } from "@/components/TexturaTopografica";
 import { Depoimentos } from "@/components/Depoimentos";
+import { RoteiroReceptivoCard } from "@/components/RoteiroReceptivoCard";
 import { Footer } from "@/components/Footer";
 import { getRoteirosAtivos, proximaVagaDisponivel } from "@/data/roteiros";
 import { formatarData, formatarPreco } from "@/lib/format";
-
-// Mesmo número usado em WhatsAppFloatButton.tsx e RoteiroCard.tsx -
-// roteiro receptivo não tem checkout online (preço/data combinados
-// direto com a gente), então o CTA leva pra conversa em vez de vaga.
-const NUMERO_WHATSAPP = "553184743523";
 
 // Ícones inline (stroke, sem lib externa - mesmo padrão do hambúrguer em
 // GlobalNav.tsx) pros 3 itens de "O que está incluso". Só o que tem
@@ -238,57 +234,9 @@ export default async function Home() {
             </div>
 
             <div className="flex flex-col gap-5">
-              {receptivos.map((roteiro) => {
-                const mensagem = encodeURIComponent(
-                  `Olá! Quero saber mais sobre o roteiro ${roteiro.nome}.`,
-                );
-
-                return (
-                  // Link de "Ver detalhes" cobre o card inteiro (irmão
-                  // do conteúdo, não ancestral) - o botão do WhatsApp
-                  // fica por cima dele com pointer-events reativado,
-                  // então clicar nele nunca aciona a navegação do Link.
-                  // Evita <a> aninhado, que seria HTML inválido. Mesma
-                  // técnica de RoteiroCard.tsx, adaptada pro card
-                  // horizontal (imagem à esquerda, texto+CTA à direita).
-                  <div
-                    key={roteiro.id}
-                    className="border-pedra-sabao bg-ocre relative flex flex-col overflow-hidden rounded-2xl border sm:flex-row"
-                  >
-                    <Link
-                      href={`/roteiros/${roteiro.slug}`}
-                      aria-label={`Ver detalhes de ${roteiro.nome}`}
-                      className="absolute inset-0 z-0"
-                    />
-                    <div className="pointer-events-none flex flex-1 flex-col sm:flex-row">
-                      <FotoPlaceholder className="aspect-[16/10] w-full rounded-2xl sm:aspect-auto sm:w-[300px] sm:rounded-2xl" />
-                      <div className="flex flex-1 flex-col justify-center gap-2 p-6 sm:p-8">
-                        <h3 className="font-display text-xl font-extrabold tracking-tight sm:text-2xl">
-                          {roteiro.nome}
-                        </h3>
-                        <span className="font-body text-verde-mata/70 text-sm">
-                          Data e grupo combinados direto com a gente
-                        </span>
-                        <div className="mt-3 flex items-center justify-between gap-4">
-                          <span className="font-display text-lg font-extrabold sm:text-xl">
-                            {roteiro.preco_receptivo != null
-                              ? `A partir de ${formatarPreco(roteiro.preco_receptivo)}`
-                              : "Consulte o valor"}
-                          </span>
-                          <a
-                            href={`https://wa.me/${NUMERO_WHATSAPP}?text=${mensagem}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="font-display pointer-events-auto relative z-10 shrink-0 rounded-2xl bg-[#25D366] px-4 py-2.5 text-xs font-bold tracking-wide uppercase text-white transition-transform hover:scale-105"
-                          >
-                            Falar no WhatsApp
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+              {receptivos.map((roteiro) => (
+                <RoteiroReceptivoCard key={roteiro.id} roteiro={roteiro} />
+              ))}
             </div>
           </section>
         )}

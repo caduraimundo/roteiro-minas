@@ -9,7 +9,7 @@ export function BackButton({ href }: { href: string }) {
     <Link
       href={href}
       aria-label="Voltar"
-      className="text-verde-mata flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-zinc-300 dark:border-zinc-700 dark:text-pedra-sabao"
+      className="text-verde-mata border-pedra-sabao flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border"
     >
       <svg
         viewBox="0 0 24 24"

@@ -1,5 +1,6 @@
 import { BackButton } from "@/components/BackButton";
 import { RoteiroCard } from "@/components/RoteiroCard";
+import { RoteiroReceptivoCard } from "@/components/RoteiroReceptivoCard";
 import { GlobalNav } from "@/components/GlobalNav";
 import { Footer } from "@/components/Footer";
 import { getRoteirosAtivos } from "@/data/roteiros";
@@ -17,36 +18,31 @@ export default async function AgendaRoteiros() {
     <div className="flex flex-1 flex-col">
       <GlobalNav />
 
-      {/* Faixa "seta + título" idêntica em estrutura à de sobre/contato
-          (mesmo container mx-auto max-w-5xl gap-3 px-8 py-4, mesma cor
-          text-verde-mata dark:text-pedra-sabao no heading) - antes o
-          BackButton+h2 ficavam dentro do container de conteúdo, sem
-          faixa própria e sem cor no h2 (herdava preto padrão). */}
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-3 px-8 py-4">
-        <div className="flex items-center gap-3">
-          <BackButton href="/" />
-          <h2 className="font-display text-verde-mata dark:text-pedra-sabao text-2xl font-extrabold tracking-tight">
-            Roteiros emissíveis
-          </h2>
+      {/* Cabeçalho no padrão do wireframe: label pequeno ("Agenda 2026")
+          acima do H1 ("Próximos Roteiros"), com o BackButton ao lado -
+          mx-auto max-w-5xl px-8, sem breakpoint horizontal adicional,
+          igual ao resto do site (GlobalNav/Footer usam o mesmo). */}
+      <div className="mx-auto flex w-full max-w-5xl items-center gap-4 px-8 py-8">
+        <BackButton href="/" />
+        <div className="flex flex-col gap-1">
+          <span className="font-body text-verde-mata/60 text-xs font-bold tracking-[0.14em] uppercase">
+            Agenda 2026
+          </span>
+          <h1 className="font-display text-2xl font-extrabold tracking-tight sm:text-3xl">
+            Próximos Roteiros
+          </h1>
         </div>
       </div>
 
-      {/* Sem divisor decorativo nessa página - o TexturaTopografica não
-          é mais desejado aqui. Conteúdo vem direto depois da faixa do
-          título - pt-4 (não p-8 completo) no topo, porque a faixa
-          acima já tem seu próprio py-4 (16px embaixo); os dois somados
-          (antes 16+32=48px) ficavam grandes demais só pra separar o
-          título da grade - reduzido pra 16+16=32px, sem duplicar a
-          redução na faixa de título (que fica idêntica à de
-          sobre/contato). gap-14 entre as seções (emissíveis/receptivos)
-          reduzido pra gap-10 - ainda maior que o respiro de bloco
-          (32px) usado em outros pontos do site, coerente com serem
-          seções de conteúdo distintas, mas sem o vão exagerado de
-          antes. */}
-      <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-10 px-8 pt-4 pb-8">
+      {/* Mesmo mx-auto max-w-5xl px-8 do cabeçalho acima, sem
+          breakpoint horizontal adicional - garante que a grade e a
+          seção "Sob encomenda" fiquem na mesma margem esquerda do
+          cabeçalho, do GlobalNav e do Footer. gap-10 entre as seções
+          (emissíveis/receptivos), mesmo valor usado na Home. */}
+      <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-10 px-8 pb-8">
         <section className="flex flex-col gap-5">
           {emissiveis.length === 0 ? (
-            <p className="font-body text-zinc-600 dark:text-zinc-400">
+            <p className="font-body text-verde-mata/70">
               Nenhum roteiro disponível no momento.
             </p>
           ) : (
@@ -59,7 +55,7 @@ export default async function AgendaRoteiros() {
         </section>
 
         {receptivos.length > 0 && (
-          <section className="bg-ocre/70 flex flex-col gap-5 rounded-3xl p-6 sm:p-8">
+          <section className="bg-pedra-sabao flex flex-col gap-5 rounded-2xl p-6 sm:p-8">
             <div className="flex flex-col gap-1">
               <span className="font-body text-terracota text-xs font-semibold tracking-[0.2em] uppercase">
                 Sob encomenda
@@ -67,15 +63,15 @@ export default async function AgendaRoteiros() {
               <h2 className="font-display text-2xl font-extrabold tracking-tight">
                 Roteiros receptivos
               </h2>
-              <p className="font-body max-w-2xl text-sm text-zinc-600 dark:text-zinc-400">
+              <p className="font-body text-verde-mata/70 max-w-2xl text-sm">
                 Passeios personalizados pra grupos e agências, com data e
                 valor combinados diretamente com a gente pelo WhatsApp.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-8 md:grid-cols-3">
+            <div className="flex flex-col gap-5">
               {receptivos.map((roteiro) => (
-                <RoteiroCard key={roteiro.id} roteiro={roteiro} />
+                <RoteiroReceptivoCard key={roteiro.id} roteiro={roteiro} />
               ))}
             </div>
           </section>
