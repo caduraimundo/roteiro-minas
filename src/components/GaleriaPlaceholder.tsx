@@ -1,31 +1,23 @@
 import { FotoPlaceholder } from "@/components/FotoPlaceholder";
 
 // Sem fotos reais ainda (mesma decisão já registrada pro hero e pros
-// cards - placeholder honesto em vez de foto de banco genérico), então
-// as "fotos" da galeria são o mesmo placeholder repetido, só pra
-// reproduzir o formato de carrossel da referência.
-const QUANTIDADE_SLIDES = 3;
+// cards - placeholder honesto em vez de foto de banco genérico). Grade
+// do wireframe: foto principal grande + 3 fotos secundárias ao lado, no
+// desktop (md:flex-row, coluna secundária com largura fixa). No mobile
+// a coluna secundária de largura fixa não cabe - tudo empilha em coluna
+// única (foto principal em cima, as 3 secundárias lado a lado embaixo).
+const QUANTIDADE_SECUNDARIAS = 3;
 
 export function GaleriaPlaceholder() {
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex w-full snap-x snap-mandatory gap-0 overflow-x-auto rounded-2xl [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {Array.from({ length: QUANTIDADE_SLIDES }).map((_, indice) => (
+    <div className="flex flex-col gap-3 md:h-[420px] md:flex-row">
+      <FotoPlaceholder className="aspect-[4/3] w-full rounded-2xl md:aspect-auto md:h-full md:flex-1" />
+
+      <div className="grid grid-cols-3 gap-3 md:flex md:w-60 md:shrink-0 md:flex-col">
+        {Array.from({ length: QUANTIDADE_SECUNDARIAS }).map((_, indice) => (
           <FotoPlaceholder
             key={indice}
-            className="h-64 w-full flex-none snap-center sm:h-80"
-          />
-        ))}
-      </div>
-      <div className="flex justify-center gap-1.5">
-        {Array.from({ length: QUANTIDADE_SLIDES }).map((_, indice) => (
-          <span
-            key={indice}
-            className={`h-1.5 rounded-full transition-all ${
-              indice === 0
-                ? "bg-terracota w-5"
-                : "w-1.5 bg-zinc-300 dark:bg-zinc-700"
-            }`}
+            className="aspect-square w-full rounded-2xl md:aspect-auto md:h-full md:flex-1"
           />
         ))}
       </div>
