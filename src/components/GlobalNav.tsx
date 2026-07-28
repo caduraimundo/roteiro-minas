@@ -4,17 +4,7 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-
-// Home/Roteiros/Sobre Nós/Contato - as 4 páginas que a navegação global
-// cobre nesta rodada (Parte 1). Detalhe/Checkout ficam pra depois.
-// Exportado - Footer.tsx reaproveita a mesma lista na coluna "Navegação"
-// em vez de duplicar os hrefs.
-export const LINKS = [
-  { href: "/", label: "Home" },
-  { href: "/roteiros", label: "Roteiros" },
-  { href: "/sobre", label: "Sobre Nós" },
-  { href: "/contato", label: "Contato" },
-] as const;
+import { LINKS } from "@/lib/nav-links";
 
 // Home compara path exato - senão qualquer rota bateria como prefixo de
 // "/" e ficaria marcada como ativa junto. Os demais usam prefixo

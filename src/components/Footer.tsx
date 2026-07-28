@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { getConfiguracoesSite } from "@/data/configuracoes";
-import { LINKS } from "@/components/GlobalNav";
+import { LINKS } from "@/lib/nav-links";
 
 // Mesmo número usado em WhatsAppFloatButton.tsx, RoteiroCard.tsx e
 // page.tsx - se mudar, atualizar nos 4 lugares.
