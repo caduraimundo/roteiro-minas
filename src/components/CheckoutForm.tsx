@@ -463,7 +463,7 @@ export function CheckoutForm({
   const resumoPreco = (
     <div className="flex flex-col gap-4">
       <div>
-        <div className="font-body text-[11px] tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
+        <div className="font-body text-[11px] tracking-wide text-zinc-500 uppercase">
           Total
         </div>
         {cupomValidoParaCpfAtual && (
@@ -471,10 +471,10 @@ export function CheckoutForm({
             {formatarPreco(preco + (preco * TAXA_PLATAFORMA_PERCENTUAL) / 100)}
           </div>
         )}
-        <div className="font-display text-verde-mata dark:text-pedra-sabao text-2xl font-semibold">
+        <div className="font-display text-verde-mata text-2xl font-semibold">
           {formatarPreco(valorFinal)}
         </div>
-        <div className="font-body text-xs text-zinc-500 dark:text-zinc-500">
+        <div className="font-body text-xs text-zinc-500">
           Roteiro {formatarPreco(precoComDesconto)} + taxa (
           {TAXA_PLATAFORMA_PERCENTUAL}%) {formatarPreco(taxa)}
         </div>
@@ -487,7 +487,7 @@ export function CheckoutForm({
       <button
         type="submit"
         disabled={!formularioValido || processando}
-        className="font-display bg-terracota hover:bg-terracota/90 text-pedra-sabao w-full rounded-xl py-3.5 text-sm font-semibold tracking-wide uppercase transition-colors disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500"
+        className="font-display bg-terracota hover:bg-terracota/90 text-pedra-sabao w-full rounded-xl py-3.5 text-sm font-semibold tracking-wide uppercase transition-colors disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500"
       >
         {processando ? "Processando..." : "Continuar"}
       </button>
@@ -740,13 +740,13 @@ export function CheckoutForm({
                   if (cupomAplicado) setCupomAplicado(null);
                 }}
                 disabled={cupomValidoParaCpfAtual}
-                className={`flex-1 ${CAMPO_CLASSE} disabled:bg-zinc-100 dark:disabled:bg-zinc-800`}
+                className={`flex-1 ${CAMPO_CLASSE} disabled:bg-pedra-sabao/60`}
               />
               {cupomValidoParaCpfAtual ? (
                 <button
                   type="button"
                   onClick={handleRemoverCupom}
-                  className="font-body shrink-0 rounded-xl border border-zinc-300 px-4 py-2 text-sm dark:border-zinc-700"
+                  className="font-body text-verde-mata border-pedra-sabao shrink-0 rounded-xl border px-4 py-2 text-sm"
                 >
                   Remover
                 </button>
@@ -755,7 +755,7 @@ export function CheckoutForm({
                   type="button"
                   onClick={handleAplicarCupom}
                   disabled={cupomValidando}
-                  className="font-body text-verde-mata dark:text-pedra-sabao shrink-0 rounded-xl border border-zinc-300 px-4 py-2 text-sm disabled:opacity-50 dark:border-zinc-700"
+                  className="font-body text-verde-mata border-pedra-sabao shrink-0 rounded-xl border px-4 py-2 text-sm disabled:opacity-50"
                 >
                   {cupomValidando ? "Validando..." : "Aplicar"}
                 </button>
@@ -787,7 +787,7 @@ export function CheckoutForm({
                 className={`font-body flex-1 cursor-pointer rounded-xl border px-4 py-3 text-center text-sm font-medium transition-colors ${
                   formaPagamento === opcao.valor
                     ? "border-terracota bg-terracota/10 text-terracota"
-                    : "border-zinc-300 text-zinc-600 dark:border-zinc-700 dark:text-zinc-400"
+                    : "border-zinc-300 text-zinc-600"
                 }`}
               >
                 <input
@@ -818,7 +818,7 @@ export function CheckoutForm({
           )}
 
           {ehCartao && (
-            <div className="flex flex-col gap-3 border-t border-zinc-200 pt-4 dark:border-zinc-800">
+            <div className="flex flex-col gap-3 border-t border-zinc-200 pt-4">
               <div className="flex flex-col gap-1">
                 <label htmlFor="numeroCartao" className={LABEL_CLASSE}>
                   Número do cartão
@@ -878,7 +878,7 @@ export function CheckoutForm({
           )}
         </div>
 
-        <label className="font-body flex items-start gap-2 text-sm text-zinc-600 dark:text-zinc-400">
+        <label className="font-body flex items-start gap-2 text-sm text-zinc-600">
           <input
             type="checkbox"
             checked={consentimento}
@@ -922,12 +922,12 @@ export function CheckoutForm({
           igual à referência - ambos os blocos vivem dentro do mesmo
           <form>, então qualquer um dos dois botões dispara o submit. */}
       <aside className="hidden md:sticky md:top-8 md:block">
-        <div className="border-verde-mata/15 bg-pedra-sabao rounded-2xl border p-6 shadow-[0_10px_26px_rgba(94,110,79,0.1)] dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="border-verde-mata/15 bg-pedra-sabao rounded-2xl border p-6 shadow-[0_10px_26px_rgba(94,110,79,0.1)]">
           {resumoPreco}
         </div>
       </aside>
 
-      <div className="border-zinc-200 bg-pedra-sabao fixed inset-x-0 bottom-0 z-20 border-t p-4 shadow-[0_-8px_22px_rgba(0,0,0,0.08)] md:hidden dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="border-pedra-sabao bg-pedra-sabao fixed inset-x-0 bottom-0 z-20 border-t p-4 shadow-[0_-8px_22px_rgba(0,0,0,0.08)] md:hidden">
         {resumoPreco}
       </div>
     </form>

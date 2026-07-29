@@ -22,6 +22,14 @@ export function HeroCarousel() {
 
       <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/55 to-black/10" />
 
+      {/* Camada extra só no mobile: o gradiente acima foi calibrado pro
+          desktop (texto à esquerda, lado direito mais claro porque a
+          foto some atrás dele). No mobile o texto ocupa a largura toda,
+          então o lado direito clareado prejudicava a leitura do
+          parágrafo "Passeios guiados..." - essa camada plana escurece
+          tudo por igual, sem mexer no gradiente do desktop. */}
+      <div className="absolute inset-0 bg-black/30 md:hidden" />
+
       <TexturaTopografica variant="fundo" className="opacity-40" />
 
       {/* Espaçador reservando a altura do GlobalNav (variante
