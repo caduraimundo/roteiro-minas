@@ -1,4 +1,3 @@
-import { BackButton } from "@/components/BackButton";
 import { RoteiroCard } from "@/components/RoteiroCard";
 import { RoteiroReceptivoCard } from "@/components/RoteiroReceptivoCard";
 import { GlobalNav } from "@/components/GlobalNav";
@@ -19,19 +18,19 @@ export default async function AgendaRoteiros() {
       <GlobalNav />
 
       {/* Cabeçalho no padrão do wireframe: label pequeno ("Agenda 2026")
-          acima do H1 ("Próximos Roteiros"), com o BackButton ao lado -
-          mx-auto max-w-5xl px-8, sem breakpoint horizontal adicional,
-          igual ao resto do site (GlobalNav/Footer usam o mesmo). */}
-      <div className="mx-auto flex w-full max-w-5xl items-center gap-4 px-8 py-8">
-        <BackButton href="/" />
-        <div className="flex flex-col gap-1">
-          <span className="font-body text-verde-mata/60 text-xs font-bold tracking-[0.14em] uppercase">
-            Agenda 2026
-          </span>
-          <h1 className="font-display text-2xl font-extrabold tracking-tight sm:text-3xl">
-            Próximos Roteiros
-          </h1>
-        </div>
+          acima do H1 ("Próximos Roteiros") - mx-auto max-w-5xl px-8, sem
+          breakpoint horizontal adicional, igual ao resto do site
+          (GlobalNav/Footer usam o mesmo). Sem BackButton aqui: a
+          navegação do GlobalNav já cobre voltar pra Home, diferente do
+          detalhe do roteiro e do checkout, onde ele volta pra uma tela
+          específica (não pra Home) e continua fazendo sentido. */}
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-1 px-8 py-8">
+        <span className="font-body text-verde-mata/60 text-xs font-bold tracking-[0.14em] uppercase">
+          Agenda 2026
+        </span>
+        <h1 className="font-display text-2xl font-extrabold tracking-tight sm:text-3xl">
+          Próximos Roteiros
+        </h1>
       </div>
 
       {/* Mesmo mx-auto max-w-5xl px-8 do cabeçalho acima, sem

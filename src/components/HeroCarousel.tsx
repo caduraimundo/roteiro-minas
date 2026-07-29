@@ -53,7 +53,7 @@ export function HeroCarousel() {
           <div className="mt-2 flex flex-wrap items-center gap-3">
             <Link
               href="/roteiros"
-              className="font-display bg-terracota hover:bg-terracota/90 text-pedra-sabao rounded-2xl px-6 py-3 text-sm font-semibold tracking-wide uppercase transition-colors"
+              className="font-display bg-verde-mata hover:bg-terracota text-pedra-sabao rounded-2xl px-6 py-3 text-sm font-semibold tracking-wide uppercase transition-colors"
             >
               Ver próximos roteiros
             </Link>

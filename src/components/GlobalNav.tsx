@@ -111,7 +111,7 @@ export function GlobalNav({ variant = "solido" }: GlobalNavProps) {
               hambúrguer - não duplica CTA num espaço já apertado. */}
           <Link
             href="/roteiros"
-            className="font-display bg-terracota hover:bg-terracota/90 text-pedra-sabao ml-2 shrink-0 rounded-2xl px-5 py-2.5 text-sm font-semibold tracking-wide uppercase transition-colors"
+            className="font-display bg-verde-mata hover:bg-terracota text-pedra-sabao ml-2 shrink-0 rounded-2xl px-5 py-2.5 text-sm font-semibold tracking-wide uppercase transition-colors"
           >
             Ver próximos roteiros
           </Link>

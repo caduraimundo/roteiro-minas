@@ -20,8 +20,16 @@ export async function Footer() {
 
   return (
     <footer className="bg-verde-mata">
-      <div className="mx-auto grid w-full max-w-5xl grid-cols-1 gap-10 px-8 py-12 sm:grid-cols-3">
-        <div className="flex flex-col gap-3 sm:col-span-1">
+      {/* flex + justify-between (não grid) de propósito: com 3 colunas,
+          isso empurra "Fale com a gente" pra colar na borda direita do
+          container (mesma borda da linha do Cadastur abaixo) e deixa
+          "Navegação" flutuando mais central entre marca e contato, em
+          vez das 3 larguras fixas e igualmente espaçadas de um grid de
+          3 colunas. w-full/sm:w-auto em cada coluna: empilha cheio no
+          mobile (igual ao grid-cols-1 de antes), largura de conteúdo a
+          partir do sm. */}
+      <div className="mx-auto flex w-full max-w-5xl flex-wrap justify-between gap-10 px-8 py-12">
+        <div className="flex w-full flex-col gap-3 sm:w-auto">
           <Link href="/" className="flex items-center gap-3">
             <Image
               src="/logo.webp"
@@ -43,7 +51,7 @@ export async function Footer() {
           </p>
         </div>
 
-        <div className="flex flex-col gap-3">
+        <div className="flex w-full flex-col gap-3 sm:w-auto">
           <span className="font-body text-pedra-sabao/50 text-xs font-bold tracking-[0.14em] uppercase">
             Navegação
           </span>
@@ -60,7 +68,7 @@ export async function Footer() {
           </nav>
         </div>
 
-        <div className="flex flex-col gap-3">
+        <div className="flex w-full flex-col gap-3 sm:w-auto">
           <span className="font-body text-pedra-sabao/50 text-xs font-bold tracking-[0.14em] uppercase">
             Fale com a gente
           </span>
