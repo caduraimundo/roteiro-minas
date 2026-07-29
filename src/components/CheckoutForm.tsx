@@ -25,14 +25,13 @@ const TAXA_PLATAFORMA_PERCENTUAL = 6;
 // verde-mata/terracota/ocre/pedra-sabão e tipografia Mulish,
 // nada criado do zero.
 const CAMPO_CLASSE =
-  "font-body rounded-xl border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-terracota focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-pedra-sabao";
-const LABEL_CLASSE =
-  "font-body text-sm font-medium text-zinc-700 dark:text-zinc-300";
+  "font-body border-pedra-sabao bg-ocre text-verde-mata placeholder:text-verde-mata/40 focus:border-terracota rounded-xl border px-3 py-2.5 text-sm focus:outline-none";
+const LABEL_CLASSE = "font-body text-verde-mata text-sm font-medium";
 const ERRO_CLASSE = "font-body text-sm text-red-600";
 const SECAO_CLASSE =
-  "flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-pedra-sabao/30 p-6 dark:border-zinc-800 dark:bg-zinc-900/40";
+  "border-pedra-sabao bg-ocre flex flex-col gap-4 rounded-2xl border p-6";
 const SECAO_TITULO_CLASSE =
-  "font-display text-verde-mata dark:text-pedra-sabao text-lg font-semibold uppercase tracking-wide";
+  "font-display text-verde-mata text-lg font-semibold uppercase tracking-wide";
 
 type Campo =
   | "nome"
