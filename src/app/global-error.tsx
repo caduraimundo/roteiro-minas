@@ -19,14 +19,14 @@ export default function GlobalError({
       <body className="flex min-h-full flex-col bg-background text-foreground">
         <div className="mx-auto flex w-full max-w-sm flex-1 flex-col items-center justify-center gap-4 p-8 text-center">
           <h1 className="text-xl font-semibold">Algo deu errado</h1>
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+          <p className="text-verde-mata/70 text-sm">
             Não foi possível carregar o Roteiro Minas agora. Tente novamente
             em alguns instantes.
           </p>
           <button
             type="button"
             onClick={() => reset()}
-            className="rounded-full bg-foreground px-5 py-3 text-sm font-medium text-background"
+            className="font-display bg-terracota hover:bg-terracota/90 text-pedra-sabao rounded-2xl px-5 py-3 text-sm font-semibold tracking-wide uppercase transition-colors"
           >
             Tentar de novo
           </button>

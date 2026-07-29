@@ -8,7 +8,7 @@ export default function PoliticaDeReembolso() {
       <GlobalNav />
 
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-3 px-8 py-4">
-        <h1 className="font-display text-2xl font-semibold uppercase text-verde-mata dark:text-pedra-sabao">
+        <h1 className="font-display text-2xl font-semibold uppercase text-verde-mata">
           Política de Reembolso e Cancelamento
         </h1>
       </div>
@@ -19,16 +19,16 @@ export default function PoliticaDeReembolso() {
 
       <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 p-8">
         <section className="flex flex-col gap-2">
-          <h2 className="font-display text-xl font-semibold text-verde-mata dark:text-pedra-sabao">
+          <h2 className="font-display text-xl font-semibold text-verde-mata">
             1. Cancelamento pelo cliente
           </h2>
-          <p className="font-body text-zinc-600 dark:text-zinc-400">
+          <p className="font-body text-verde-mata/70">
             Cancelamentos feitos até 7 dias antes da data do passeio têm
             direito a 100% de reembolso do valor do roteiro.
             Cancelamentos com menos de 7 dias de antecedência, ou não
             comparecimento (no-show), não têm direito a reembolso.
           </p>
-          <p className="font-body text-zinc-600 dark:text-zinc-400">
+          <p className="font-body text-verde-mata/70">
             A taxa de serviço (6%) não é devolvida em nenhum
             cancelamento feito por decisão do cliente, mesmo dentro do
             prazo de 7 dias - só o valor do roteiro em si é reembolsado.
@@ -36,10 +36,10 @@ export default function PoliticaDeReembolso() {
         </section>
 
         <section className="flex flex-col gap-2">
-          <h2 className="font-display text-xl font-semibold text-verde-mata dark:text-pedra-sabao">
+          <h2 className="font-display text-xl font-semibold text-verde-mata">
             2. Cancelamento ou alteração pelo Roteiro Minas
           </h2>
-          <p className="font-body text-zinc-600 dark:text-zinc-400">
+          <p className="font-body text-verde-mata/70">
             Se o passeio for cancelado por nós ou pelo guia (condição
             climática, nível do rio, risco de segurança, número
             insuficiente de participantes, ou qualquer outro motivo de
@@ -51,12 +51,12 @@ export default function PoliticaDeReembolso() {
         </section>
 
         <section className="flex flex-col gap-2">
-          <h2 className="font-display text-xl font-semibold text-verde-mata dark:text-pedra-sabao">
+          <h2 className="font-display text-xl font-semibold text-verde-mata">
             3. Como funciona o reembolso na prática
           </h2>
           {/* PENDENTE DE VALIDAÇÃO COM O MARKYS: o prazo de "7 dias
               úteis" abaixo também não foi confirmado. */}
-          <p className="font-body text-zinc-600 dark:text-zinc-400">
+          <p className="font-body text-verde-mata/70">
             O reembolso não é processado automaticamente pelo sistema -
             é feito manualmente por nós após confirmação do
             cancelamento, em até 7 dias úteis, devolvido pelo mesmo meio
@@ -65,12 +65,12 @@ export default function PoliticaDeReembolso() {
         </section>
 
         <section className="flex flex-col gap-2">
-          <h2 className="font-display text-xl font-semibold text-verde-mata dark:text-pedra-sabao">
+          <h2 className="font-display text-xl font-semibold text-verde-mata">
             4. Casos excepcionais
           </h2>
           {/* PENDENTE DE VALIDAÇÃO COM O MARKYS: a regra de "caso a
               caso" abaixo é uma proposta, não decisão fechada. */}
-          <p className="font-body text-zinc-600 dark:text-zinc-400">
+          <p className="font-body text-verde-mata/70">
             Situações como problema de saúde comprovado por atestado
             médico, evento de força maior, ou erro comprovado do sistema
             (ex: cobrança duplicada) são tratadas caso a caso e podem
@@ -80,10 +80,10 @@ export default function PoliticaDeReembolso() {
         </section>
 
         <section className="flex flex-col gap-2">
-          <h2 className="font-display text-xl font-semibold text-verde-mata dark:text-pedra-sabao">
+          <h2 className="font-display text-xl font-semibold text-verde-mata">
             5. Roteiros personalizados / receptivo
           </h2>
-          <p className="font-body text-zinc-600 dark:text-zinc-400">
+          <p className="font-body text-verde-mata/70">
             Roteiros personalizados seguem a mesma regra de cancelamento
             e reembolso descrita no item 1 (7 dias / sem reembolso da
             taxa de serviço).
@@ -91,10 +91,10 @@ export default function PoliticaDeReembolso() {
         </section>
 
         <section className="flex flex-col gap-2">
-          <h2 className="font-display text-xl font-semibold text-verde-mata dark:text-pedra-sabao">
+          <h2 className="font-display text-xl font-semibold text-verde-mata">
             6. Como solicitar
           </h2>
-          <p className="font-body text-zinc-600 dark:text-zinc-400">
+          <p className="font-body text-verde-mata/70">
             Solicite pelo WhatsApp: (31) 8474-3523.
           </p>
         </section>
