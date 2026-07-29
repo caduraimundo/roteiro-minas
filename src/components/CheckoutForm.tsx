@@ -375,7 +375,7 @@ export function CheckoutForm({
 
   if (resultado?.tipo === "pix") {
     return (
-      <div className="border-verde-mata/15 bg-pedra-sabao flex flex-col items-center gap-4 rounded-2xl border p-6 text-center shadow-[0_10px_26px_rgba(94,110,79,0.1)] dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="border-verde-mata/15 bg-pedra-sabao flex flex-col items-center gap-4 rounded-2xl border p-6 text-center shadow-[0_10px_26px_rgba(94,110,79,0.1)]">
         <span className="bg-terracota/10 flex h-12 w-12 items-center justify-center rounded-full">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path
@@ -387,7 +387,7 @@ export function CheckoutForm({
             />
           </svg>
         </span>
-        <h2 className="font-display text-verde-mata dark:text-pedra-sabao text-xl font-semibold uppercase">
+        <h2 className="font-display text-verde-mata text-xl font-semibold uppercase">
           Pague com Pix pra confirmar
         </h2>
         {resultado.qrCodeUrl && (
@@ -395,24 +395,24 @@ export function CheckoutForm({
           <img
             src={resultado.qrCodeUrl}
             alt="QR Code Pix"
-            className="h-56 w-56 rounded-xl border border-zinc-200 dark:border-zinc-800"
+            className="border-pedra-sabao h-56 w-56 rounded-xl border"
           />
         )}
         {resultado.qrCode && (
           <div className="flex w-full flex-col gap-1">
-            <span className="font-body text-sm text-zinc-600 dark:text-zinc-400">
+            <span className="font-body text-sm text-zinc-600">
               Ou copie o código:
             </span>
             <textarea
               readOnly
               value={resultado.qrCode}
-              className="font-body w-full resize-none rounded-xl border border-zinc-300 p-2 text-xs dark:border-zinc-700 dark:bg-zinc-900"
+              className="font-body border-pedra-sabao w-full resize-none rounded-xl border p-2 text-xs"
               rows={4}
             />
           </div>
         )}
         {resultado.expiresAt && (
-          <p className="font-body text-xs text-zinc-500 dark:text-zinc-500">
+          <p className="font-body text-xs text-zinc-500">
             Esse QR Code expira às{" "}
             {new Date(resultado.expiresAt).toLocaleTimeString("pt-BR", {
               hour: "2-digit",
@@ -421,7 +421,7 @@ export function CheckoutForm({
             .
           </p>
         )}
-        <p className="font-body text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="font-body text-sm text-zinc-600">
           A confirmação do pagamento acontece automaticamente após o Pix cair.
         </p>
         <button
@@ -438,7 +438,7 @@ export function CheckoutForm({
 
   if (resultado?.tipo === "cartao_sucesso") {
     return (
-      <div className="border-verde-mata/15 bg-pedra-sabao flex flex-col items-center gap-2 rounded-2xl border p-6 text-center shadow-[0_10px_26px_rgba(94,110,79,0.1)] dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="border-verde-mata/15 bg-pedra-sabao flex flex-col items-center gap-2 rounded-2xl border p-6 text-center shadow-[0_10px_26px_rgba(94,110,79,0.1)]">
         <span className="bg-terracota/10 flex h-12 w-12 items-center justify-center rounded-full">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path
@@ -450,10 +450,10 @@ export function CheckoutForm({
             />
           </svg>
         </span>
-        <h2 className="font-display text-verde-mata dark:text-pedra-sabao text-xl font-semibold uppercase">
+        <h2 className="font-display text-verde-mata text-xl font-semibold uppercase">
           Pagamento aprovado!
         </h2>
-        <p className="font-body text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="font-body text-sm text-zinc-600">
           Você vai receber o ticket por e-mail em breve.
         </p>
       </div>
@@ -763,7 +763,7 @@ export function CheckoutForm({
             </div>
             {cupomErro && <span className={ERRO_CLASSE}>{cupomErro}</span>}
             {cupomValidoParaCpfAtual && (
-              <span className="font-body text-sm font-medium text-green-700 dark:text-green-500">
+              <span className="font-body text-sm font-medium text-green-700">
                 Cupom aplicado: {cupomAplicado.percentualDesconto}% de
                 desconto.
               </span>
