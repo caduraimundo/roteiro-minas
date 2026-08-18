@@ -332,11 +332,21 @@ export default function WoodSpotDemo() {
       ctx.drawImage(processed, box.x, box.y, box.width, box.height);
     }
 
-    const dataUrl = exportCanvas.toDataURL("image/png");
-    const link = document.createElement("a");
-    link.href = dataUrl;
-    link.download = "preview-gravacao.png";
-    link.click();
+    // toBlob (assíncrono, binário) em vez de toDataURL: no Safari iOS,
+    // uma data URL grande (a tábua é 2000x2000px) faz o navegador tratar o
+    // clique como navegação de página para a URL "data:", travando a UI
+    // por vários segundos em vez de só disparar o download.
+    exportCanvas.toBlob((blob) => {
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "preview-gravacao.png";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }, "image/png");
   }
 
   return (
