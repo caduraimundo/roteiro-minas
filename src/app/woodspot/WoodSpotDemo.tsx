@@ -13,6 +13,9 @@ import tabuaBase from "./assets/tabua-base.png";
 const MAX_LOGO_DIMENSION = 1000;
 const DEBOUNCE_MS = 150;
 const MAX_COLOR_DISTANCE = Math.sqrt(3 * 255 * 255);
+const INITIAL_LOGO_WIDTH_RATIO = 0.28;
+const ZOOM_STEP = 0.05;
+const MIN_LOGO_SIZE = 40;
 
 type LogoBox = {
   x: number;
@@ -47,6 +50,7 @@ export default function WoodSpotDemo() {
   const dragOffsetRef = useRef({ dx: 0, dy: 0 });
   const isDraggingRef = useRef(false);
   const boxRef = useRef<LogoBox | null>(null);
+  const defaultBoxRef = useRef<LogoBox | null>(null);
 
   const [boardReady, setBoardReady] = useState(false);
   const [originalPreview, setOriginalPreview] = useState<string | null>(null);
@@ -193,15 +197,17 @@ export default function WoodSpotDemo() {
     const board = boardCanvasRef.current;
     const boardWidth = board?.width ?? 700;
     const boardHeight = board?.height ?? 900;
-    const initialWidth = Math.min(width, boardWidth * 0.4);
+    const initialWidth = boardWidth * INITIAL_LOGO_WIDTH_RATIO;
     const initialHeight = initialWidth * (height / width);
 
-    setBox({
+    const initialBox: LogoBox = {
       x: (boardWidth - initialWidth) / 2,
       y: (boardHeight - initialHeight) / 2,
       width: initialWidth,
       height: initialHeight,
-    });
+    };
+    defaultBoxRef.current = initialBox;
+    setBox(initialBox);
 
     setHasLogo(true);
     processLogo(tolerance);
@@ -221,6 +227,38 @@ export default function WoodSpotDemo() {
 
   function isInsideBox(x: number, y: number, b: LogoBox) {
     return x >= b.x && x <= b.x + b.width && y >= b.y && y <= b.y + b.height;
+  }
+
+  function scaleBox(current: LogoBox, factor: number): LogoBox {
+    const canvas = boardCanvasRef.current;
+    const canvasWidth = canvas?.width ?? current.width;
+    const canvasHeight = canvas?.height ?? current.height;
+    const aspect = current.height / current.width;
+    const newWidth = clamp(current.width * factor, MIN_LOGO_SIZE, canvasWidth);
+    const newHeight = newWidth * aspect;
+    const cx = current.x + current.width / 2;
+    const cy = current.y + current.height / 2;
+
+    return {
+      x: clamp(cx - newWidth / 2, 0, Math.max(0, canvasWidth - newWidth)),
+      y: clamp(cy - newHeight / 2, 0, Math.max(0, canvasHeight - newHeight)),
+      width: newWidth,
+      height: newHeight,
+    };
+  }
+
+  function handleZoomIn() {
+    setBox((current) => (current ? scaleBox(current, 1 + ZOOM_STEP) : current));
+  }
+
+  function handleZoomOut() {
+    setBox((current) => (current ? scaleBox(current, 1 - ZOOM_STEP) : current));
+  }
+
+  function handleResetSize() {
+    if (defaultBoxRef.current) {
+      setBox({ ...defaultBoxRef.current });
+    }
   }
 
   function handlePointerDown(e: PointerEvent<HTMLCanvasElement>) {
@@ -269,19 +307,8 @@ export default function WoodSpotDemo() {
       if (!isInsideBox(x, y, current)) return;
 
       e.preventDefault();
-      const factor = e.deltaY > 0 ? 0.95 : 1.05;
-      const aspect = current.height / current.width;
-      const newWidth = clamp(current.width * factor, 40, canvas.width);
-      const newHeight = newWidth * aspect;
-      const cx = current.x + current.width / 2;
-      const cy = current.y + current.height / 2;
-
-      setBox({
-        x: clamp(cx - newWidth / 2, 0, canvas.width - newWidth),
-        y: clamp(cy - newHeight / 2, 0, canvas.height - newHeight),
-        width: newWidth,
-        height: newHeight,
-      });
+      const factor = e.deltaY > 0 ? 1 - ZOOM_STEP : 1 + ZOOM_STEP;
+      setBox(scaleBox(current, factor));
     }
 
     canvas.addEventListener("wheel", handleWheel, { passive: false });
@@ -318,10 +345,6 @@ export default function WoodSpotDemo() {
         <h1 className="text-2xl font-semibold text-neutral-800">
           WoodSpot - Preview de gravação
         </h1>
-        <p className="text-sm text-neutral-500">
-          Ferramenta isolada de demonstração. Não faz parte do site
-          principal do Roteiro Minas.
-        </p>
       </header>
 
       <section className="flex flex-col gap-4 sm:flex-row">
@@ -367,6 +390,36 @@ export default function WoodSpotDemo() {
             uniformes.
           </p>
 
+          <div className="flex flex-col gap-1">
+            <span className="text-xs text-neutral-500">Zoom da logo</span>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={handleZoomOut}
+                disabled={!hasLogo}
+                className="flex-1 rounded border border-neutral-300 bg-white px-3 py-1.5 text-sm font-medium text-neutral-700 disabled:opacity-40"
+              >
+                -
+              </button>
+              <button
+                type="button"
+                onClick={handleZoomIn}
+                disabled={!hasLogo}
+                className="flex-1 rounded border border-neutral-300 bg-white px-3 py-1.5 text-sm font-medium text-neutral-700 disabled:opacity-40"
+              >
+                +
+              </button>
+            </div>
+            <button
+              type="button"
+              onClick={handleResetSize}
+              disabled={!hasLogo}
+              className="rounded border border-neutral-300 bg-white px-3 py-1.5 text-sm font-medium text-neutral-700 disabled:opacity-40"
+            >
+              Tamanho padrão
+            </button>
+          </div>
+
           <button
             type="button"
             onClick={handleDownload}
@@ -379,7 +432,7 @@ export default function WoodSpotDemo() {
           {hasLogo && (
             <p className="text-xs text-neutral-400">
               Arraste a logo sobre a tábua para posicionar. Use o scroll do
-              mouse sobre a logo para redimensionar.
+              mouse ou os botões de zoom para redimensionar.
             </p>
           )}
         </div>
