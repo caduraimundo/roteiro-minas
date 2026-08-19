@@ -16,6 +16,9 @@ const MAX_COLOR_DISTANCE = Math.sqrt(3 * 255 * 255);
 const INITIAL_LOGO_WIDTH_RATIO = 0.28;
 const ZOOM_STEP = 0.05;
 const MIN_LOGO_SIZE = 40;
+// Marrom escuro de "madeira queimada" em vez de preto puro, aplicado com
+// blend mode soft-light (duas passadas) pra simular gravação real.
+const ENGRAVING_COLOR = [59, 33, 18];
 
 type LogoBox = {
   x: number;
@@ -88,6 +91,7 @@ export default function WoodSpotDemo() {
     const processed = processedCanvasRef.current;
     const currentBox = boxRef.current;
     if (processed && currentBox) {
+      ctx.globalCompositeOperation = "soft-light";
       ctx.drawImage(
         processed,
         currentBox.x,
@@ -95,6 +99,14 @@ export default function WoodSpotDemo() {
         currentBox.width,
         currentBox.height
       );
+      ctx.drawImage(
+        processed,
+        currentBox.x,
+        currentBox.y,
+        currentBox.width,
+        currentBox.height
+      );
+      ctx.globalCompositeOperation = "source-over";
     }
   }, []);
 
@@ -102,8 +114,8 @@ export default function WoodSpotDemo() {
     redraw();
   }, [redraw, boardReady, box]);
 
-  // Recalcula a imagem processada (fundo removido + preto) sempre que a
-  // tolerância muda, com debounce para não travar o slider.
+  // Recalcula a imagem processada (fundo removido + cor de gravação) sempre
+  // que a tolerância muda, com debounce para não travar o slider.
   useEffect(() => {
     if (!hasLogo) return;
     const timer = setTimeout(() => {
@@ -140,9 +152,9 @@ export default function WoodSpotDemo() {
       if (a === 0 || distSq < thresholdSq) {
         out[i + 3] = 0;
       } else {
-        out[i] = 0;
-        out[i + 1] = 0;
-        out[i + 2] = 0;
+        out[i] = ENGRAVING_COLOR[0];
+        out[i + 1] = ENGRAVING_COLOR[1];
+        out[i + 2] = ENGRAVING_COLOR[2];
         out[i + 3] = a;
       }
     }
@@ -329,7 +341,10 @@ export default function WoodSpotDemo() {
 
     ctx.drawImage(boardImg, 0, 0, exportCanvas.width, exportCanvas.height);
     if (processed && box) {
+      ctx.globalCompositeOperation = "soft-light";
       ctx.drawImage(processed, box.x, box.y, box.width, box.height);
+      ctx.drawImage(processed, box.x, box.y, box.width, box.height);
+      ctx.globalCompositeOperation = "source-over";
     }
 
     // toBlob (assíncrono, binário) em vez de toDataURL: no Safari iOS,
